@@ -1,0 +1,187 @@
+---
+title: "Scraping RU Sociology department"
+author: 
+  - '**AUTHORS:**'
+  - 'Rob Franken'
+  - 'Daniel Cowen'  
+  - 'Jochem Tolsma'
+#bibliography: references.bib
+link-citations: true
+date: "Last compiled on `r format(Sys.time(), '%B, %Y')`"
+output: 
+  html_document:
+    css: tweaks.css
+    toc:  true
+    toc_float: true
+    number_sections: true
+    toc_depth: 2
+    code_folding: show
+    code_download: yes
+---
+
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide', message=FALSE}
+library(knitr)
+library(tidyverse) 
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test3"))
+options(width = 100)
+rgl::setupKnitr()
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+#install.packages("remotes")
+#remotes::install_github("rlesur/klippy")
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+# Preparation
+
+## clean up
+```{r, cleanup, results='hide'}
+rm(list=ls())
+gc()
+```
+
+<br>
+
+## general custom functions
+
+- `fpackage.check`: Check if packages are installed (and install if not) in R
+- `fsave`: save data with time stamp in correct directory
+- `fload`: load R-objects under new names
+
+
+```{r, customfunc}
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file, location = "./local/", ...) {
+    if (!dir.exists(location))
+        dir.create(location)
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, datename, file, sep = "")
+    print(paste("SAVED: ", totalname, sep = ""))
+    save(x, file = totalname)
+}
+
+fload  <- function(fileName){
+  load(fileName)
+  get(ls()[ls() != "fileName"])
+}
+
+fshowdf <- function(x, digits = 2, ...) {
+    knitr::kable(x, digits = digits, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+```
+
+<br>
+
+## necessary packages
+
+```{r, packages, results='hide', message=FALSE, warning=FALSE}
+packages = c("RSelenium", "rvest", "tidyverse", "netstat", "pingr", "stringr")
+fpackage.check(packages)
+rm(packages)
+```
+
+<br>
+
+## set up RSelenium
+
+```{r, selenium, eval = FALSE}
+#find a free port
+port <- netstat::free_port(random = TRUE)
+
+#ping port for confirmation
+pingr::ping_port("localhost", port)
+
+#set up selenium server and browser
+rD <- rsDriver(browser="firefox", port=port, chromever = NULL, verbose = FALSE)
+remDr <- rD[["client"]]
+``` 
+
+<br>
+
+An issue with `RSelenium::rsDriver` is that it is configured to launch the Selenium server with the latest versions of Chrome *and* Firefox drivers, *even if you have specified the other browser to run*. To solve this, pass in `NULL` in the Chrome driver version `chromever`!
+
+If at any time you wish to terminate the process, use the code:
+
+```{r, taskkill, eval = FALSE}
+pid <- rD$server$process$get_pid()#get process id
+system(paste0("Taskkill /F /T" ," /PID ", pid))
+```
+<br>
+
+---
+
+# Scraping scholar names
+
+```{r, names, eval = FALSE}
+#navigate to RU staff page
+remDr$navigate("https://www.ru.nl/en/search/scope/staff/")
+
+#we want to get scholars from the sociology department; so we use the website's collapsible lists
+#expand content under Radboud University
+remDr$findElement(using = "class name", value = "facet-list__expand-sub")$clickElement()
+
+#expand content under Faculty of social science (dep id 961)
+#using its xpath
+remDr$findElement(using = "xpath", value = "//button[@class='facet-list__expand-sub' and @aria-controls='toggle-staff-department-961']")$clickElement()
+
+#click on sociology
+remDr$findElement(using = "xpath", value = "//input[@type='checkbox' and @class='facets-checkbox' and @id='staff-department-992']")$clickElement()
+
+#among all staff members, select researchers
+#that is, check the 4th checkbox
+remDr$findElements(using = "class name", value = "facets-checkbox")[[4]]$clickElement()
+
+#naturally this can also be achieved by using the url https://www.ru.nl/en/search/scope/staff/staff-department/X/staff-staff/researchers, where X should be replaced department-id, which can be stored in a list beforehand
+
+##################################################################################################
+
+#now we have all sociology researchers;
+#but this is spread across multiple pages;
+#we store the elements of class "pager__item" in a list. We use this to get the number of pages (note that there are also "next" and "last" page buttons; so the number of elements of this class minus 2 equals the number of pages)
+
+npages <- length(remDr$findElements("class name", "pager__item") ) - 2
+
+#get all elements with class name "card__title"; these refer to names of researchers. Retrieve the text:
+names_page <- unlist(lapply(remDr$findElements("class name", "card__title"),
+                     function(x) x$getElementText()))
+
+#now repeat this for the other pages in 1:npages-1
+page1 <- remDr$getCurrentUrl()
+
+for ( i in 1:(npages-1)) { 
+  #increment page
+  pageswitch <- paste0(page1,"?page=", i)
+  #navigate to the page
+  remDr$navigate(pageswitch)
+  #retrieve names
+  new_names <- unlist(lapply(remDr$findElements("class name", "card__title"),
+                     function(x) x$getElementText()))
+  #and add to the names_page object:
+  names_page <- c(names_page, new_names)
+  #add sleeper:
+  Sys.sleep(2)
+}
+
+fshowdf(names_page)
+``` 
+
+
+
+
