@@ -1,0 +1,186 @@
+---
+title: "Sunbelt 2023 Workshop: from webscraping to SNA"
+author: 
+  - '**AUTHORS:**'
+  - 'Rob Franken'  
+  - 'Anne Maaike Mulders' 
+  - '[Bas Hofstra](https://www.bashofstra.com/)'
+  - '[Jochem Tolsma](https://www.jochemtolsma.nl) - Radboud University / University of Groningen, the Netherlands'
+date: "Last compiled on `r format(Sys.Date(), format='%d %B %Y')`"
+bibliography: references.bib
+link-citations: yes
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"), cache.lazy = FALSE)
+options(width = 100) 
+rgl::setupKnitr()
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE, message=FALSE}
+# install.packages("remotes")
+#remotes::install_github("rlesur/klippy")
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+------------------------------------------------------------------------
+
+# Introduction
+
+```{=html}
+<script>
+function myFunction() {
+
+            var btn = document.getElementById("myButton");
+            //to make it fancier
+            if (btn.value == "Click to hide code") {
+                btn.value = "Read more";
+                btn.innerHTML = "Read more";
+            }
+            else {
+                btn.value = "Click to hide code";
+                btn.innerHTML = "Read less";
+            }
+            //this is what you're looking for
+            var x = document.getElementById("myDIV");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+          
+</script>
+```
+Welcome to the website of the Sunbelt 2023 Workshop: **From Webscraping
+to Social Network Analyses: Structure and Evolution of Scientific
+Co-publishing Networks**
+
+<br>
+
+In this workshop you will first collect and then analyze academic
+departmental co-publishing networks. In the workhop's Part 1 you learn
+to webscrape scientific metadata of scientific departmental websites
+(via R packages like rvest and RSelenium), assign name-based gender and
+ethnicity signals, retrieve scholars' publications, and construct
+longitudinal co-publishing networks. In Part 2, you learn to analyze the
+structure and evolution of these networks by means of RSiena. You will
+answer questions such as: are co-publishing networks segregated by
+scientific success? And is success-based segregation in co-publishing
+networks the result of departmental characteristics, structural network
+effects, influence processes and selection processes? For each step, we
+provide clear (proof-of-principle) coding examples and output data,
+ensuring you will not get stuck along the way. Depending on skills and
+progress, you might analyze your own chosen departments. You will keep
+track of your work via a labjournal on GitHub.
+
+<!--
+
+<button class="button1" onclick="myFunction()" id="myButton" value="Click To Open Instructions">
+
+Read more
+
+</button>
+
+::: {#myDIV style="display:none;"}
+<br>
+
+more text here
+
+<br>
+:::
+
+--->
+
+------------------------------------------------------------------------
+
+# Getting started
+
+## LabJournal
+
+During the course, students will journal their work and assignments in
+their custom lab journal. A template lab journal can be found on
+[GitHub](https://github.com/robfranken/LabJournal). Here, you find how
+to get started.
+
+## Discord
+
+Please join the [discord channel](https://discord.gg/ACcYU8nu). Use the
+channel to chat, ask questions and share (small) files.
+
+------------------------------------------------------------------------
+
+# Program
+
+The program of this workshop will be as follows:
+
+`r colorize("Introduction", "red")`\
+*Time: 9:00am - 9:30am*  
+
+- **all**  
+    - round of introductions  
+- **Jochem and Anne Maaike**
+    -   Our RQs for today\
+    -   Data requirements for RQs\
+    -   PhD project AM
+
+`r colorize("Lab Journal", "red")`\
+*Time: 9:30am - 10:00am*
+
+-   **Rob**
+    -   [Lab Journal](https://github.com/robfranken/LabJournal)
+
+`r colorize("Webscraping-scholars", "red")`\
+*Time: 10:00am - 11:30am*
+
+-   **Bas**
+    -   Webscraping - [Lecture](./presentations/insna_science_data.pdf)
+    -   Webscraping - [Tutorial](10scholars.html)
+
+`r colorize("BREAK", "red")`\
+*Time: 11:30am - 11:45am*
+
+`r colorize("genderize", "red")`\
+*Time: 11:45am - 12:30pm*
+
+-   **Anne Maaike**
+    -   names curating - [tutorial](20names.html)
+    -   names to gender - [tutorial](30gender.html)
+
+`r colorize("BREAK", "red")`\
+*Time: 12:30pm - 1:45pm*
+
+`r colorize("Webscraping - publications", "red")`\
+*Time: 1:45pm - 2:00pm*
+
+-   **Jochem and Bas**
+    -   Scraping publications - [demonstration](40publications.html)
+
+`r colorize("RSiena", "red")`\
+
+*Time: 2:00pm - 4:00pm*
+
+-   **Jochem and Rob**
+    -   Logic of RSiena - [lecture](./presentations/insna_logic_rsiena.pdf)  
+    -   Rsiena data preparation - [tutorial](50pubnets.html)  
+    -   RSiena analyses  - [tutorial](60RSiena.html)  
+    
+
+`r colorize("The End", "red")`\
+*Time: 4:00pm - 4:30pm*
+
+-   **All**
+    -   Questions  
+    -   Evaluation  
+
+---  
+

@@ -1,0 +1,359 @@
+---  
+title: "publication networks"
+bibliography: references.bib
+link-citations: yes
+---
+  
+```{r, globalsettings, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"), cache.lazy = FALSE)
+options(width = 100) 
+rgl::setupKnitr()
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE, message=FALSE}
+# install.packages("remotes")
+#remotes::install_github("rlesur/klippy")
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+
+----
+
+# getting started
+
+Start with clean workspace 
+
+```{r}
+rm(list=ls())
+```
+
+----
+
+# Goal
+
+Our goal is to make a network based on the publications we scraped for our scholars. 
+
+
+# Custom functions
+
+- `fpackage.check`: Check if packages are installed (and install if not) in R ([source](https://vbaliga.github.io/verify-that-r-packages-are-installed-and-loaded/)).  
+- `fsave`: Save to processed data in repository  
+- `fload`: To load the files back after an `fsave`  
+- `fshowdf`: To print objects (tibbles / data.frame) nicely on screen in .rmd  
+
+
+```{r customfunctions, results='hide'}
+fpackage.check <- function(packages) {
+  lapply(packages, FUN = function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+      library(x, character.only = TRUE)
+    }
+  })
+}
+
+fsave <- function(x, file=NULL, location="./data/processed/") {
+  ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+  ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+  if (is.null(file)) file= deparse(substitute(x))
+  datename <- substr(gsub("[:-]", "", Sys.time()), 1,8)  
+  totalname <- paste(location, datename, file, ".rda", sep="")
+  save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+  load(filename)
+  get(ls()[ls() != "filename"])
+}
+
+fshowdf <-  function(x, ...) {
+  knitr::kable(x, digits=2, "html", ...) %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  kableExtra::scroll_box(width="100%", height= "300px")
+} 
+
+```
+
+
+# packages
+
+- `stringdist`: string stuff.
+- `stringi`: string stuff 
+
+```{r, results='hide'}
+packages = c("stringdist", "stringi", "tidyverse")
+
+fpackage.check(packages)
+```
+
+# load data
+
+
+Hopefully you managed to construct the datasets yourself. If not. Here are the downloads: 
+
+Please use this one:  
+
+`r xfun::embed_file("./data/processed/20230621df_complete.rda")`. 
+
+`r xfun::embed_file("./data/processed/20230621list_publications_jt.rda")`. 
+
+Save file in correct directory: './data/processed'. 
+
+
+
+
+```{r}
+df <- fload("./data/processed/20230621df_complete.rda")
+publications <- fload("./data/processed/20230621list_publications_jt.rda")
+```
+
+## unique publications in df
+
+```{r}
+publications <- publications %>% 
+  bind_rows() %>%
+  distinct(title, .keep_all = TRUE) 
+```
+
+---  
+
+# networks based on publications  
+
+We have to make a couple of decisions:  
+
+- what are the boundaries of our network?: 
+  - combination of university and discipline  
+- undirected or directed network?:  
+  - directed: first author is sending a tie to other authors  
+- weighted or unweighted network?:  
+  - unweighted (no distinction between number ties within a specific time window, thus 0/1)  
+- time window?: 
+  - one wave is 3 years   
+  - 2 waves  
+    - wave 1: 2018-2020  
+    - wave 2: 2021-2023  
+
+## An example: RU-sociology
+
+```{r}
+#select scholars
+df %>% 
+  filter(affil1=="RU" | affil2=="RU") %>%
+  filter(discipline=="sociology") -> df_sel
+fshowdf(df_sel)
+```
+
+### network based on publications
+
+We will use an adjacency matrix to store our network ties: the first author is sending a tie to other authors. 
+
+We make the assumption that the composition of the network is stable!  
+
+```{r}
+networkw1 <- matrix(0, nrow=nrow(df_sel), ncol=nrow(df_sel))
+networkw2 <- matrix(0, nrow=nrow(df_sel), ncol=nrow(df_sel))
+```
+
+
+### select publications
+
+```{r}
+#wave1
+publications %>% 
+  filter(gs_id %in% df_sel$gs_id) %>% 
+  filter (year %in% c(2018,2019,2020))-> pub_w1
+
+#wave2
+publications %>% 
+  filter(gs_id %in% df_sel$gs_id) %>% 
+  filter (year %in% c(2021,2022,2023))-> pub_w2
+```
+
+### make a list for each publication 
+
+cleaned a bit
+```{r}
+#wave1
+pub_w1 <- str_split(pub_w1$author, ",") %>%
+  #lowercase
+  lapply(tolower) %>% 
+  # Removing diacritics
+  lapply(stri_trans_general, id = "latin-ascii") %>%
+  # only last name
+  lapply(word, start=-1, sep=" ") %>%
+  # only last last name
+  lapply(word, start=-1, sep="-")
+ 
+#let us remove all publications with only one author
+remove <- which(sapply(pub_w1, FUN = function(x) length(x)==1 )==TRUE)
+pub_w1 <- pub_w1[-remove]
+
+#wave2
+pub_w2 <- str_split(pub_w2$author, ",") %>%
+  #lowercase
+  lapply(tolower) %>% 
+  # Removing diacritics
+  lapply(stri_trans_general, id = "latin-ascii") %>%
+  # only last name
+  lapply(word, start=-1, sep=" ") %>%
+  # only last last name
+  lapply(word, start=-1, sep="-")
+ 
+#let us remove all publications with only one author
+remove <- which(sapply(pub_w2, FUN = function(x) length(x)==1 )==TRUE)
+pub_w2 <- pub_w2[-remove]
+```
+
+### find the author positions  
+
+And if we know the author positions, we can fill in our matrix  
+```{r}
+pubs <- pub_w1
+for (ego in 1: nrow(df_sel)) {
+  #which ego? 
+  lastname_ego <- df_sel$lastname[ego]
+  #for all publications
+  for (pub in 1:length(pubs)) {
+    #only continue if ego is author of pub
+    if (lastname_ego %in% pubs[[pub]]) {
+      aut_pot <- which.max(pubs[[pub]] %in% lastname_ego)
+      #only continue if ego is first author of pub
+      if (aut_pot==1) {
+        #check all alters/co-authors
+        for (alter in 1: nrow(df_sel)) {
+          #which alter
+          lastname_alter <- df_sel$lastname[alter]
+          if (lastname_alter %in% pubs[[pub]]) {
+            networkw1[ego,alter] <- networkw1[ego,alter] + 1
+          }
+        }
+      }
+    }
+ }
+}
+
+pubs <- pub_w2
+
+for (ego in 1: nrow(df_sel)) {
+  #which ego? 
+  lastname_ego <- df_sel$lastname[ego]
+  #for all publications
+  for (pub in 1:length(pubs)) {
+    #only continue if ego is author of pub
+    if (lastname_ego %in% pubs[[pub]]) {
+      aut_pot <- which.max(pubs[[pub]] %in% lastname_ego)
+      #only continue if ego is first author of pub
+      if (aut_pot==1) {
+        #check all alters/co-authors
+        for (alter in 1: nrow(df_sel)) {
+          #which alter
+          lastname_alter <- df_sel$lastname[alter]
+          if (lastname_alter %in% pubs[[pub]]) {
+            networkw1[ego,alter] <- networkw1[ego,alter] + 1
+          }
+        }
+      }
+    }
+ }
+}
+```
+
+
+---  
+
+# making life easy
+
+Wouldn't it be great if we could not write a function that would all this in one go? 
+
+Okay
+
+```{r}
+f_pubnets <- function(df_scholars=df, list_publications=publications, discip="sociology", affiliation="RU", waves=list(wave1=c(2018,2019,2020), wave2=c(2021,2022,2023))) {
+  
+  publications <- list_publications %>% 
+  bind_rows() %>%
+  distinct(title, .keep_all = TRUE) 
+  
+  df_scholars %>% 
+  filter(affil1==affiliation | affil2==affiliation) %>%
+  filter(discipline==discip) -> df_sel
+  
+  networklist <- list()
+  for (wave in 1:length(waves)) {
+    networklist[[wave]] <- matrix(0, nrow=nrow(df_sel), ncol=nrow(df_sel))
+  }
+  
+  publicationlist <- list()
+  for (wave in 1:length(waves)) {
+    publicationlist[[wave]] <- publications %>%
+    filter(gs_id %in% df_sel$gs_id) %>% 
+    filter (year %in% waves[[wave]]) %>%
+    select(author) %>% 
+    lapply(str_split, pattern=",") 
+  }  
+    
+  publicationlist2 <- list()
+  for (wave in 1:length(waves)) {
+    publicationlist2[[wave]] <- publicationlist[[wave]]$author %>%
+    #lowercase
+    lapply(tolower) %>% 
+    # Removing diacritics
+    lapply(stri_trans_general, id = "latin-ascii") %>%
+    # only last name
+    lapply(word, start=-1, sep=" ") %>%
+    # only last last name
+    lapply(word, start=-1, sep="-")
+  }
+  
+  for (wave in 1:length(waves)) {
+    #let us remove all publications with only one author
+    remove <- which(sapply(publicationlist2[[wave]], FUN = function(x) length(x)==1 )==TRUE)
+    publicationlist2[[wave]] <- publicationlist2[[wave]][-remove]
+  }
+
+  for (wave in 1:length(waves)) {
+    pubs <- publicationlist2[[wave]]
+    for (ego in 1: nrow(df_sel)) {
+      #which ego? 
+      lastname_ego <- df_sel$lastname[ego]
+      #for all publications
+      for (pub in 1:length(pubs)) {
+        #only continue if ego is author of pub
+        if (lastname_ego %in% pubs[[pub]]) {
+          aut_pot <- which.max(pubs[[pub]] %in% lastname_ego)
+          #only continue if ego is first author of pub
+          if (aut_pot==1) {
+            #check all alters/co-authors
+            for (alter in 1: nrow(df_sel)) {
+              #which alter
+              lastname_alter <- df_sel$lastname[alter]
+              if (lastname_alter %in% pubs[[pub]]) {
+                networklist[[wave]][ego,alter] <- networklist[[wave]][ego,alter] + 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return(list(df=df_sel, network=networklist))
+}
+```
+
+## some testing
+
+```{r}
+outputUU_sociology <- f_pubnets(affiliation="UU")
+str(outputUU_sociology)
+head(outputUU_sociology[[1]])
+#head(outputUU_sociology[[2]])
+```
+
+It seems to work. 
+
