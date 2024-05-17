@@ -54,6 +54,7 @@ gc()
 - `fpackage.check`: Check if packages are installed (and install if not) in R
 - `fsave`: save data with time stamp in correct directory
 - `fload`: load R-objects under new names
+- `fshowdf`: Print objects (`tibble` / `data.frame`) nicely on screen in `.Rmd`.
 
 
 ```{r, customfunc}
@@ -123,6 +124,7 @@ If at any time you wish to terminate the process, use the code:
 pid <- rD$server$process$get_pid()#get process id
 system(paste0("Taskkill /F /T" ," /PID ", pid))
 ```
+
 <br>
 
 ---
@@ -145,20 +147,42 @@ remDr$findElement(using = "xpath", value = "//button[@class='facet-list__expand-
 remDr$findElement(using = "xpath", value = "//input[@type='checkbox' and @class='facets-checkbox' and @id='staff-department-992']")$clickElement()
 
 #among all staff members, select researchers
-#that is, check the 4th checkbox
-remDr$findElements(using = "class name", value = "facets-checkbox")[[4]]$clickElement()
+#get the indicator of the checkbox that is "Researchers";
 
-#naturally this can also be achieved by using the url https://www.ru.nl/en/search/scope/staff/staff-department/X/staff-staff/researchers, where X should be replaced department-id, which can be stored in a list beforehand
+#first get categories:
+remDr$findElement(using = "id", value = "block-staffstaff")$getElementText() %>% #get element text;
+  unlist(.) %>% #unlist
+  strsplit(., "\n") %>% #split by \n
+  .[[1]] %>% #take the first element from the list
+  .[-1] -> staff_cats #remove the header "staff"
+
+#take the indicator of researchers
+researchers <- grep("Researchers", staff_cats)   
+
+#check the corresponding checkbox
+remDr$findElements(using = "class name", value = "facets-checkbox")[[researchers]]$clickElement()
+
+#naturally this can also be achieved by using the URL https://www.ru.nl/en/search/scope/staff/staff-department/X/staff-staff/researchers, where X should be replaced by department-id, which can be stored in a list beforehand (this is useful if we want multiple departments of a faculty)
 
 ##################################################################################################
 
-#now we have all sociology researchers;
+#now we have all sociology researchers (or of any other department);
 #but this is spread across multiple pages;
-#we store the elements of class "pager__item" in a list. We use this to get the number of pages (note that there are also "next" and "last" page buttons; so the number of elements of this class minus 2 equals the number of pages)
+#to know how many pages there are - and thus through how many we must scrape - we navigate to the "last" page first;
+remDr$findElements("class name", "pager__link-text")[[2]]$clickElement()
 
-npages <- length(remDr$findElements("class name", "pager__item") ) - 2
+#get the page number of this page
+npages <- remDr$findElement(using = "xpath", "//a[@aria-current='page']")$getElementText() %>%
+  unlist(.) %>% #unlist
+  strsplit(., "\n") %>% #split by \n
+  .[[1]] %>%
+  .[2] %>%
+  as.numeric(.)
 
-#get all elements with class name "card__title"; these refer to names of researchers. Retrieve the text:
+#go back to the first page
+remDr$findElements("class name", "pager__link-text")[[1]]$clickElement()
+
+#get all elements with class name "card__title"; these refer to names of researchers, on the first page. Retrieve the text:
 names_page <- unlist(lapply(remDr$findElements("class name", "card__title"),
                      function(x) x$getElementText()))
 
@@ -166,10 +190,10 @@ names_page <- unlist(lapply(remDr$findElements("class name", "card__title"),
 page1 <- remDr$getCurrentUrl()
 
 for ( i in 1:(npages-1)) { 
-  #increment page
-  pageswitch <- paste0(page1,"?page=", i)
+  #increment page 
+  newpage <- sub("page=0$", paste0("page=", i), page1)
   #navigate to the page
-  remDr$navigate(pageswitch)
+  remDr$navigate(newpage)
   #retrieve names
   new_names <- unlist(lapply(remDr$findElements("class name", "card__title"),
                      function(x) x$getElementText()))
@@ -179,7 +203,8 @@ for ( i in 1:(npages-1)) {
   Sys.sleep(2)
 }
 
-fshowdf(names_page)
+#all names!
+print(names_page)
 ``` 
 
 
