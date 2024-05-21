@@ -13,7 +13,7 @@ output:
     css: tweaks.css
     toc:  true
     toc_float: true
-    number_sections: true
+    number_sections: false
     toc_depth: 2
     code_folding: show
     code_download: yes
@@ -23,6 +23,7 @@ output:
 ```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide', message=FALSE}
 library(knitr)
 library(tidyverse) 
+library(reticulate)
 knitr::opts_chunk$set(echo = TRUE)
 opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test3"))
 options(width = 100)
@@ -49,7 +50,7 @@ gc()
 
 <br>
 
-## general custom functions
+## general custom R functions
 
 - `fpackage.check`: Check if packages are installed (and install if not) in R
 - `fsave`: save data with time stamp in correct directory
@@ -90,7 +91,9 @@ fshowdf <- function(x, digits = 2, ...) {
 
 <br>
 
-## necessary packages
+## necessary packages {.tabset .tabset-fade}
+
+### R
 
 ```{r, packages, results='hide', message=FALSE, warning=FALSE}
 packages = c("RSelenium", "rvest", "tidyverse", "netstat", "pingr", "stringr")
@@ -98,9 +101,32 @@ fpackage.check(packages)
 rm(packages)
 ```
 
+### Python
+
+Install the newest version of the `selenium` module inside a virtual environment, by typing in your terminal the below command:
+
+```{bash, eval = FALSE}
+pip install -U selenium
+``` 
+
 <br>
 
-## set up RSelenium
+and import necessary modules
+
+```{python, eval = FALSE}
+import selenium
+import time
+
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+``` 
+
+<br>
+
+## set up Selenium {.tabset .tabset-fade}
+
+### R
 
 ```{r, selenium, eval = FALSE}
 #find a free port
@@ -113,7 +139,6 @@ pingr::ping_port("localhost", port)
 rD <- rsDriver(browser="firefox", port=port, chromever = NULL, verbose = FALSE)
 remDr <- rD[["client"]]
 ``` 
-
 <br>
 
 An issue with `RSelenium::rsDriver` is that it is configured to launch the Selenium server with the latest versions of Chrome *and* Firefox drivers, *even if you have specified the other browser to run*. To solve this, pass in `NULL` in the Chrome driver version `chromever`!
@@ -125,11 +150,30 @@ pid <- rD$server$process$get_pid()#get process id
 system(paste0("Taskkill /F /T" ," /PID ", pid))
 ```
 
+### Python
+
+```{python, eval = FALSE}
+remDr = webdriver.Firefox()
+``` 
+
+<br>
+
+If at any time you wish to terminate the process, use the code:
+
+```{python, eval = FALSE}
+remDr.close()
+``` 
+
+## {.unlisted .unnumbered}
+
+
 <br>
 
 ---
 
-# Scraping scholar names
+# Scraping scholar names {.tabset .tabset-fade}
+
+## R
 
 ```{r, names, eval = FALSE}
 #navigate to RU staff page
@@ -205,8 +249,76 @@ for ( i in 1:(npages-1)) {
 
 #all names!
 print(names_page)
+length(names_page)
 ``` 
 
+## Python
 
+```{python, eval = FALSE}
+#navigate to RU staff page
+remDr.get("https://www.ru.nl/en/search/scope/staff/")
 
+#we want to get scholars from the sociology department; so we use the website's collapsible lists
+#expand content under Radboud University
+remDr.find_element(By.CLASS_NAME, "facet-list__expand-sub").click()
+
+#expand content under Faculty of social science (dep id 961)
+#using its xpath
+remDr.find_element(By.XPATH, "//button[@class='facet-list__expand-sub' and @aria-controls='toggle-staff-department-961']").click()
+
+#click on sociology
+remDr.find_element(By.XPATH, "//input[@type='checkbox' and @class='facets-checkbox' and @id='staff-department-992']").click()
+
+#among all staff members, select researchers
+#get the indicator of the checkbox that is "Researchers";
+
+#first get categories:
+staff_cats = remDr.find_element(By.ID, "block-staffstaff").text.split("\n")[1:]
+
+#take the indicator of "researchers"
+researchers = [i for i, cat in enumerate(staff_cats) if "Researchers" in cat][0]
+
+#check the corresponding checkbox
+remDr.find_elements(By.CLASS_NAME, "facets-checkbox")[researchers].click()
+
+#naturally this can also be achieved by using the URL https://www.ru.nl/en/search/scope/staff/staff-department/X/staff-staff/researchers, where X should be replaced by department-id, which can be stored in a list beforehand (this is useful if we want multiple departments of a faculty)
+
+##################################################################################################
+
+#now we have all sociology researchers (or of any other department);
+#but this is spread across multiple pages;
+#to know how many pages there are - and thus through how many we must scrape - we navigate to the "last" page first;
+remDr.find_elements(By.CLASS_NAME, "pager__link-text")[1].click()
+
+#get the page number of this page
+npages = int(remDr.find_element(By.XPATH, "//a[@aria-current='page']").text.split("\n")[1])
+  
+#go back to the first page
+remDr.find_elements(By.CLASS_NAME, "pager__link-text")[0].click()
+
+#get all elements with class name "card__title"; these refer to names of researchers, on the first page. Retrieve the text:
+names_page = [elem.text for elem in remDr.find_elements(By.CLASS_NAME, "card__title")]
+
+#now repeat this for the other pages
+page1 = remDr.current_url
+
+for i in range(1, npages):
+  #increment page
+  newpage = page1.replace("page=0", f"page={i}")
+  print(str("navigating to: ") + newpage)
+  time.sleep(0.5)
+  #navigate to the page
+  remDr.get(newpage)
+  time.sleep(0.5)
+  #retrieve names
+  new_names = [elem.text for elem in remDr.find_elements(By.CLASS_NAME, "card__title")]
+  #and add to the names_page object:
+  names_page.extend(new_names)
+  #add sleeper:
+  time.sleep(2)
+
+#all names!
+print(names_page)
+len(names_page)
+``` 
 
