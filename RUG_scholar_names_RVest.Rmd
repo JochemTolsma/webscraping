@@ -1,0 +1,218 @@
+---
+title: "Scraping RUG Sociology department"
+author:
+- Rob Franken
+- Daniel Cowen
+- Jochem Tolsma
+- '**AUTHORS:**'
+date: "Last compiled on `r format(Sys.time(), '%B, %Y')`"
+output:
+  html_document:
+    css: tweaks.css
+    toc: true
+    toc_float: true
+    number_sections: false
+    toc_depth: 2
+    code_folding: show
+    code_download: true
+  word_document:
+    toc: true
+    toc_depth: '2'
+  pdf_document:
+    toc: true
+    toc_depth: '2'
+link-citations: true
+---
+
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide', message=FALSE}
+library(knitr)
+library(tidyverse) 
+library(reticulate)
+library(kableExtra)
+knitr::opts_chunk$set(echo = TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test3"))
+options(width = 100)
+rgl::setupKnitr()
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+```
+
+```{r klippy, echo=FALSE, include=TRUE}
+# install.packages("remotes",repos = "http://cran.us.r-project.org")
+# remotes::install_github("rlesur/klippy")
+# klippy::klippy(lang = c("r", "python"), position = c('top', 'right'))
+# 
+# klippy::klippy(color = 'darkred')
+# klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+# Preparation
+
+## clean up
+```{r, cleanup, results='hide'}
+rm(list=ls())
+gc()
+```
+
+<br>
+
+## general custom R functions
+
+- `fpackage.check`: Check if packages are installed (and install if not) in R
+- `fsave`: save data with time stamp in correct directory
+- `fload`: load R-objects under new names
+- `fshowdf`: Print objects (`tibble` / `data.frame`) nicely on screen in `.Rmd`.
+
+
+```{r, customfunc}
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave <- function(x, file, location = "./local/", ...) {
+    if (!dir.exists(location))
+        dir.create(location)
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, datename, file, sep = "")
+    print(paste("SAVED: ", totalname, sep = ""))
+    save(x, file = totalname)
+}
+
+fload  <- function(fileName){
+  load(fileName)
+  get(ls()[ls() != "fileName"])
+}
+
+
+fshowdf <- function(x, digits = 2, ...) {
+    knitr::kable(x, digits = digits, "html", ...) %>%
+        kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+        kableExtra::scroll_box(width = "100%", height = "300px")
+}
+```
+
+<br>
+
+## necessary packages {.tabset .tabset-fade}
+
+### R
+
+```{r, packages, results='hide', message=FALSE, warning=FALSE}
+packages = c( "rvest", "tidyverse", "stringr","xml2")
+fpackage.check(packages)
+rm(packages)
+```
+
+### Python
+
+Install the newest version of the `selenium` module inside a virtual environment, by typing in your terminal the below command:
+
+```{bash, eval = FALSE}
+
+``` 
+
+<br>
+
+and import necessary modules
+
+```{python, eval = FALSE}
+
+``` 
+
+<br>
+
+## Input the static URL you wish to scrape {.tabset .tabset-fade}
+
+### R
+
+```{r, rvest, eval = FALSE}
+#Read the HTML on the page with your link
+
+RugSociology <- read_html("https://www.rug.nl/about-ug/practical-matters/find-an-expert?lang=en&discipline=Sociology")
+
+``` 
+<br>
+
+
+## {.unlisted .unnumbered}
+
+
+<br>
+
+---
+
+# Scraping scholar names {.tabset .tabset-fade}
+
+## R
+
+You will need to know the tags or XPath to the exact types of elements you are looking for. You can do this by inspecting the webpage itself and finding the common code between all items you want to get.
+
+Alternatively, you can use extensions such as Selector Gadget to get the XPath or tags you are looking for. Here, I am inputting the code used to specify information from an individual staff member
+
+```{r, names, eval = FALSE, results = 'asis'}
+
+
+Staffmembers <- RugSociology %>% html_elements(".rug-ph-xs") 
+
+#and subsequently verify that the first entry into my staff members list is indeed the first person on the webpage
+xml_child(Staffmembers[[1]], 1)
+xml_child(Staffmembers[[2]], 1)
+
+#Again, then using Selector Gadget or looking at the similarities between each indidivudal staff members list, we can find the tag that corresponds just to the names, and extract just the text from this using html_text2
+
+StaffNames <- Staffmembers %>% html_element(".rug-h3") %>% html_text2()
+#We have as accurate names as we can get from this pace
+head(StaffNames)
+
+
+#similar can be done for other information like their email
+StaffEmail <- Staffmembers %>% html_element(".rug-mb-s:nth-child(1) .rug-width-s-20-24") %>% html_text2()
+#necessary to clean text
+StaffEmail<- gsub("[\r\n0-9+/]", "", StaffEmail)
+#remove all the trailing spaces after cleaning (using the (.nl).*) while still keeping the end of the email (using \\1)
+StaffEmail <- gsub("(.nl).*", "\\1", StaffEmail)
+#Finally, we see we didnt scrape the @ (as it is a symbol that also means something else in html so the html_text function didnt think it was text and subsequently removed it) so we must put it back in place of the space it left
+StaffEmail <- gsub(" ", "@", StaffEmail)
+#and then we have all 118 emails!
+head(StaffEmail)
+
+#Fields of Research
+#Similar to above, separate teh text from html code and clean as needed
+StaffExpertese <- Staffmembers %>% html_element(".rug-mb-s~ .rug-mb-s+ .rug-mb-s .rug-width-s-20-24") %>% html_text2()
+#Here we remove line breaks and replace them with semi-colons 
+StaffExpertese<- gsub("[\r\n]", "; ", StaffExpertese)
+head(StaffExpertese)
+
+#Funcion/role
+#Similar to above, separate teh text from html code and clean as needed. This time no cleaning is needed
+StaffRole <- Staffmembers %>% html_element(".rug-layout:nth-child(2) .rug-width-s-20-24") %>% html_text2()
+head(StaffRole)
+
+
+#Misc Info
+#Similar to above, separate teh text from html code and clean as needed. This time no cleaning is needed
+StaffInfo <- Staffmembers %>% html_element(".rug-h3+ .rug-mb-s") %>% html_text2()
+head(StaffInfo)
+
+
+#After we get all the information we want, we can then combine it into a single dataframe to allow for better storage and data manipulation
+
+RugSociologyEmployees <- data.frame(cbind(StaffNames,StaffEmail,StaffRole,StaffExpertese,StaffInfo))
+
+fshowdf(RugSociologyEmployees, caption = "Our table of all the Sociology Employees in the RuG" ) 
+
+
+``` 
+
+## Python
+
+```{r, eval = FALSE}
+
+``` 
+
