@@ -106,6 +106,13 @@ rm(packages)
 
 Install the newest version of the `selenium` module inside a virtual environment, by typing in your terminal the below command:
 
+
+```{python}
+
+```
+
+
+
 ```{bash, eval = FALSE}
 pip install -U selenium
 ``` 
@@ -138,6 +145,7 @@ pingr::ping_port("localhost", port)
 
 #set up selenium server and browser
 rD <- rsDriver(browser="firefox", port=port, chromever = NULL, verbose = FALSE)
+rD
 remDr <- rD[["client"]]
 ``` 
 <br>
@@ -180,19 +188,58 @@ remDr.close()
 #navigate to RU staff page
 remDr$navigate("https://www.ru.nl/en/search/scope/staff/")
 
+#handle cookies
+remDr$findElement(using = "css", value = ".agree-button")$highlightElement()
+remDr$findElement(using = "css", value = ".agree-button")$clickElement()
+
+cookies <- remDr$getAllCookies()
+saveRDS(cookies, "cookies.rds")
+remDr$addCookie(name = cookies[[1]][["name"]], value = cookies[[1]][["value"]])
+
+
 #we want to get scholars from the sociology department; so we use the website's collapsible lists
 #expand content under Radboud University
+remDr$findElement(using = "class name", value = "facet-list__expand-sub")$highlightElement()
 remDr$findElement(using = "class name", value = "facet-list__expand-sub")$clickElement()
+
+#we have to expand the list
+remDr$findElement(using = "class name", value = "btn--show-hide")$highlightElement()
+remDr$findElement(using = "class name", value = "btn--show-hide")$clickElement()
+
 
 #expand content under Faculty of social science (dep id 961)
 #using its xpath
+#note, this is the html: 
+# <button class="facet-list__expand-sub is-active" aria-controls="toggle-staff-department-961" aria-expanded="false" data-once="ruHierarchicalFacetsClick" style=""><span class="visually-hidden">Hide filters</span>-</button>
+
+#this translates into the following xpath. Note here we use a compound class!   
+remDr$findElement(using = "xpath", value = "//button[@class='facet-list__expand-sub' and @aria-controls='toggle-staff-department-961']")$highlightElement()
+
+#If you would follow the complete html structure you will arrive at the same point. 
+remDr$findElement(using = "xpath", value = "/html/body/div[1]/div/div[1]/aside/div/div[27]/div/ul/li/div/ul/li[9]/button")$highlightElement()
+
+# webElem <- remDr$findElement(using = "xpath", value = "/html/body/div[1]/div/div[1]/aside/div/div[27]/div/ul/li/div/ul/li[9]/button")
+# 
+# webElem$getElementAttribute("class")
+# webElem$getElementAttribute("type")
+
 remDr$findElement(using = "xpath", value = "//button[@class='facet-list__expand-sub' and @aria-controls='toggle-staff-department-961']")$clickElement()
+
+#NOTE: for me JT something goes wrong and I have to click less and more!
 
 #click on sociology
 remDr$findElement(using = "xpath", value = "//input[@type='checkbox' and @class='facets-checkbox' and @id='staff-department-992']")$clickElement()
 
 #among all staff members, select researchers
 #get the indicator of the checkbox that is "Researchers";
+
+#simple
+remDr$findElement(using = "xpath", value = "//input[@type='checkbox' and @class='facets-checkbox' and @id='staff-staff-researchers']")$highlightElement()
+
+#more complicated but insightful 
+remDr$findElement(using = "id", value = "block-staffstaff")$highlightElement()
+
+remDr$findElement(using = "id", value = "block-staffstaff")$getElementText()
 
 #first get categories:
 remDr$findElement(using = "id", value = "block-staffstaff")$getElementText() %>% #get element text;
@@ -206,6 +253,9 @@ researchers <- grep("Researchers", staff_cats)
 
 #check the corresponding checkbox
 remDr$findElements(using = "class name", value = "facets-checkbox")[[researchers]]$clickElement()
+
+
+
 
 #naturally this can also be achieved by using the URL https://www.ru.nl/en/search/scope/staff/staff-department/X/staff-staff/researchers, where X should be replaced by department-id, which can be stored in a list beforehand (this is useful if we want multiple departments of a faculty)
 

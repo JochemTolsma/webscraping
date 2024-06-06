@@ -1,0 +1,59 @@
+```{r}
+rm(list=ls())
+gc()
+```
+```{r}
+fpackage.check <- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fgeneratepass <- function(nchar=7, nupper=1, nspecial=1, nnumber=2) {
+  special <- c("!","@","#","$","%","^","&","*","(",")","_","+")
+  number <- c(1:9)
+  chars <- c(sample(special,nspecial,replace=T),
+             sample(number,nnumber,replace=T),
+             sample(LETTERS,nupper,replace=T),
+             sample(letters,nchar-(nupper+nspecial+nnumber),
+                    replace=T))
+  pass <- paste0(sample(chars),collapse="")
+  return(pass)
+}
+
+fsave <- function(x, file, location = "./local/", ...) {
+    if (!dir.exists(location))
+        dir.create(location)
+    datename <- substr(gsub("[:-]", "", Sys.time()), 1, 8)
+    totalname <- paste(location, datename, file, sep = "")
+    print(paste("SAVED: ", totalname, sep = ""))
+    save(x, file = totalname)
+}
+
+
+fload  <- function(fileName){
+  load(fileName)
+  get(ls()[ls() != "fileName"])
+}
+```
+
+```{r}
+packages = c("RSelenium", "rvest", "tidyverse", "netstat", "pingr", "stringr")
+fpackage.check(packages)
+```
+```{r}
+#find a free port
+port <- netstat::free_port(random=TRUE)
+
+#ping port for confirmation
+pingr::ping_port("localhost", port)
+
+#set up selenium server and browser
+rD <- rsDriver(browser="firefox", port=port, chromever=NULL, verbose=F)
+remDr <- rD[["client"]]
+remDr$navigate("https://www.jochemtolsma.nl")
+```
+
