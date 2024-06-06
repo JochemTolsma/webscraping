@@ -107,11 +107,6 @@ rm(packages)
 Install the newest version of the `selenium` module inside a virtual environment, by typing in your terminal the below command:
 
 
-```{python}
-
-```
-
-
 
 ```{bash, eval = FALSE}
 pip install -U selenium
@@ -187,6 +182,8 @@ remDr.close()
 ```{r, names, eval = FALSE}
 #navigate to RU staff page
 remDr$navigate("https://www.ru.nl/en/search/scope/staff/")
+
+remDr$maxWindowSize()
 
 #handle cookies
 remDr$findElement(using = "css", value = ".agree-button")$highlightElement()
@@ -308,6 +305,8 @@ length(names_page)
 ```{python, eval = FALSE}
 #navigate to RU staff page
 remDr.get("https://www.ru.nl/en/search/scope/staff/")
+
+remDr.maximize_window()
 
 #we want to get scholars from the sociology department; so we use the website's collapsible lists
 #expand content under Radboud University
