@@ -113,9 +113,9 @@ rm(packages)
 
 ### Python
 
-Install the newest version of the `selenium` module inside a virtual environment, by typing in your terminal the below command:
-
+Make sure you have the required libraries by typing in the code below into your console
 ```{bash, eval = FALSE}
+pip install requests beautifulsoup4 pandas
 
 ``` 
 
@@ -124,7 +124,10 @@ Install the newest version of the `selenium` module inside a virtual environment
 and import necessary modules
 
 ```{python, eval = FALSE}
-
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import re
 ``` 
 
 <br>
@@ -187,7 +190,7 @@ Staffmembers %>% html_nodes("div") %>% html_elements(".rug-h3") %>% html_text2()
 xml_child(Staffmembers[[1]], 1)
 xml_child(Staffmembers[[2]], 1)
 
-#Again, then using Selector Gadget or looking at the similarities between each indidivudal staff members list, we can find the tag that corresponds just to the names, and extract just the text from this using html_text2
+#Again, then using Selector Gadget or looking at the similarities between each individual staff members list, we can find the tag that corresponds just to the names, and extract just the text from this using html_text2
 
 StaffNames <- Staffmembers %>% html_element(".rug-h3") %>% html_text2()
 #We have as accurate names as we can get from this pace
@@ -215,7 +218,7 @@ StaffExpertese <- Staffmembers %>% html_element(".rug-mb-s~ .rug-mb-s+ .rug-mb-s
 StaffExpertese<- gsub("[\r\n]", "; ", StaffExpertese)
 head(StaffExpertese)
 
-#Funcion/role
+#Function/role
 #Similar to above, separate teh text from html code and clean as needed. This time no cleaning is needed
 StaffRole <- Staffmembers %>% html_element(".rug-layout:nth-child(2) .rug-width-s-20-24") %>% html_text2()
 head(StaffRole)
@@ -238,7 +241,62 @@ fshowdf(RugSociologyEmployees, caption = "Our table of all the Sociology Employe
 
 ## Python
 
-```{r, eval = FALSE}
+```{python, eval = FALSE}
+# Fetch the webpage
+url = "https://www.rug.nl/about-ug/practical-matters/find-an-expert?lang=en&discipline=Sociology"
+response = requests.get(url)
+webpage = response.content
 
+# Parse the webpage
+soup = BeautifulSoup(webpage, 'html.parser')
+
+# Extract staff members
+staff_members = soup.select('.rug-ph-xs')
+
+# Verify the first entry
+first_staff_member = staff_members[0]
+second_staff_member = staff_members[1]
+print(first_staff_member.prettify())
+print(second_staff_member.prettify())
+
+# Extract names
+staff_names = [member.select_one('.rug-h3').get_text(strip=True) for member in staff_members]
+print(staff_names[:6])
+
+# Extract emails
+staff_emails = [member.select_one('.rug-mb-s:nth-child(1) .rug-width-s-20-24').get_text(strip=True) for member in staff_members]
+# Clean emails
+staff_emails = [re.sub(r'[\r\n0-9+/]', '', email) for email in staff_emails]
+staff_emails = [re.sub(r'(.nl).*', r'\1', email) for email in staff_emails]
+staff_emails = [email.replace(' ', '@') for email in staff_emails]
+print(staff_emails[:6])
+
+# Extract fields of research and do the same cleaning (with the different characters we notice are in these fields)
+staff_expertise = [member.select_one('.rug-mb-s~ .rug-mb-s+ .rug-mb-s .rug-width-s-20-24').get_text(strip=True) for member in staff_members]
+staff_expertise = [expertise.replace('\r\n', '; ') for expertise in staff_expertise]
+print(staff_expertise[:6])
+
+# Extract roles
+staff_roles = [member.select_one('.rug-layout:nth-child(2) .rug-width-s-20-24').get_text(strip=True) for member in staff_members]
+print(staff_roles[:6])
+
+# Extract miscellaneous info
+staff_info = [member.select_one('.rug-h3+ .rug-mb-s').get_text(strip=True) for member in staff_members]
+print(staff_info[:6])
+
+# Combine data into a DataFrame
+rug_sociology_employees = pd.DataFrame({
+    'Name': staff_names,
+    'Email': staff_emails,
+    'Role': staff_roles,
+    'Expertise': staff_expertise,
+    'Info': staff_info
+})
+
+# Display the DataFrame
+print(rug_sociology_employees.head())
+
+# Optionally save to a file
+rug_sociology_employees.to_csv("rug_sociology_employees.csv", index=False)
 ``` 
 
