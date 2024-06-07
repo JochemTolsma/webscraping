@@ -101,6 +101,8 @@ fshowdf <- function(x, digits = 2, ...) {
 
 ## necessary packages {.tabset .tabset-fade}
 
+- `rvest`: part of tidyverse, not necessary to load seperately
+
 ### R
 
 ```{r, packages, results='hide', message=FALSE, warning=FALSE}
@@ -131,8 +133,26 @@ and import necessary modules
 
 ### R
 
+```{r}
+library(chromote)
+
+b <- ChromoteSession$new()
+
+# In a web browser, open a viewer for the headless browser. Works best with
+# Chromium-based browsers.
+b$view()
+b$Page$navigate(url)
+
+```
+
+
 ```{r, rvest, eval = FALSE}
-#Read the HTML on the page with your link
+
+url <- "https://www.rug.nl/about-ug/practical-matters/find-an-expert?lang=en&discipline=Sociology"
+
+sess <- LiveHTML$new(url)
+sess$view()
+sess$html_elements(".rug-ph-xs") 
 
 RugSociology <- read_html("https://www.rug.nl/about-ug/practical-matters/find-an-expert?lang=en&discipline=Sociology")
 
@@ -160,6 +180,9 @@ Alternatively, you can use extensions such as Selector Gadget to get the XPath o
 
 Staffmembers <- RugSociology %>% html_elements(".rug-ph-xs") 
 
+Staffmembers %>% html_nodes("div") %>% html_elements(".rug-h3") %>% html_text2()
+
+
 #and subsequently verify that the first entry into my staff members list is indeed the first person on the webpage
 xml_child(Staffmembers[[1]], 1)
 xml_child(Staffmembers[[2]], 1)
@@ -171,7 +194,10 @@ StaffNames <- Staffmembers %>% html_element(".rug-h3") %>% html_text2()
 head(StaffNames)
 
 
+
 #similar can be done for other information like their email
+
+#JT, how did you find this element. Explain naming. 
 StaffEmail <- Staffmembers %>% html_element(".rug-mb-s:nth-child(1) .rug-width-s-20-24") %>% html_text2()
 #necessary to clean text
 StaffEmail<- gsub("[\r\n0-9+/]", "", StaffEmail)
