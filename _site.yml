@@ -1,0 +1,49 @@
+name: "Sunbelt 2023 Workshop: From Webscraping to SNA"
+author: 
+  - '[Jochem Tolsma](https://www.jochemtolsma.nl) - Radboud University / University of Groningen, the Netherlands'
+  - '[Rob Franken](https://robfranken.net/) - Utrecht University, the Netherlands'
+  - '[Dan Cowen](https://www.rug.nl/staff/d.r.cowen/) - University of Groningen, the Netherlands'
+  - '[Anne Maaike Mulders](https://www.ru.nl/en/people/mulders-a) - Radboud University, the Netherlands'
+  - '[Bas Hofstra](https://www.bashofstra.com/) - Radboud University, the Netherlands'
+date: "Last compiled on `r format(Sys.time(), '%B, %Y')`"
+output_dir: "docs"
+exclude: 
+  - "local"
+  - "rawdata"
+  - "data"
+  - "LICENSE"
+bibliography: references.bib
+navbar:
+  title: "Sunbelt 2024 Workshop: Webscraping"
+  left:
+  - text: "Introduction"
+    href: index.html
+  - text: "Webcraping"
+    menu:
+      - text: "Scholars" 
+        href: 10scholars.html
+      - text: "Publications"
+        href: 40publications.html
+  - text: "Genderize"
+    menu:
+      - text: "Names"
+        href: 20names.html
+      - text: "Genderize"
+        href: 30genderizeR.html
+#     - text: "GOF"
+#        href: 70GOF.html
+  right:
+  - icon: fab fa-github
+    href: https://github.com/JochemTolsma/webscraping
+output:
+  bookdown::html_document2:
+    theme: flatly
+    highlight: default
+    toc:  true
+    toc_float: true
+    number_sections: true
+    code_folding: show
+    code_download: yes
+    css: tweaks.css
+    include:
+      after_body: footer.html

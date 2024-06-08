@@ -1,0 +1,200 @@
+---
+title: "Sunbelt 2024 Workshop: Webscraping"
+author: 
+  - '**AUTHORS:**'
+  - '[Jochem Tolsma](https://www.jochemtolsma.nl) - Radboud University / University of Groningen, the Netherlands'
+  - '[Rob Franken](https://robfranken.net/) - Utrecht University, the Netherlands'
+  - '[Dan Cowen](https://www.rug.nl/staff/d.r.cowen/) - University of Groningen, the Netherlands'
+  - '[Anne Maaike Mulders](https://www.ru.nl/en/people/mulders-a) - Radboud University, the Netherlands'
+  - '[Bas Hofstra](https://www.bashofstra.com/) - Radboud University, the Netherlands'
+date: "Last compiled on `r format(Sys.Date(), format='%d %B %Y')`"
+bibliography: references.bib
+link-citations: yes
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r, globalsettings, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"), cache.lazy = FALSE)
+options(width = 100) 
+rgl::setupKnitr()
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE, message=FALSE}
+# install.packages("remotes")
+#remotes::install_github("rlesur/klippy")
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+------------------------------------------------------------------------
+
+# Introduction
+
+```{=html}
+<script>
+function myFunction() {
+
+            var btn = document.getElementById("myButton");
+            //to make it fancier
+            if (btn.value == "Click to hide code") {
+                btn.value = "Read more";
+                btn.innerHTML = "Read more";
+            }
+            else {
+                btn.value = "Click to hide code";
+                btn.innerHTML = "Read less";
+            }
+            //this is what you're looking for
+            var x = document.getElementById("myDIV");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+          
+</script>
+```
+Welcome to the website of the Sunbelt 2024 Workshop: **Webscraping
+Scientific Co-publishing Networks**
+
+<br>
+
+In this workshop you will collect and then describe academic
+departmental co-publishing networks. You will learn to webscrape
+scientific metadata of scientific university and departmental websites
+(via R packages like rvest and RSelenium), assign name-based gender and
+ethnicity signals, retrieve scholars' publications (via e.g. Google
+Scholar and OpenAlex), and construct (longitudinal) co-publishing
+networks.
+
+In our description of these networks, we will focus on the degree of
+segregation. You will answer questions such as: Are co-publishing
+networks segregated by scientific success and/or gender? And is
+segregation in co-publishing networks related to university/departmental
+characteristics?
+
+For each step, we provide clear (proof-of-principle) coding examples and
+output data, ensuring you will not get stuck along the way. Depending on
+your skills and progress, you might want to collect and describe your
+own chosen universities or departments.
+
+This workshop can be followed as a standalone workshop but in our second
+workshop 'Analyzing the Structure and Evolution of Scientific
+Co-publishing Networks' we will describe and analyze the same type of
+webscraped co-publishing network data in more detail by employing
+RSiena.
+
+You will keep track of your work via a labjournal on GitHub. We will
+help you setting up this labjournal in the week(s) before the workshop.
+
+Prerequisites:
+
+-   Intermediate familiarity with working in R and using R Markdown\
+-   A beginner's understanding of SNA\
+-   Entry-level of git, and GitHub
+
+```{=html}
+<!--
+
+<button class="button1" onclick="myFunction()" id="myButton" value="Click To Open Instructions">
+
+Read more
+
+</button>
+
+::: {#myDIV style="display:none;"}
+<br>
+
+more text here
+
+<br>
+:::
+
+--->
+```
+
+------------------------------------------------------------------------
+
+# Getting started
+
+## LabJournal
+
+During the course, students will journal their work and assignments in
+their custom lab journal. A template lab journal can be found on
+[GitHub](https://github.com/robfranken/LabJournal). Here, you find how
+to get started.
+
+<!-- ## Discord -->
+
+<!-- Please join the [discord channel](https://discord.gg/ACcYU8nu). Use the -->
+
+<!-- channel to chat, ask questions and share (small) files. -->
+
+------------------------------------------------------------------------
+
+# Program
+
+The program of this workshop will be as follows:
+
+`r colorize("Introduction", "red")`\
+*Time: 9:00am - 9:30am*
+
+-   **all**
+    -   \- round of introductions
+-   **Jochem, Rob, Dan**
+    -   Our goals for today
+    -   Research Questions based on Scientific Co-publishing Networks
+    -   Data requirements for RQs\
+
+`r colorize("Lab Journal", "red")`\
+*Time: 9:30am - 10:30am*
+
+-   **Rob**
+    -   \- [Lab Journal](https://github.com/robfranken/LabJournal)
+    -   Some Git pointers
+    -    Some RMarkdown pointers
+
+`r colorize("BREAK", "red")`\
+*Time: 10:30am - 10:45am*
+
+`r colorize("Webscraping-scholars Part 1", "red")`\
+*Time: 10:45am - 12:30pm*
+
+-   **Jochem**
+    -   Webscraping - [Lecture](./presentations/insna_science_data.pdf)
+-   **Dan**
+    -   Webscraping - [Tutorial](RUG_scholar_names_RVest.Rmd)
+-   **Rob**
+    -   Webscraping - [Tutorial](RU_scholar_names_RSelenium.Rmd)
+
+`r colorize("BREAK", "red")`\
+*Time: 12:30pm - 1:45pm*
+
+`r colorize("genderize", "red")`\
+*Time: 1:45pm - 2:45pm*
+
+-   **Jochem**
+    -   names curating - [tutorial](20names.html)
+    -   names to gender - [tutorial](30gender.html)
+
+`r colorize("Webscraping - publications", "red")`\
+*Time: 2:45pm - 3:45pm*
+
+-   **Jochem**
+    -   Scraping publications - [tutorial](40publications.html)
+
+`r colorize("Errors, bugs and crashes", "red")`\
+*Time: 3:45pm - 4:30pm*
+
+-   **All**
+    -   Own work
+    -   Questions
+    -   Evaluation

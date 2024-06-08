@@ -1,0 +1,571 @@
+---
+title: "publications"
+bibliography: references.bib
+link-citations: yes
+---
+
+  
+```{r, globalsettings, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"), cache.lazy = FALSE)
+options(width = 100) 
+rgl::setupKnitr()
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
+
+```
+
+```{r klippy, echo=FALSE, include=TRUE, message=FALSE}
+# install.packages("remotes")
+#remotes::install_github("rlesur/klippy")
+klippy::klippy(position = c('top', 'right'))
+#klippy::klippy(color = 'darkred')
+#klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
+```
+
+
+----
+
+
+
+# getting started
+
+Start with clean workspace 
+
+```{r}
+rm(list=ls())
+```
+
+----
+
+# Goal
+
+Now we harvested the names of scholars from specific departments, it is time to webscrape their publications (and some other stuff along the way). There are many ways of doing this:  
+
+* via google scholar**.  
+* via [OpenAlex](https://openalex.org/)  
+ 
+
+What we are not going to deal with here is how to tackle rate limits, alternating vpns, etc. 
+
+
+# Custom functions
+
+- `fpackage.check`: Check if packages are installed (and install if not) in R ([source](https://vbaliga.github.io/verify-that-r-packages-are-installed-and-loaded/)).  
+- `fsave`: Save to processed data in repository  
+- `fload`: To load the files back after an `fsave`  
+- `fshowdf`: To print objects (tibbles / data.frame) nicely on screen in .rmd  
+
+
+```{r customfunctions, results='hide'}
+fpackage.check <- function(packages) {
+  lapply(packages, FUN = function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+      library(x, character.only = TRUE)
+    }
+  })
+}
+
+fsave <- function(x, file=NULL, location="./data/processed/") {
+  ifelse(!dir.exists("data"), dir.create("data"), FALSE)
+  ifelse(!dir.exists("data/processed"), dir.create("data/processed"), FALSE)
+  if (is.null(file)) file= deparse(substitute(x))
+  datename <- substr(gsub("[:-]", "", Sys.time()), 1,8)  
+  totalname <- paste(location, datename, file, ".rda", sep="")
+  save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload <- function(filename) {
+  load(filename)
+  get(ls()[ls() != "filename"])
+}
+
+fshowdf <-  function(x, ...) {
+  knitr::kable(x, digits=2, "html", ...) %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  kableExtra::scroll_box(width="100%", height= "300px")
+} 
+
+```
+
+
+---  
+
+# packages
+
+```{r}
+packages <- c("tidyverse", "scholar", "openalexR", "rvest")
+fpackage.check(packages)
+```
+
+# input  
+
+```{r, echo=FALSE, eval=FALSE}
+load("./data/processed/df_gender.rda")
+df_gender_jt <- df_gender %>%
+  select("id", "uni", "discipline", "year", "name", "affil1", "affil2", "position", "np", "lastname", "firstname", "ini","gender")
+df_gender_jt$affil2[df_gender_jt$affil2=="G"] <- "RUG"
+df_gender_jt$affil2[df_gender_jt$affil2=="Tilburg"] <- "UvT"
+df_gender_jt$affil2[df_gender_jt$affil1=="Universiteit Gent"] <- "UvA"
+df_gender_jt$affil2[df_gender_jt$affil1=="Koc University.UvA"] <- "UvA"
+df_gender_jt$affil1[df_gender_jt$affil1=="Koc University.UvA"] <- "Koc University"
+fsave(df_gender_jt)
+```
+
+
+We use the file created in the previous step (names with genders attached) as input. 
+Anne Maaike and I tidied up the data set of the previous step a bit. Please use this one:  
+
+`r xfun::embed_file("./data/processed/20230620df_gender_jt.rda")`. 
+
+Save file in correct directory: './data/processed'. 
+
+```{r}
+load("./data/processed/20230620df_gender_jt.rda") #load dataset (adapt name if necessary)
+df <- x #give a short name
+rm(x)  #remove the original object
+#PLEASE NOTE THAT OBJECTS SAVED VIA FSAVE ARE NAMED X WHEN LOADED BACK INTO YOUR GLOBAL ENVIRONMENT
+#UPDATE: that is why we also made the fload function. 
+```
+
+# Nice to have an id of the scholar which is linked to publications
+
+## OpenAlex
+
+First a quick intro to Openalex
+Priem, J., Piwowar, H., & Orr, R. (2022). OpenAlex: A fully-open index of scholarly works, authors, venues, institutions, and concepts. ArXiv. https://arxiv.org/abs/2205.01833 
+
+Workflow options: 
+1. use the api directly (rvest)  
+2. use 
+
+### OpenalexR
+
+If you use openalexR in research, please cite:
+
+Aria, M., Le T., Cuccurullo, C., Belfiore, A. & Choe, J. (2024), openalexR: An R-Tool for Collecting Bibliometric Data from OpenAlex, The R Journal, 15(4), 167-180, DOI: https://doi.org/10.32614/RJ-2023-089.
+
+```{r}
+options(openalexR.mailto = "jochem.tolsma@ru.nl") #please replace with your own emailadress
+```
+
+```{r}
+url <- "https://api.openalex.org/authors?search=Jochem Tolsma"
+
+jt <- read_html("https://api.openalex.org/authors?search=Jochem+Tolsma") %>% 
+  html_text2()
+```
+
+```{r}
+library(jsonlite)
+
+jt_json <- fromJSON("https://api.openalex.org/authors?search=Jochem+Tolsma", simplifyVector = FALSE)
+glimpse(jt_json, max.level = 1) 
+jt_json[["results"]][[1]][["display_name"]]
+
+df_jt <- jt_json %>% 
+    .$results %>%
+  .[[1]] %>%
+  discard(is_empty) 
+
+```
+
+
+```{r}
+df <- oa_fetch(entity = "author", search = "Jochem Tolsma")
+fshowdf(df)
+df_papers <- oa_fetch(entity = "works", author.id = df$id)
+df_papers$author
+?oa_fetch
+```
+
+
+
+# Google: scholar id
+
+## fixing a bug in the get_scholar_id function. 
+
+```{r}
+get_scholar_id_fix <- function (last_name = "", first_name = "", affiliation = NA)
+{
+  if (!any(nzchar(c(first_name, last_name))))
+    stop("At least one of first and last name must be specified!")
+  site <- getOption("scholar_site")
+  url <- paste0(site, "/citations?view_op=search_authors&mauthors=",
+                first_name, "+", last_name, "&hl=en&oi=ao")
+  page <- get_scholar_resp(url)
+  if (is.null(page))
+    return(NA)
+  aa <- httr::content(page, as = "text")
+  # added by Bas Hofstra: bugfix for IDs that have a dash ("-")
+  ids <- substring(aa, regexpr(";user=", aa))
+  ids <- substr(ids, 1, 19) # error prone, but unsure how to solve otherwise
+  # if (nchar(stringr::str_extract_all(string = aa, pattern = ";user=[[:alnum:]]+[[:punct:]]")[[1]][1]) < 18) {
+  #   ids <- stringr::str_extract_all(string = aa, pattern = ";user=[[:alnum:]]+[[:punct:]]+[[:alnum:]]+[[:punct:]]")
+  # } else {
+  #   ids <- stringr::str_extract_all(string = aa, pattern = ";user=[[:alnum:]]+[[:punct:]]")
+  # }
+  if (length(unlist(ids)) == 0) {
+    message("No Scholar ID found.")
+    return(NA)
+  }
+  ids <- ids %>% unlist %>% gsub(";user=|[[:punct:]]$", "",
+                                 .) %>% unique
+  if (length(ids) > 1) {
+    profiles <- lapply(ids, scholar::get_profile)
+    if (is.na(affiliation)) {
+      x_profile <- profiles[[1]]
+      warning("Selecting first out of ", length(profiles),
+              " candidate matches.")
+    }
+    else {
+      which_profile <- sapply(profiles, function(x) {
+        stringr::str_count(string = x$affiliation, pattern = stringr::coll(affiliation,
+                                                                           ignore_case = TRUE))
+      })
+      if (all(which_profile == 0)) {
+        warning("No researcher found at the indicated affiliation.")
+        return(NA)
+      }
+      else {
+        x_profile <- profiles[[which(which_profile !=
+                                       0)]]
+      }
+    }
+  }
+  else {
+    x_profile <- scholar::get_profile(id = ids)
+  }
+  return(x_profile$id)
+}
+```
+
+## one profile
+
+What we now have is a data frame of staff members from several universities. So we successfully gathered the anchor data set we can move on with. Next, we need to find out whether these staff have a Google Scholar profile. I imagine you have accessed [Google Scholar](www.scholar.google.com) many times during your studies for finding scientists or publications. The nice thing about Google Scholar is that it lists collaborators, publications, and citations on profiles. So what we first need to do is look for Google Scholar profiles among staff. Luckily, we cleaned first and last names and have their affiliation.
+
+So let's move on with attempting to find Google Scholar profiles. The package `scholar` has a very nice function `get_scholar_id`. It needs a last name, first name, and affiliation. Luckily, we already found those university websites! So we can fill in those. Let's try it for Jochem first. Note that we need function `get_scholar_id_fix` before we can start (see code chunk above).
+
+```{r}
+get_scholar_id_fix(last_name="tolsma", first_name="jochem", affiliation="radboud university")
+```
+We now know that Jochem's Scholar ID is "Iu23-90AAAAJ". That's very convenient, because now we can use the package `scholar` to extract a range of useful information from his Google Scholar profile. Let's try it out on his profile first. Notice the nice function `get_profiles`. We simply have to input his Google Scholar ID and it shows everything on the profile
+
+```{r}
+get_profile("Iu23-90AAAAJ") # Jochem's profile
+```
+
+So let's gather these data, but now for *all* staff simultaneously! For this, we use the for loop again. The for loop I make below is a bit more complicated, but follows the same logic as before. For each row (i) in our dataset, we attempt to query Google Scholar on the basis of the first name, last name, and affiliation listed in that row in the data frame. We use some handy subsetting, e.g., `staff[i, c("last_name")]` means we input `last_name=` with the last name (which is the third column) found in the i-th row in the data frame. The same goes for first name and affiliation. We fill up `gs_id` in the data frame with the Google Scholar IDs we'll hopefully find. The `for (i in nrow(lpol_staff))` simply means we let i run for however many rows the data frame has. Finally, the `tryCatch({})` function makes that we can continue the loop even though we may encounter errors for a given row. Here, that probably means that not every row (i.e., sociology staff member) can be found on Google Scholar. We print the error, but continue the for loop with the `tryCatch({})` function. Note also how we sometimes get rate limited by Google Scholar: it is somewhat ambiguous how often we need to retry, or when we get blocked. We set a system sleep to try and circumvent that somewhat.
+
+## a simple loop
+
+```{r, eval=FALSE}
+df$gs_id <- "" #let us create an empty variable
+
+for (i in 1:nrow(df)) {
+  print(i) #to keep track where we are
+  time <- runif(1, 0, 1) #hopefully to avoid fast rate limits
+  Sys.sleep(time)
+  
+  tryCatch({
+     df[i,c("gs_id")] <- get_scholar_id_fix(last_name = df[i, c("lastname")], 
+                                             first_name = df[i, c("firstname")],  
+                                             affiliation = df[i,c("affil1")]) #let us first try with affil1 
+
+    }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")}) # continue on error, but print the error
+}
+
+# let us try the different affiliation
+for (i in 1:nrow(df)) {
+  if (df$gs_id == "") {
+    print(i) #to keep track where we are
+    time <- runif(1, 0, 1) #hopefully to avoid fast rate limits
+    Sys.sleep(time)
+    
+    tryCatch({
+      df[i,c("gs_id")] <- get_scholar_id_fix(last_name = df[i, c("lastname")], 
+                                             first_name = df[i, c("firstname")],  
+                                             affiliation = df[i,c("affil2")]) #let us first with affil2 
+      
+    }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")}) # continue on error, but print the error
+  }
+}
+```
+
+If everything worked out correctly, you could save the new dataset. 
+
+```{r, eval=FALSE}
+df_gsid <- df
+fsave(df_gsid)
+```
+
+
+# Google: publications and profiles
+
+Perhaps you could stuck along the way. This is very likely, because of annoying rate limits. 
+We thus prepared the file for you. 
+
+```{r t1, echo=FALSE, eval=FALSE}
+load("./data/processed/df_gender.rda")
+df_gender_jt <- df_gender %>% 
+  mutate(gs_id=scholar_id) %>%
+  select("id", "uni", "discipline", "year", "name", "affil1", "affil2", "position", "np", "lastname", "firstname", "ini","gender", "gs_id")
+df_gender_jt$affil2[df_gender_jt$affil2=="G"] <- "RUG"
+df_gender_jt$affil2[df_gender_jt$affil2=="Tilburg"] <- "UvT"
+df_gender_jt$affil2[df_gender_jt$affil1=="Universiteit Gent"] <- "UvA"
+df_gender_jt$affil2[df_gender_jt$affil1=="Koc University.UvA"] <- "UvA"
+df_gender_jt$affil1[df_gender_jt$affil1=="Koc University.UvA"] <- "Koc University"
+
+df$gs_id[df$gs_id=="PJcZlYAAAAJ"] <- "-PJcZlYAAAAJ"
+df$gs_id[df$gs_id=="abxxmUAAAAJ"] <- "-abxxmUAAAAJ"
+df$gs_id[df$gs_id=="bWtqPwAAAAJ"] <- "lbWtqPwAAAAJ"
+df$gs_id[df$gs_id=="rrh0V7IAAAAJ"] <- "y4XBawMAAAAJ"
+df$gs_id[df$gs_id=="sCz1vrMAAAAJ"] <- NA
+
+df_gsid_jt <- df_gender_jt
+fsave(df_gsid_jt)
+```
+
+
+Please use this one:  
+
+`r xfun::embed_file("./data/processed/20230621df_gsid_jt.rda")`. 
+
+Save file in correct directory: './data/processed'. 
+
+
+
+```{r}
+df <- fload("./data/processed/20230621df_gsid_jt.rda") #load dataset (adapt name if necessary)
+
+#have a quick look
+fshowdf(df)
+```
+
+
+<!--this is START of my scrape for real--->
+
+```{r, echo=FALSE, eval=FALSE}
+df <- readxl::read_xls("./data/ids.xls", col_names = c("gs_id"))
+getwd()
+#manual fix
+df$gs_id[135] <- "-PJcZlYAAAAJ"
+df$gs_id[235] <- "-abxxmUAAAAJ"
+df$gs_id[249] <- "lbWtqPwAAAAJ"
+df$gs_id[388] <- "y4XBawMAAAAJ"
+df$gs_id[395] <- NA
+```
+
+```{r, echo=FALSE, eval=FALSE}
+save(df_list_profiles, file="./data/df_list_profiles_temp.rda")
+save(df_list_publications, file="./data/df_list_publications_temp.rda")
+```
+
+
+```{r, echo=FALSE, eval=FALSE}
+df_list_profiles <- list()  # first we create an empty list that we then fill up with the for loop
+df_list_publications <- list()
+```
+
+```{r, echo=FALSE, eval=FALSE}
+time <- .1 # I placed the waiting time outside the loop
+i <- i # Our loop iterator is now a variable. This means I can change it within a while loop. Using a for loop you cant change your iterator in the loop itself.
+```
+
+```{r, echo=FALSE, eval=FALSE}
+while (i <= nrow(df)) {
+    print(i)
+    Sys.sleep(time)
+
+    tryCatch({
+    df_list_profiles[[i]] <- get_profile(df[i, c("gs_id")]) 
+    df_list_publications[[i]] <- get_publications(df[i, c("gs_id")])
+    df_list_publications[[i]][, c("gs_id")] <- df[i, c("gs_id")]  
+    i <- i + 1 
+    time <- .1
+    },
+    
+      warning = function(w) {
+        cat("WARNING:", conditionMessage(w), "\n") 
+        i <<- i + 1
+        }, 
+    
+      error =function(e) {
+        time <<- min(time + 100, 3600*2)
+        cat("Error:", conditionMessage(e), "\n") 
+        cat("sleep time:", time,  "\n")
+        cat("ik zit in loop", i)
+      })
+}
+```
+
+
+
+```{r, echo=FALSE, eval=FALSE}
+
+load("./data/processed/df_list_profiles_temp.rda")
+load("./data/processed/df_list_publications_temp.rda")
+
+list_profiles_jt <- df_list_profiles
+list_publications_jt <- df_list_publications
+
+fsave(list_profiles_jt)
+fsave(list_publications_jt)
+
+save(names_df_publications, file="./data/names_df_publications_v20221006.RData")
+save(names_list_profiles, file= "./data/names_list_profiles_v20221006.RData")
+```
+
+<!--this is STOP of my scrape for real--->
+
+
+Please note, that quite some Google profiles are missing. A quick look shows me this is mostly among the *position* category 'Phds' and 'other'. Thus probably because these scholars do not have any publications yet. This is however not always the case. Even some full profs do not have a Google scholar profile. The idea would be that even if they themselves do not have a profile, we can still find their publications with department (or discipline) members because we will find the same publications via different authors.  
+
+Later, we need to decide whether or not we set the number of publications for some scholars to `0` or to `NA`. 
+
+## objects to save scrap
+
+We are going to scrape the profiles for each scholar and all publications for each scholar. 
+
+Let us save all information in list objects. 
+
+```{r t2, test}
+list_profiles <- list()  # first we create an empty list that we then fill up with the for loop
+list_publications <- list()
+```
+
+We will use the `gs_id` variable as a key to match all stuff later. 
+
+```{r}
+gs_id <- unique(df$gs_id)[unique(df$gs_id)!=""] #a clumsy way to remove the empty gs_id values. 
+```
+
+now the actual scraping part
+
+```{r}
+time <- .1 # I placed the waiting time outside the loop
+i <- 1 # Our loop iterator is now a variable. This means I can change it within a while loop. Using a for loop you cant change your iterator in the loop itself.
+```
+
+
+```{r, echo=TRUE, eval=FALSE}
+while (i <= length(gs_id)) {
+    print(i)
+    Sys.sleep(time)
+
+    tryCatch({
+    list_profiles[[i]] <- get_profile(gs_id[i]) #the scholar id is save automatically 
+    list_publications[[i]] <- get_publications(gs_id[i])
+    list_publications[[i]][, c("gs_id")] <- gs_id[i] #make sure to add the id manually for matching purposes later 
+    i <- i + 1 
+    time <- .1 #set time back to low value of we get an answer from google
+    },
+    
+      warning = function(w) {
+        cat("WARNING:", conditionMessage(w), "\n") 
+        i <<- i + 1 #please not the double arrow head, so we can assign values to a global variable. We want to continue if we get a warning
+        }, 
+    
+      error =function(e) {
+        time <<- min(time + 100, 3600*2) #probably reached a rate limit, increase waiting with maximum of 2hours
+        cat("Error:", conditionMessage(e), "\n") 
+        cat("sleep time:", time,  "\n")
+        cat("I am currently in loop number:", i)
+        #google throws all kind of error messages, we are not catching all
+      })
+}
+```
+
+
+## save your objects
+
+```{r, echo=TRUE, eval=FALSE}
+fsave(list_profiles)
+fsave(list_publications)
+```
+
+
+## put the info of the profiles in our data set of staff members cs_df
+
+Because of rate limits you were probably not able to complete the total scrape yourself. Please download the files: 
+
+
+egodata: `r xfun::embed_file("./data/processed/20230621df_gsid_jt.rda")`. 
+
+Profiles:  `r xfun::embed_file("./data/processed/20230621list_profiles_jt.rda")`
+
+Publications:  `r xfun::embed_file("./data/processed/20230621list_publications_jt.rda")`
+
+Save files in correct directory: './data/processed'. 
+
+### load files
+
+```{r}
+load("./data/processed/20230621df_gsid_jt.rda") #load dataset (adapt name if necessary)
+df <- x #give a short name
+
+load("./data/processed/20230621list_profiles_jt.rda") #load dataset (adapt name if necessary)
+profiles <- x #give a short name
+
+load("./data/processed/20230621list_publications_jt.rda") #load dataset (adapt name if necessary)
+publications <- x #give a short name
+
+rm(x)  #remove the original object
+
+```
+
+### attach some profile data to our egodata
+
+```{r}
+#remove the empty lists first
+#  https://stackoverflow.com/questions/26539441/remove-null-elements-from-list-of-lists
+## A helper function that tests whether an object is either NULL _or_ 
+## a list of NULLs
+is.NullOb <- function(x) is.null(x) | all(sapply(x, is.null))
+
+## Recursively step down into list, removing all such objects 
+rmNullObs <- function(x) {
+   x <- Filter(Negate(is.NullOb), x)
+   lapply(x, function(x) if (is.list(x)) rmNullObs(x) else x)
+}
+profiles <- rmNullObs(profiles)
+
+#yes, I know that apply, map etc can/may be faster. but loops are easy to understand. And easy to parallelize if need be. 
+
+for (i in 1:length(profiles)) {
+ names(profiles)[[i]] <- profiles[[i]]$id$gs_id
+}
+
+#we are working with tibbles thus need to declare variables upfront. 
+df$gs_name <- df$gs_affiliation <- df$gs_total_cites <- df$gs_h_index <- df$gs_i10_index <- df$gs_field <- df$gs_homepage <- NA
+
+for (i in 1:nrow(df)) {
+    who_id <- which(names(profiles)==df$gs_id[i])
+    if (length(who_id)>0) tryCatch({{
+      df$gs_name[i] <- profiles[[who_id]]$name
+      df$gs_affiliation[i] <- profiles[[who_id]]$affiliation
+      df$gs_total_cites[i] <- profiles[[who_id]]$total_cites
+      df$gs_h_index[i] <- profiles[[who_id]]$h_index
+      df$gs_i10_index[i] <- profiles[[who_id]]$i10_index
+      df$gs_field[i] <- profiles[[who_id]]$field[1]
+      df$gs_homepage[i] <- profiles[[who_id]]$homepage
+    }
+  }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")}) # continue on error, but print the error
+}
+
+```
+
+```{r, eval=FALSE}
+df_complete <- df
+
+fsave(df_complete)
+```
+
+
+
+Okay, please note we did not attach everything. We also did not scrape everything yet via the `scholar` package. But for today this will be enough. 
+
+Let us start to construct the networks. 
+
+
