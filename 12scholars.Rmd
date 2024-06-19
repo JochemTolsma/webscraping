@@ -209,7 +209,9 @@ remDr$findElement(using = "class name", value = "btn--show-hide")$clickElement()
 #note, this is the html: 
 # <button class="facet-list__expand-sub is-active" aria-controls="toggle-staff-department-961" aria-expanded="false" data-once="ruHierarchicalFacetsClick" style=""><span class="visually-hidden">Hide filters</span>-</button>
 
-#this translates into the following xpath. Note here we use a compound class!   
+#this translates into the following xpath. Note here we use a compound class! 
+#difficulties with xpath, have a look here: https://www.w3schools.com/xml/xpath_intro.asp
+
 remDr$findElement(using = "xpath", value = "//button[@class='facet-list__expand-sub' and @aria-controls='toggle-staff-department-961']")$highlightElement()
 
 #If you would follow the complete html structure you will arrive at the same point. 

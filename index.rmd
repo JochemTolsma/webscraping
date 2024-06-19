@@ -148,7 +148,7 @@ The program of this workshop will be as follows:
 *Time: 9:00am - 9:30am*
 
 -   **all**
-    -   \- round of introductions
+    -   round of introductions
 -   **Jochem, Rob, Dan**
     -   Our goals for today
     -   Research Questions based on Scientific Co-publishing Networks
@@ -158,9 +158,9 @@ The program of this workshop will be as follows:
 *Time: 9:30am - 10:30am*
 
 -   **Rob**
-    -   \- [Lab Journal](https://github.com/robfranken/LabJournal)
+    -   [Lab Journal](https://github.com/robfranken/LabJournal)
     -   Some Git pointers
-    -    Some RMarkdown pointers
+    -   Some RMarkdown pointers
 
 `r colorize("BREAK", "red")`\
 *Time: 10:30am - 10:45am*
