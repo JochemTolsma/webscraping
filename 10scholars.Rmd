@@ -7,15 +7,12 @@ link-citations: yes
 
 ```{r, globalsettings, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 library(knitr)
-opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"), cache.lazy = FALSE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, eval = FALSE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"), cache.lazy = FALSE)
 options(width = 100) 
 rgl::setupKnitr()
-
-colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
-
 ```
 
-```{r klippy, echo=FALSE, include=TRUE, message=FALSE}
+```{r klippy, echo=FALSE, include=TRUE, message=FALSE, eval=TRUE}
 # install.packages("remotes")
 #remotes::install_github("rlesur/klippy")
 klippy::klippy(position = c('top', 'right'))
@@ -53,7 +50,7 @@ gc()
 - `fshowdf`: To print objects (tibbles / data.frame) nicely on screen in .rmd  
 
 
-```{r customfunctions, results='hide'}
+```{r customfunctions, results='hide', eval = TRUE}
 rm(list = ls()) #clean up your environment
 
 fpackage.check <- function(packages) {
@@ -84,6 +81,8 @@ fshowdf <-  function(x, ...) {
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) %>%
   kableExtra::scroll_box(width="100%", height= "300px")
 } 
+
+colorize <- function(x, color) {sprintf("<span style='color: %s;'>%s</span>", color, x) }
 
 ```
 
@@ -140,14 +139,17 @@ iii. who they collaborate with.
 
 So that means at least three data sources we need to collect from somewhere. What would be a nice starting (read: anchor) point be? First, we have to know who is staff. Let's check out [the Leiden political science staff website](https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1). Here we see a nice list on who is on the staff in several pages. How do we get that data? It is actually quite simple, the package [`rvest`](https://rvest.tidyverse.org/index.html) has a very nice function [`html_read()`](https://rvest.tidyverse.org/reference/read_html.html) (actually this comes from the `xml2` package) which simply derives the source html of a *static* webpage:
 
+
+`r colorize("How incredibly annoying, when trying to do the final knit for the workshop, Leiden university decided to do maintance work on their website on Saturday 22 and Sunday 23 June!!!!!!!", "red")`
+
 ## Staff pages {.tabset .tabset-fade}
 
 ### R 
 
-```{r}
-# Let's first simply get the staff pages
-# read_html is a function that simply extracts html webpages and puts them in xml format
+Let's first simply get the staff pages.
+`read_html()` is a function that simply extracts html webpages and puts them in xml format.
 
+```{r}
 lpol_staff <- read_html("https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1")
 head(lpol_staff)
 ```
@@ -218,7 +220,7 @@ lpol_staff <- lpol_staff %>%
 
 Let us for now assume you are satisfied with the above output.
 
-## Python
+### Python
 ```{python, eval = FALSE}
 lpol_staff = soup.body.find_all('a')
 

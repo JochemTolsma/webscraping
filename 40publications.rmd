@@ -1,5 +1,5 @@
 ---
-title: "publications"
+title: "Publications"
 bibliography: references.bib
 link-citations: yes
 ---
@@ -42,7 +42,7 @@ rm(list=ls())
 
 Now we harvested the names of scholars from specific departments, it is time to webscrape their publications (and some other stuff along the way). There are many ways of doing this:  
 
-* via google scholar**.  
+* via google scholar.  
 * via [OpenAlex](https://openalex.org/)  
  
 
@@ -95,7 +95,7 @@ fshowdf <-  function(x, ...) {
 # packages
 
 ```{r}
-packages <- c("tidyverse", "scholar", "openalexR", "rvest")
+packages <- c("tidyverse", "scholar", "openalexR", "rvest", "jsonlite")
 fpackage.check(packages)
 ```
 
@@ -122,43 +122,41 @@ Anne Maaike and I tidied up the data set of the previous step a bit. Please use 
 Save file in correct directory: './data/processed'. 
 
 ```{r}
-load("./data/processed/20230620df_gender_jt.rda") #load dataset (adapt name if necessary)
-df <- x #give a short name
-rm(x)  #remove the original object
-#PLEASE NOTE THAT OBJECTS SAVED VIA FSAVE ARE NAMED X WHEN LOADED BACK INTO YOUR GLOBAL ENVIRONMENT
-#UPDATE: that is why we also made the fload function. 
+df <- fload("./data/processed/20230620df_gender_jt.rda") 
+
 ```
 
 # Nice to have an id of the scholar which is linked to publications
 
 ## OpenAlex
 
-First a quick intro to Openalex
-Priem, J., Piwowar, H., & Orr, R. (2022). OpenAlex: A fully-open index of scholarly works, authors, venues, institutions, and concepts. ArXiv. https://arxiv.org/abs/2205.01833 
+If you use openalexR in research, please cite: [@priem2022openalex]
 
-Workflow options: 
-1. use the api directly (rvest)  
-2. use 
+Before we start playing ourselves. Let us have a look at the website. 
 
-### OpenalexR
-
-If you use openalexR in research, please cite:
-
-Aria, M., Le T., Cuccurullo, C., Belfiore, A. & Choe, J. (2024), openalexR: An R-Tool for Collecting Bibliometric Data from OpenAlex, The R Journal, 15(4), 167-180, DOI: https://doi.org/10.32614/RJ-2023-089.
+Okay, time to play. Make yourself known to openalex. 
 
 ```{r}
-options(openalexR.mailto = "jochem.tolsma@ru.nl") #please replace with your own emailadress
+options(openalexR.mailto = "jochem.tolsma@ru.nl") #please Please replace with your own emailadress
 ```
+
+Let us try to find me. 
 
 ```{r}
 url <- "https://api.openalex.org/authors?search=Jochem Tolsma"
 
+#based on what you have learned so far, you would probably first try:
 jt <- read_html("https://api.openalex.org/authors?search=Jochem+Tolsma") %>% 
   html_text2()
+
+substr(jt, 1, 100)
+
 ```
+Okay, everything is in this `jt` object, but not very conviently. 
+
+The openalex page is actually a json object so will read in that. And make it a bit prettier. 
 
 ```{r}
-library(jsonlite)
 
 jt_json <- fromJSON("https://api.openalex.org/authors?search=Jochem+Tolsma", simplifyVector = FALSE)
 glimpse(jt_json, max.level = 1) 
@@ -168,23 +166,38 @@ df_jt <- jt_json %>%
     .$results %>%
   .[[1]] %>%
   discard(is_empty) 
-
 ```
+Can you find my affiliations? 
 
+Some people (i.e. the developers of the `openalexR` package) have spend a little more time on converting this JSON object, let us take advantage of that: 
 
 ```{r}
 df <- oa_fetch(entity = "author", search = "Jochem Tolsma")
 fshowdf(df)
-df_papers <- oa_fetch(entity = "works", author.id = df$id)
-df_papers$author
-?oa_fetch
 ```
 
+But please note, that `df` contains **less** information than `df_jt`. 
+
+Okay, and now my papers and co-authors. 
+```{r}
+df_papers <- oa_fetch(entity = "works", author.id = df$id)
+df_papers$author[1]
+```
+
+This works like a charm. But once again be aware that `oa_fetch` does removes some info from the JSON object. Thus, at times, it is best to manipulate this object yourself. 
+
+Naturally, at times you also have multiple hits on the same name. So you need to build in checks/filters etc.. 
 
 
 # Google: scholar id
 
-## fixing a bug in the get_scholar_id function. 
+While openalex is great and the way to go imho, you may want to use additional sources for the same info. Let us demonstrate google scholar.
+
+Once again, with the webscraping tools you master at this point, you actually would not need a package/wrapper such as `scholar`. 
+
+You will learn a lot by looking at the code of the package `scholar`: [(https://github.com/YuLab-SMU/scholar)]. 
+
+## fixing a 'bug' in the get_scholar_id function. 
 
 ```{r}
 get_scholar_id_fix <- function (last_name = "", first_name = "", affiliation = NA)
@@ -464,7 +477,7 @@ while (i <= length(gs_id)) {
     
       warning = function(w) {
         cat("WARNING:", conditionMessage(w), "\n") 
-        i <<- i + 1 #please not the double arrow head, so we can assign values to a global variable. We want to continue if we get a warning
+        i <<- i + 1 #please note the double arrow head, so we can assign values to a global variable. We want to continue if we get a warning
         }, 
     
       error =function(e) {
@@ -566,6 +579,6 @@ fsave(df_complete)
 
 Okay, please note we did not attach everything. We also did not scrape everything yet via the `scholar` package. But for today this will be enough. 
 
-Let us start to construct the networks. 
 
-
+---  
+# References  

@@ -18,20 +18,22 @@ navbar:
   left:
   - text: "Introduction"
     href: index.html
-  - text: "Webcraping"
+  - text: "Scholars"
     menu:
-      - text: "Scholars" 
+      - text: "Scholars I" 
         href: 10scholars.html
-      - text: "Publications"
-        href: 40publications.html
-  - text: "Genderize"
+      - text: "Scholars II" 
+        href: 11scholars.html
+      - text: "Scholars III" 
+        href: 12scholars.html
+  - text: "Attributes"
     menu:
       - text: "Names"
         href: 20names.html
       - text: "Genderize"
         href: 30genderizeR.html
-#     - text: "GOF"
-#        href: 70GOF.html
+      - text: "Publications"
+        href: 40publications.html
   right:
   - icon: fab fa-github
     href: https://github.com/JochemTolsma/webscraping

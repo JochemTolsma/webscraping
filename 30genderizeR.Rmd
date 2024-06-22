@@ -120,20 +120,17 @@ df <- fload(file="./data/processed/20230627df_names.rda")
 # Preparing the dataframe
 
 We only need to check each unique first name once, so therefore we extract all unique names first. 
+We use the `distinct` function from tidyverse to recognize and then `select` only unique entries in the first name object
 
 ```{r}
-# We use the distinct function from tidyverse to recognize and then select only unique entries in the first name object
-uniquenames <- df %>% distinct(firstname) %>% select(firstname)
-uniquenames <- uniquenames[uniquenames$firstname!="", ] # transform to character vector
+
+firstname <- df %>% 
+  distinct(firstname) %>% #only unique
+  select(firstname) %>% #only this variable
+  filter(firstname != "") %>% #remove empty
+  pull(firstname) #save as chr
 
 
-# create empty lists to store the genderizeR info
-genderizer <- list()
-
-names <- list()
-count <- list()
-gender <- list()
-prob <- list()
 ```
 
 
@@ -142,62 +139,31 @@ prob <- list()
 
 It is possible to use specific databases of GenderizeR by country. In that case, you can add the 'country' argument in genderizeAPI. We will now use the worldwide database, which this function defaults to when you don't add a country argument. 
 
+As a besides, in our 'real' project, we scraped the gender for Dutch names from this website: [(https://nvb.meertens.knaw.nl/)]. We only used genderizeR as check. 
+
 Let us scrape one name first  
 
 ```{r}
-genderizeAPI(uniquenames[1])
+test <- genderizeAPI(firstname[1])
+test$response
 ```
 Okay, now just loop. ;-)
 
-First we scrape...
+First we scrape...but watch out, you will probably run into rate limits. 
 
 
 ```{r, eval=FALSE}
-for (i in 1:length(uniquenames)) {
-  
+length(firstname)
+df_genderizer <- data.frame(matrix(ncol = 4, nrow = length(firstname)))
+colnames(df_genderizer) <- c('count', 'name', 'gender', 'probability')
+for (i in 1:length(firstname)) {
   Sys.sleep(0.1)
-  
-  genderizer[[i]] <- genderizeAPI(uniquenames[i])[[1]]
-  
-}
-```
-
-... then we fill in names for which no info is found: count to 0, gender and probability to NA, but retain the name for reference. 
-
-```{r, eval=FALSE}
-for (i in 1:length(genderizer)) {
-  
-  if (nrow(genderizer[[i]])==0) {
-    
-    genderizer[[i]][1, c("count")] <- 0
-    genderizer[[i]][1, c("gender")] <- NA
-    genderizer[[i]][1, c("name")] <- uniquenames[i]
-    genderizer[[i]][1, c("probability")] <- NA
-    
+  df_genderizer[i,] <- genderizeAPI(firstname[i])$response
   }
-}
+colnames(df_genderizer) <- c('count', 'name', 'gender', 'probability')
+df_genderizer$name <- firstname #so we know which names are not found. 
 ```
 
-And we convert from list to dataframe structure:  
-
-```{r, eval=FALSE}
-
-for (i in 1:length(genderizer)) {
-  
-  names[[i]] <- data.frame(genderizer[[i]])$name
-  count[[i]] <- data.frame(genderizer[[i]])$count
-  gender[[i]] <- data.frame(genderizer[[i]])$gender
-  prob[[i]] <- data.frame(genderizer[[i]])$probability
-
-}
-
-
-df_genderizer <- do.call(rbind, Map(data.frame, name = names, count = count, gender = gender, probability = prob)) 
-
-
-# setting count = 0 for names that cannot be found in the for-loop does not work well
-df_genderizer$count <- ifelse(is.na(df_genderizer$count), 0, df_genderizer$count)
-```
 
 
 <!--- 
@@ -231,7 +197,9 @@ Decision moment!
 
 We retain only names where we can be pretty sure about the gender. If the name is around 50/50 male- or female-typed, we cannot assign the gender with confidence.
 
-Our cut-off point is at .90, meaning we can be 90% confident that a name is either male or female.
+Our cut-off point is at .90, meaning we can be 90% confident that a name is either male or female. 
+
+To be honest, I think it would be a better strategy not to dummify but simply use the probability score as variable in your final model. 
 
 ```{r}
 df_genderizer <- df_genderizer[df_genderizer$probability>.9, ]

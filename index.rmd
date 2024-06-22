@@ -67,19 +67,10 @@ Scientific Co-publishing Networks**
 
 <br>
 
-In this workshop you will collect and then describe academic
-departmental co-publishing networks. You will learn to webscrape
+In this workshop you will collect co-publishing networks. You will learn to webscrape
 scientific metadata of scientific university and departmental websites
-(via R packages like rvest and RSelenium), assign name-based gender and
-ethnicity signals, retrieve scholars' publications (via e.g. Google
-Scholar and OpenAlex), and construct (longitudinal) co-publishing
-networks.
-
-In our description of these networks, we will focus on the degree of
-segregation. You will answer questions such as: Are co-publishing
-networks segregated by scientific success and/or gender? And is
-segregation in co-publishing networks related to university/departmental
-characteristics?
+(via R packages like rvest and RSelenium), assign name-based gender and retrieve scholars' publications (via e.g. Google
+Scholar and OpenAlex). If time allows, we will based on this construct (longitudinal) co-publishing networks.
 
 For each step, we provide clear (proof-of-principle) coding examples and
 output data, ensuring you will not get stuck along the way. Depending on
@@ -89,11 +80,10 @@ own chosen universities or departments.
 This workshop can be followed as a standalone workshop but in our second
 workshop 'Analyzing the Structure and Evolution of Scientific
 Co-publishing Networks' we will describe and analyze the same type of
-webscraped co-publishing network data in more detail by employing
+webscraped co-publishing network data by employing
 RSiena.
 
-You will keep track of your work via a labjournal on GitHub. We will
-help you setting up this labjournal in the week(s) before the workshop.
+You will keep track of your work via a labjournal on GitHub. 
 
 Prerequisites:
 

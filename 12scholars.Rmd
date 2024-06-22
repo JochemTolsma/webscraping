@@ -1,23 +1,9 @@
 ---
 title: "Scraping RU Sociology department"
-author: 
-  - '**AUTHORS:**'
-  - 'Rob Franken'
-  - 'Daniel Cowen'  
-  - 'Jochem Tolsma'
-#bibliography: references.bib
-link-citations: true
-date: "Last compiled on `r format(Sys.time(), '%B, %Y')`"
-output: 
-  html_document:
-    css: tweaks.css
-    toc:  true
-    toc_float: true
-    number_sections: false
-    toc_depth: 2
-    code_folding: show
-    code_download: yes
+bibliography: references.bib
+link-citations: yes
 ---
+
 
 
 ```{r, globalsettings, echo=FALSE, warning=FALSE, results='hide', message=FALSE}
@@ -25,7 +11,7 @@ library(knitr)
 library(tidyverse) 
 library(reticulate)
 knitr::opts_chunk$set(echo = TRUE)
-opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test3"))
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, warning = FALSE, message = FALSE, eval = FALSE, comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test3"))
 options(width = 100)
 rgl::setupKnitr()
 
@@ -40,6 +26,14 @@ klippy::klippy(lang = c("r", "python"), position = c('top', 'right'))
 #klippy::klippy(color = 'darkred')
 #klippy::klippy(tooltip_message = 'Click to copy', tooltip_success = 'Done')
 ```
+
+In this last part of scraping names, we will show how to mimic a human webbrowsing activity. We will use RSelenium / Selenium for this. This can be a bit complicated to get up and running. For example, you need to hava Java installed. 
+
+Especially the R documentation is not great. 
+In R, there is a relatively new package `selendir` which looks promising. 
+
+Because we will be interacting with websites, we did not show our output on this page. 
+
 
 # Preparation
 
@@ -137,15 +131,18 @@ port <- netstat::free_port(random = TRUE)
 
 #ping port for confirmation
 pingr::ping_port("localhost", port)
+```
 
-#set up selenium server and browser
+Set up selenium server and browser (firefox is recommended)
+An issue with `RSelenium::rsDriver` is that it is configured to launch the Selenium server with the latest versions of Chrome *and* Firefox drivers, *even if you have specified the other browser to run*. To solve this, pass in `NULL` in the Chrome driver version `chromever`!
+```{r, eval = FALSE}
+
 rD <- rsDriver(browser="firefox", port=port, chromever = NULL, verbose = FALSE)
-rD
 remDr <- rD[["client"]]
-``` 
+```
 <br>
 
-An issue with `RSelenium::rsDriver` is that it is configured to launch the Selenium server with the latest versions of Chrome *and* Firefox drivers, *even if you have specified the other browser to run*. To solve this, pass in `NULL` in the Chrome driver version `chromever`!
+
 
 If at any time you wish to terminate the process, use the code:
 
@@ -183,8 +180,6 @@ remDr.close()
 #navigate to RU staff page
 remDr$navigate("https://www.ru.nl/en/search/scope/staff/")
 
-remDr$maxWindowSize()
-
 #handle cookies
 remDr$findElement(using = "css", value = ".agree-button")$highlightElement()
 remDr$findElement(using = "css", value = ".agree-button")$clickElement()
@@ -193,46 +188,53 @@ cookies <- remDr$getAllCookies()
 saveRDS(cookies, "cookies.rds")
 remDr$addCookie(name = cookies[[1]][["name"]], value = cookies[[1]][["value"]])
 
+remDr$maxWindowSize()
 
-#we want to get scholars from the sociology department; so we use the website's collapsible lists
-#expand content under Radboud University
+
+```
+
+We want to get scholars from the sociology department; so we use the website's collapsible lists
+and expand content under Radboud University. 
+
+We use the `highlightElement()` function to demonstrate where we are on the website.
+
+```{r, eval = FALSE}
 remDr$findElement(using = "class name", value = "facet-list__expand-sub")$highlightElement()
 remDr$findElement(using = "class name", value = "facet-list__expand-sub")$clickElement()
 
 #we have to expand the list
 remDr$findElement(using = "class name", value = "btn--show-hide")$highlightElement()
 remDr$findElement(using = "class name", value = "btn--show-hide")$clickElement()
+```
 
+Expand content under Faculty of social science (dep id 961) using its xpath.  
+Note, this is the html: 
 
-#expand content under Faculty of social science (dep id 961)
-#using its xpath
-#note, this is the html: 
-# <button class="facet-list__expand-sub is-active" aria-controls="toggle-staff-department-961" aria-expanded="false" data-once="ruHierarchicalFacetsClick" style=""><span class="visually-hidden">Hide filters</span>-</button>
+```
+<button class="facet-list__expand-sub is-active" aria-controls="toggle-staff-department-961" aria-expanded="false" data-once="ruHierarchicalFacetsClick" style=""><span class="visually-hidden">Hide filters</span>-</button>
+```
 
-#this translates into the following xpath. Note here we use a compound class! 
-#difficulties with xpath, have a look here: https://www.w3schools.com/xml/xpath_intro.asp
+This translates into the xpath shown below. Note here we use a compound class!   
+Difficulties with xpath? Have a look [here](https://www.w3schools.com/xml/xpath_intro.asp)
 
+There seems to be a small bug in the website which breaks our code. Let us try to fix this in class. 
+
+```{r, eval = FALSE}
 remDr$findElement(using = "xpath", value = "//button[@class='facet-list__expand-sub' and @aria-controls='toggle-staff-department-961']")$highlightElement()
 
 #If you would follow the complete html structure you will arrive at the same point. 
 remDr$findElement(using = "xpath", value = "/html/body/div[1]/div/div[1]/aside/div/div[27]/div/ul/li/div/ul/li[9]/button")$highlightElement()
 
-# webElem <- remDr$findElement(using = "xpath", value = "/html/body/div[1]/div/div[1]/aside/div/div[27]/div/ul/li/div/ul/li[9]/button")
-# 
-# webElem$getElementAttribute("class")
-# webElem$getElementAttribute("type")
-
+#and click
 remDr$findElement(using = "xpath", value = "//button[@class='facet-list__expand-sub' and @aria-controls='toggle-staff-department-961']")$clickElement()
 
-#NOTE: for me JT something goes wrong and I have to click less and more!
+#here is the bug. not all departments are shown. you have to click on less and more. 
 
 #click on sociology
 remDr$findElement(using = "xpath", value = "//input[@type='checkbox' and @class='facets-checkbox' and @id='staff-department-992']")$clickElement()
 
 #among all staff members, select researchers
-#get the indicator of the checkbox that is "Researchers";
 
-#simple
 remDr$findElement(using = "xpath", value = "//input[@type='checkbox' and @class='facets-checkbox' and @id='staff-staff-researchers']")$highlightElement()
 
 #more complicated but insightful 
@@ -252,17 +254,15 @@ researchers <- grep("Researchers", staff_cats)
 
 #check the corresponding checkbox
 remDr$findElements(using = "class name", value = "facets-checkbox")[[researchers]]$clickElement()
+```
 
 
+Naturally, this can also be achieved by using the URL https://www.ru.nl/en/search/scope/staff/staff-department/X/staff-staff/researchers, where X should be replaced by department-id, which can be stored in a list beforehand (this is useful if we want multiple departments of a faculty)
 
+Now we have all sociology researchers (or of any other department) but these are spread across multiple pages.  
+To know how many pages there are we navigate to the "last" page first, save the last page, go back and loop through all pages: 
 
-#naturally this can also be achieved by using the URL https://www.ru.nl/en/search/scope/staff/staff-department/X/staff-staff/researchers, where X should be replaced by department-id, which can be stored in a list beforehand (this is useful if we want multiple departments of a faculty)
-
-##################################################################################################
-
-#now we have all sociology researchers (or of any other department);
-#but this is spread across multiple pages;
-#to know how many pages there are - and thus through how many we must scrape - we navigate to the "last" page first;
+```{r}
 remDr$findElements("class name", "pager__link-text")[[2]]$clickElement()
 
 #get the page number of this page
@@ -300,7 +300,7 @@ for ( i in 1:(npages-1)) {
 #all names!
 print(names_page)
 length(names_page)
-``` 
+```
 
 ## Python
 
