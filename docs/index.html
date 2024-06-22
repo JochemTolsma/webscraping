@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="AUTHORS:" />
+<meta name="author" content="Jochem Tolsma - Radboud University / University of Groningen, the Netherlands" />
+<meta name="author" content="Rob Franken - Utrecht University, the Netherlands" />
+<meta name="author" content="Dan Cowen - University of Groningen, the Netherlands" />
+<meta name="author" content="Anne Maaike Mulders - Radboud University, the Netherlands" />
+<meta name="author" content="Bas Hofstra - Radboud University, the Netherlands" />
+
+
+<title>Sunbelt 2024 Workshop: Webscraping</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+<link rel="stylesheet" href="tweaks.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sunbelt 2024 Workshop: Webscraping</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Scholars
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="10scholars.html">Scholars I</a>
+    </li>
+    <li>
+      <a href="11scholars.html">Scholars II</a>
+    </li>
+    <li>
+      <a href="12scholars.html">Scholars III</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Attributes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="20names.html">Names</a>
+    </li>
+    <li>
+      <a href="30genderizeR.html">Genderize</a>
+    </li>
+    <li>
+      <a href="40publications.html">Publications</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/JochemTolsma/webscraping">
+    <span class="fab fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Sunbelt 2024 Workshop: Webscraping</h1>
+<h4 class="author"><strong>AUTHORS:</strong></h4>
+<h4 class="author"><a href="https://www.jochemtolsma.nl">Jochem Tolsma</a> - Radboud University / University of Groningen, the Netherlands</h4>
+<h4 class="author"><a href="https://robfranken.net/">Rob Franken</a> - Utrecht University, the Netherlands</h4>
+<h4 class="author"><a href="https://www.rug.nl/staff/d.r.cowen/">Dan Cowen</a> - University of Groningen, the Netherlands</h4>
+<h4 class="author"><a href="https://www.ru.nl/en/people/mulders-a">Anne Maaike Mulders</a> - Radboud University, the Netherlands</h4>
+<h4 class="author"><a href="https://www.bashofstra.com/">Bas Hofstra</a> - Radboud University, the Netherlands</h4>
+<h4 class="date">Last compiled on 22 juni 2024</h4>
+
+</div>
+
+
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<hr />
+<div id="introduction" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<script>
+function myFunction() {
+
+            var btn = document.getElementById("myButton");
+            //to make it fancier
+            if (btn.value == "Click to hide code") {
+                btn.value = "Read more";
+                btn.innerHTML = "Read more";
+            }
+            else {
+                btn.value = "Click to hide code";
+                btn.innerHTML = "Read less";
+            }
+            //this is what you're looking for
+            var x = document.getElementById("myDIV");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+          
+</script>
+<p>Welcome to the website of the Sunbelt 2024 Workshop: <strong>Webscraping
+Scientific Co-publishing Networks</strong></p>
+<p><br></p>
+<p>In this workshop you will collect co-publishing networks. You will learn to webscrape
+scientific metadata of scientific university and departmental websites
+(via R packages like rvest and RSelenium), assign name-based gender and retrieve scholars’ publications (via e.g. Google
+Scholar and OpenAlex). If time allows, we will based on this construct (longitudinal) co-publishing networks.</p>
+<p>For each step, we provide clear (proof-of-principle) coding examples and
+output data, ensuring you will not get stuck along the way. Depending on
+your skills and progress, you might want to collect and describe your
+own chosen universities or departments.</p>
+<p>This workshop can be followed as a standalone workshop but in our second
+workshop ‘Analyzing the Structure and Evolution of Scientific
+Co-publishing Networks’ we will describe and analyze the same type of
+webscraped co-publishing network data by employing
+RSiena.</p>
+<p>You will keep track of your work via a labjournal on GitHub.</p>
+<p>Prerequisites:</p>
+<ul>
+<li>Intermediate familiarity with working in R and using R Markdown<br />
+</li>
+<li>A beginner’s understanding of SNA<br />
+</li>
+<li>Entry-level of git, and GitHub</li>
+</ul>
+<!--
+
+<button class="button1" onclick="myFunction()" id="myButton" value="Click To Open Instructions">
+
+Read more
+
+</button>
+
+::: {#myDIV style="display:none;"}
+<br>
+
+more text here
+
+<br>
+:::
+
+--->
+<hr />
+</div>
+<div id="getting-started" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Getting started</h1>
+<div id="labjournal" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> LabJournal</h2>
+<p>During the course, students will journal their work and assignments in
+their custom lab journal. A template lab journal can be found on
+<a href="https://github.com/robfranken/LabJournal">GitHub</a>. Here, you find how
+to get started.</p>
+<!-- ## Discord -->
+<!-- Please join the [discord channel](https://discord.gg/ACcYU8nu). Use the -->
+<!-- channel to chat, ask questions and share (small) files. -->
+<hr />
+</div>
+</div>
+<div id="program" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Program</h1>
+<p>The program of this workshop will be as follows:</p>
+<p><span style="color: red;">Introduction</span><br />
+<em>Time: 9:00am - 9:30am</em></p>
+<ul>
+<li><strong>all</strong>
+<ul>
+<li>round of introductions</li>
+</ul></li>
+<li><strong>Jochem, Rob, Dan</strong>
+<ul>
+<li>Our goals for today</li>
+<li>Research Questions based on Scientific Co-publishing Networks</li>
+<li>Data requirements for RQs<br />
+</li>
+</ul></li>
+</ul>
+<p><span style="color: red;">Lab Journal</span><br />
+<em>Time: 9:30am - 10:30am</em></p>
+<ul>
+<li><strong>Rob</strong>
+<ul>
+<li><a href="https://github.com/robfranken/LabJournal">Lab Journal</a></li>
+<li>Some Git pointers</li>
+<li>Some RMarkdown pointers</li>
+</ul></li>
+</ul>
+<p><span style="color: red;">BREAK</span><br />
+<em>Time: 10:30am - 10:45am</em></p>
+<p><span style="color: red;">Webscraping-scholars Part 1</span><br />
+<em>Time: 10:45am - 12:30pm</em></p>
+<ul>
+<li><strong>Jochem</strong>
+<ul>
+<li>Webscraping - <a href="./presentations/insna_science_data.pdf">Lecture</a></li>
+</ul></li>
+<li><strong>Dan</strong>
+<ul>
+<li>Webscraping - <a href="RUG_scholar_names_RVest.Rmd">Tutorial</a></li>
+</ul></li>
+<li><strong>Rob</strong>
+<ul>
+<li>Webscraping - <a href="RU_scholar_names_RSelenium.Rmd">Tutorial</a></li>
+</ul></li>
+</ul>
+<p><span style="color: red;">BREAK</span><br />
+<em>Time: 12:30pm - 1:45pm</em></p>
+<p><span style="color: red;">genderize</span><br />
+<em>Time: 1:45pm - 2:45pm</em></p>
+<ul>
+<li><strong>Jochem</strong>
+<ul>
+<li>names curating - <a href="20names.html">tutorial</a></li>
+<li>names to gender - <a href="30gender.html">tutorial</a></li>
+</ul></li>
+</ul>
+<p><span style="color: red;">Webscraping - publications</span><br />
+<em>Time: 2:45pm - 3:45pm</em></p>
+<ul>
+<li><strong>Jochem</strong>
+<ul>
+<li>Scraping publications - <a href="40publications.html">tutorial</a></li>
+</ul></li>
+</ul>
+<p><span style="color: red;">Errors, bugs and crashes</span><br />
+<em>Time: 3:45pm - 4:30pm</em></p>
+<ul>
+<li><strong>All</strong>
+<ul>
+<li>Own work</li>
+<li>Questions</li>
+<li>Evaluation</li>
+</ul></li>
+</ul>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlN1bmJlbHQgMjAyNCBXb3Jrc2hvcDogV2Vic2NyYXBpbmciDQphdXRob3I6IA0KICAtICcqKkFVVEhPUlM6KionDQogIC0gJ1tKb2NoZW0gVG9sc21hXShodHRwczovL3d3dy5qb2NoZW10b2xzbWEubmwpIC0gUmFkYm91ZCBVbml2ZXJzaXR5IC8gVW5pdmVyc2l0eSBvZiBHcm9uaW5nZW4sIHRoZSBOZXRoZXJsYW5kcycNCiAgLSAnW1JvYiBGcmFua2VuXShodHRwczovL3JvYmZyYW5rZW4ubmV0LykgLSBVdHJlY2h0IFVuaXZlcnNpdHksIHRoZSBOZXRoZXJsYW5kcycNCiAgLSAnW0RhbiBDb3dlbl0oaHR0cHM6Ly93d3cucnVnLm5sL3N0YWZmL2Quci5jb3dlbi8pIC0gVW5pdmVyc2l0eSBvZiBHcm9uaW5nZW4sIHRoZSBOZXRoZXJsYW5kcycNCiAgLSAnW0FubmUgTWFhaWtlIE11bGRlcnNdKGh0dHBzOi8vd3d3LnJ1Lm5sL2VuL3Blb3BsZS9tdWxkZXJzLWEpIC0gUmFkYm91ZCBVbml2ZXJzaXR5LCB0aGUgTmV0aGVybGFuZHMnDQogIC0gJ1tCYXMgSG9mc3RyYV0oaHR0cHM6Ly93d3cuYmFzaG9mc3RyYS5jb20vKSAtIFJhZGJvdWQgVW5pdmVyc2l0eSwgdGhlIE5ldGhlcmxhbmRzJw0KZGF0ZTogIkxhc3QgY29tcGlsZWQgb24gYHIgZm9ybWF0KFN5cy5EYXRlKCksIGZvcm1hdD0nJWQgJUIgJVknKWAiDQpiaWJsaW9ncmFwaHk6IHJlZmVyZW5jZXMuYmliDQpsaW5rLWNpdGF0aW9uczogeWVzDQplZGl0b3Jfb3B0aW9uczogDQogIG1hcmtkb3duOiANCiAgICB3cmFwOiA3Mg0KLS0tDQoNCmBgYHtyLCBnbG9iYWxzZXR0aW5ncywgZWNobz1GQUxTRSwgd2FybmluZz1GQUxTRSwgbWVzc2FnZT1GQUxTRSwgcmVzdWx0cz0naGlkZSd9DQpsaWJyYXJ5KGtuaXRyKQ0Kb3B0c19jaHVuayRzZXQodGlkeS5vcHRzPWxpc3Qod2lkdGguY3V0b2ZmPTEwMCksdGlkeT1UUlVFLCB3YXJuaW5nID0gRkFMU0UsIG1lc3NhZ2UgPSBGQUxTRSxjb21tZW50ID0gIiM+IiwgY2FjaGU9VFJVRSwgY2xhc3Muc291cmNlPWMoInRlc3QiKSwgY2xhc3Mub3V0cHV0PWMoInRlc3QyIiksIGNhY2hlLmxhenkgPSBGQUxTRSkNCm9wdGlvbnMod2lkdGggPSAxMDApIA0KcmdsOjpzZXR1cEtuaXRyKCkNCg0KY29sb3JpemUgPC0gZnVuY3Rpb24oeCwgY29sb3IpIHtzcHJpbnRmKCI8c3BhbiBzdHlsZT0nY29sb3I6ICVzOyc+JXM8L3NwYW4+IiwgY29sb3IsIHgpIH0NCg0KYGBgDQoNCmBgYHtyIGtsaXBweSwgZWNobz1GQUxTRSwgaW5jbHVkZT1UUlVFLCBtZXNzYWdlPUZBTFNFfQ0KIyBpbnN0YWxsLnBhY2thZ2VzKCJyZW1vdGVzIikNCiNyZW1vdGVzOjppbnN0YWxsX2dpdGh1Yigicmxlc3VyL2tsaXBweSIpDQprbGlwcHk6OmtsaXBweShwb3NpdGlvbiA9IGMoJ3RvcCcsICdyaWdodCcpKQ0KI2tsaXBweTo6a2xpcHB5KGNvbG9yID0gJ2RhcmtyZWQnKQ0KI2tsaXBweTo6a2xpcHB5KHRvb2x0aXBfbWVzc2FnZSA9ICdDbGljayB0byBjb3B5JywgdG9vbHRpcF9zdWNjZXNzID0gJ0RvbmUnKQ0KYGBgDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQojIEludHJvZHVjdGlvbg0KDQpgYGB7PWh0bWx9DQo8c2NyaXB0Pg0KZnVuY3Rpb24gbXlGdW5jdGlvbigpIHsNCg0KICAgICAgICAgICAgdmFyIGJ0biA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJteUJ1dHRvbiIpOw0KICAgICAgICAgICAgLy90byBtYWtlIGl0IGZhbmNpZXINCiAgICAgICAgICAgIGlmIChidG4udmFsdWUgPT0gIkNsaWNrIHRvIGhpZGUgY29kZSIpIHsNCiAgICAgICAgICAgICAgICBidG4udmFsdWUgPSAiUmVhZCBtb3JlIjsNCiAgICAgICAgICAgICAgICBidG4uaW5uZXJIVE1MID0gIlJlYWQgbW9yZSI7DQogICAgICAgICAgICB9DQogICAgICAgICAgICBlbHNlIHsNCiAgICAgICAgICAgICAgICBidG4udmFsdWUgPSAiQ2xpY2sgdG8gaGlkZSBjb2RlIjsNCiAgICAgICAgICAgICAgICBidG4uaW5uZXJIVE1MID0gIlJlYWQgbGVzcyI7DQogICAgICAgICAgICB9DQogICAgICAgICAgICAvL3RoaXMgaXMgd2hhdCB5b3UncmUgbG9va2luZyBmb3INCiAgICAgICAgICAgIHZhciB4ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoIm15RElWIik7DQogICAgICAgICAgICBpZiAoeC5zdHlsZS5kaXNwbGF5ID09PSAibm9uZSIpIHsNCiAgICAgICAgICAgICAgICB4LnN0eWxlLmRpc3BsYXkgPSAiYmxvY2siOw0KICAgICAgICAgICAgfSBlbHNlIHsNCiAgICAgICAgICAgICAgICB4LnN0eWxlLmRpc3BsYXkgPSAibm9uZSI7DQogICAgICAgICAgICB9DQogICAgICAgIH0NCiAgICAgICAgICANCjwvc2NyaXB0Pg0KYGBgDQpXZWxjb21lIHRvIHRoZSB3ZWJzaXRlIG9mIHRoZSBTdW5iZWx0IDIwMjQgV29ya3Nob3A6ICoqV2Vic2NyYXBpbmcNClNjaWVudGlmaWMgQ28tcHVibGlzaGluZyBOZXR3b3JrcyoqDQoNCjxicj4NCg0KSW4gdGhpcyB3b3Jrc2hvcCB5b3Ugd2lsbCBjb2xsZWN0IGNvLXB1Ymxpc2hpbmcgbmV0d29ya3MuIFlvdSB3aWxsIGxlYXJuIHRvIHdlYnNjcmFwZQ0Kc2NpZW50aWZpYyBtZXRhZGF0YSBvZiBzY2llbnRpZmljIHVuaXZlcnNpdHkgYW5kIGRlcGFydG1lbnRhbCB3ZWJzaXRlcw0KKHZpYSBSIHBhY2thZ2VzIGxpa2UgcnZlc3QgYW5kIFJTZWxlbml1bSksIGFzc2lnbiBuYW1lLWJhc2VkIGdlbmRlciBhbmQgcmV0cmlldmUgc2Nob2xhcnMnIHB1YmxpY2F0aW9ucyAodmlhIGUuZy4gR29vZ2xlDQpTY2hvbGFyIGFuZCBPcGVuQWxleCkuIElmIHRpbWUgYWxsb3dzLCB3ZSB3aWxsIGJhc2VkIG9uIHRoaXMgY29uc3RydWN0IChsb25naXR1ZGluYWwpIGNvLXB1Ymxpc2hpbmcgbmV0d29ya3MuDQoNCkZvciBlYWNoIHN0ZXAsIHdlIHByb3ZpZGUgY2xlYXIgKHByb29mLW9mLXByaW5jaXBsZSkgY29kaW5nIGV4YW1wbGVzIGFuZA0Kb3V0cHV0IGRhdGEsIGVuc3VyaW5nIHlvdSB3aWxsIG5vdCBnZXQgc3R1Y2sgYWxvbmcgdGhlIHdheS4gRGVwZW5kaW5nIG9uDQp5b3VyIHNraWxscyBhbmQgcHJvZ3Jlc3MsIHlvdSBtaWdodCB3YW50IHRvIGNvbGxlY3QgYW5kIGRlc2NyaWJlIHlvdXINCm93biBjaG9zZW4gdW5pdmVyc2l0aWVzIG9yIGRlcGFydG1lbnRzLg0KDQpUaGlzIHdvcmtzaG9wIGNhbiBiZSBmb2xsb3dlZCBhcyBhIHN0YW5kYWxvbmUgd29ya3Nob3AgYnV0IGluIG91ciBzZWNvbmQNCndvcmtzaG9wICdBbmFseXppbmcgdGhlIFN0cnVjdHVyZSBhbmQgRXZvbHV0aW9uIG9mIFNjaWVudGlmaWMNCkNvLXB1Ymxpc2hpbmcgTmV0d29ya3MnIHdlIHdpbGwgZGVzY3JpYmUgYW5kIGFuYWx5emUgdGhlIHNhbWUgdHlwZSBvZg0Kd2Vic2NyYXBlZCBjby1wdWJsaXNoaW5nIG5ldHdvcmsgZGF0YSBieSBlbXBsb3lpbmcNClJTaWVuYS4NCg0KWW91IHdpbGwga2VlcCB0cmFjayBvZiB5b3VyIHdvcmsgdmlhIGEgbGFiam91cm5hbCBvbiBHaXRIdWIuIA0KDQpQcmVyZXF1aXNpdGVzOg0KDQotICAgSW50ZXJtZWRpYXRlIGZhbWlsaWFyaXR5IHdpdGggd29ya2luZyBpbiBSIGFuZCB1c2luZyBSIE1hcmtkb3duXA0KLSAgIEEgYmVnaW5uZXIncyB1bmRlcnN0YW5kaW5nIG9mIFNOQVwNCi0gICBFbnRyeS1sZXZlbCBvZiBnaXQsIGFuZCBHaXRIdWINCg0KYGBgez1odG1sfQ0KPCEtLQ0KDQo8YnV0dG9uIGNsYXNzPSJidXR0b24xIiBvbmNsaWNrPSJteUZ1bmN0aW9uKCkiIGlkPSJteUJ1dHRvbiIgdmFsdWU9IkNsaWNrIFRvIE9wZW4gSW5zdHJ1Y3Rpb25zIj4NCg0KUmVhZCBtb3JlDQoNCjwvYnV0dG9uPg0KDQo6OjogeyNteURJViBzdHlsZT0iZGlzcGxheTpub25lOyJ9DQo8YnI+DQoNCm1vcmUgdGV4dCBoZXJlDQoNCjxicj4NCjo6Og0KDQotLS0+DQpgYGANCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQoNCiMgR2V0dGluZyBzdGFydGVkDQoNCiMjIExhYkpvdXJuYWwNCg0KRHVyaW5nIHRoZSBjb3Vyc2UsIHN0dWRlbnRzIHdpbGwgam91cm5hbCB0aGVpciB3b3JrIGFuZCBhc3NpZ25tZW50cyBpbg0KdGhlaXIgY3VzdG9tIGxhYiBqb3VybmFsLiBBIHRlbXBsYXRlIGxhYiBqb3VybmFsIGNhbiBiZSBmb3VuZCBvbg0KW0dpdEh1Yl0oaHR0cHM6Ly9naXRodWIuY29tL3JvYmZyYW5rZW4vTGFiSm91cm5hbCkuIEhlcmUsIHlvdSBmaW5kIGhvdw0KdG8gZ2V0IHN0YXJ0ZWQuDQoNCjwhLS0gIyMgRGlzY29yZCAtLT4NCg0KPCEtLSBQbGVhc2Ugam9pbiB0aGUgW2Rpc2NvcmQgY2hhbm5lbF0oaHR0cHM6Ly9kaXNjb3JkLmdnL0FDY1lVOG51KS4gVXNlIHRoZSAtLT4NCg0KPCEtLSBjaGFubmVsIHRvIGNoYXQsIGFzayBxdWVzdGlvbnMgYW5kIHNoYXJlIChzbWFsbCkgZmlsZXMuIC0tPg0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KIyBQcm9ncmFtDQoNClRoZSBwcm9ncmFtIG9mIHRoaXMgd29ya3Nob3Agd2lsbCBiZSBhcyBmb2xsb3dzOg0KDQpgciBjb2xvcml6ZSgiSW50cm9kdWN0aW9uIiwgInJlZCIpYFwNCipUaW1lOiA5OjAwYW0gLSA5OjMwYW0qDQoNCi0gICAqKmFsbCoqDQogICAgLSAgIHJvdW5kIG9mIGludHJvZHVjdGlvbnMNCi0gICAqKkpvY2hlbSwgUm9iLCBEYW4qKg0KICAgIC0gICBPdXIgZ29hbHMgZm9yIHRvZGF5DQogICAgLSAgIFJlc2VhcmNoIFF1ZXN0aW9ucyBiYXNlZCBvbiBTY2llbnRpZmljIENvLXB1Ymxpc2hpbmcgTmV0d29ya3MNCiAgICAtICAgRGF0YSByZXF1aXJlbWVudHMgZm9yIFJRc1wNCg0KYHIgY29sb3JpemUoIkxhYiBKb3VybmFsIiwgInJlZCIpYFwNCipUaW1lOiA5OjMwYW0gLSAxMDozMGFtKg0KDQotICAgKipSb2IqKg0KICAgIC0gICBbTGFiIEpvdXJuYWxdKGh0dHBzOi8vZ2l0aHViLmNvbS9yb2JmcmFua2VuL0xhYkpvdXJuYWwpDQogICAgLSAgIFNvbWUgR2l0IHBvaW50ZXJzDQogICAgLSAgIFNvbWUgUk1hcmtkb3duIHBvaW50ZXJzDQoNCmByIGNvbG9yaXplKCJCUkVBSyIsICJyZWQiKWBcDQoqVGltZTogMTA6MzBhbSAtIDEwOjQ1YW0qDQoNCmByIGNvbG9yaXplKCJXZWJzY3JhcGluZy1zY2hvbGFycyBQYXJ0IDEiLCAicmVkIilgXA0KKlRpbWU6IDEwOjQ1YW0gLSAxMjozMHBtKg0KDQotICAgKipKb2NoZW0qKg0KICAgIC0gICBXZWJzY3JhcGluZyAtIFtMZWN0dXJlXSguL3ByZXNlbnRhdGlvbnMvaW5zbmFfc2NpZW5jZV9kYXRhLnBkZikNCi0gICAqKkRhbioqDQogICAgLSAgIFdlYnNjcmFwaW5nIC0gW1R1dG9yaWFsXShSVUdfc2Nob2xhcl9uYW1lc19SVmVzdC5SbWQpDQotICAgKipSb2IqKg0KICAgIC0gICBXZWJzY3JhcGluZyAtIFtUdXRvcmlhbF0oUlVfc2Nob2xhcl9uYW1lc19SU2VsZW5pdW0uUm1kKQ0KDQpgciBjb2xvcml6ZSgiQlJFQUsiLCAicmVkIilgXA0KKlRpbWU6IDEyOjMwcG0gLSAxOjQ1cG0qDQoNCmByIGNvbG9yaXplKCJnZW5kZXJpemUiLCAicmVkIilgXA0KKlRpbWU6IDE6NDVwbSAtIDI6NDVwbSoNCg0KLSAgICoqSm9jaGVtKioNCiAgICAtICAgbmFtZXMgY3VyYXRpbmcgLSBbdHV0b3JpYWxdKDIwbmFtZXMuaHRtbCkNCiAgICAtICAgbmFtZXMgdG8gZ2VuZGVyIC0gW3R1dG9yaWFsXSgzMGdlbmRlci5odG1sKQ0KDQpgciBjb2xvcml6ZSgiV2Vic2NyYXBpbmcgLSBwdWJsaWNhdGlvbnMiLCAicmVkIilgXA0KKlRpbWU6IDI6NDVwbSAtIDM6NDVwbSoNCg0KLSAgICoqSm9jaGVtKioNCiAgICAtICAgU2NyYXBpbmcgcHVibGljYXRpb25zIC0gW3R1dG9yaWFsXSg0MHB1YmxpY2F0aW9ucy5odG1sKQ0KDQpgciBjb2xvcml6ZSgiRXJyb3JzLCBidWdzIGFuZCBjcmFzaGVzIiwgInJlZCIpYFwNCipUaW1lOiAzOjQ1cG0gLSA0OjMwcG0qDQoNCi0gICAqKkFsbCoqDQogICAgLSAgIE93biB3b3JrDQogICAgLSAgIFF1ZXN0aW9ucw0KICAgIC0gICBFdmFsdWF0aW9uDQo=</div>
+<style>
+  .center {
+    text-align: center;
+    color: red;
+  }
+</style>
+  
+  <hr>
+  <br>
+  <p class="center">Copyright &copy; 2024 Jochem Tolsma </p>
+    
+    
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("index.rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

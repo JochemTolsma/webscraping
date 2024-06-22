@@ -1,0 +1,2741 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Scraping RUG Sociology department</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+<link rel="stylesheet" href="tweaks.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sunbelt 2024 Workshop: Webscraping</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Scholars
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="10scholars.html">Scholars I</a>
+    </li>
+    <li>
+      <a href="11scholars.html">Scholars II</a>
+    </li>
+    <li>
+      <a href="12scholars.html">Scholars III</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Attributes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="20names.html">Names</a>
+    </li>
+    <li>
+      <a href="30genderizeR.html">Genderize</a>
+    </li>
+    <li>
+      <a href="40publications.html">Publications</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/JochemTolsma/webscraping">
+    <span class="fab fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Scraping RUG Sociology department</h1>
+
+</div>
+
+
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<div id="preparation" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Preparation</h1>
+<div id="clean-up" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> clean up</h2>
+<pre class="r test"><code>rm(list = ls())
+gc()</code></pre>
+<p><br></p>
+</div>
+<div id="general-custom-r-functions" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> general custom R functions</h2>
+<ul>
+<li><code>fpackage.check</code>: Check if packages are installed (and install if not) in R</li>
+<li><code>fsave</code>: save data with time stamp in correct directory</li>
+<li><code>fload</code>: load R-objects under new names</li>
+<li><code>fshowdf</code>: Print objects (<code>tibble</code> / <code>data.frame</code>) nicely on screen in <code>.Rmd</code>.</li>
+</ul>
+<pre class="r test"><code>fpackage.check &lt;- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave &lt;- function(x, file, location = &quot;./local/&quot;, ...) {
+    if (!dir.exists(location))
+        dir.create(location)
+    datename &lt;- substr(gsub(&quot;[:-]&quot;, &quot;&quot;, Sys.time()), 1, 8)
+    totalname &lt;- paste(location, datename, file, sep = &quot;&quot;)
+    print(paste(&quot;SAVED: &quot;, totalname, sep = &quot;&quot;))
+    save(x, file = totalname)
+}
+
+fload &lt;- function(fileName) {
+    load(fileName)
+    get(ls()[ls() != &quot;fileName&quot;])
+}
+
+
+fshowdf &lt;- function(x, digits = 2, ...) {
+    knitr::kable(x, digits = digits, &quot;html&quot;, ...) %&gt;%
+        kableExtra::kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;)) %&gt;%
+        kableExtra::scroll_box(width = &quot;100%&quot;, height = &quot;300px&quot;)
+}</code></pre>
+<p><br></p>
+</div>
+<div id="necessary-packages" class="section level2 tabset tabset-fade" number="1.3">
+<h2><span class="header-section-number">1.3</span> necessary packages</h2>
+<ul>
+<li><code>rvest</code>: part of tidyverse, not necessary to load seperately<br />
+</li>
+<li><code>stringr</code>: for text manipulation<br />
+</li>
+<li><code>xml2</code>: <code>rvest</code> is build on <code>xml2</code> but at times at is handy to use <code>xml2</code> directly</li>
+</ul>
+<div id="r" class="section level3" number="1.3.1">
+<h3><span class="header-section-number">1.3.1</span> R</h3>
+<pre class="r test"><code>packages = c(&quot;rvest&quot;, &quot;tidyverse&quot;, &quot;stringr&quot;, &quot;xml2&quot;)
+fpackage.check(packages)
+rm(packages)</code></pre>
+</div>
+<div id="python" class="section level3" number="1.3.2">
+<h3><span class="header-section-number">1.3.2</span> Python</h3>
+<p>Make sure you have the required libraries by typing in the code below into your console</p>
+<pre class="bash test"><code>pip install requests beautifulsoup4 pandas</code></pre>
+<p><br></p>
+<p>and import necessary modules</p>
+<pre class="python test"><code>import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import re</code></pre>
+<p><br></p>
+</div>
+</div>
+<div id="input-the-static-url-you-wish-to-scrape" class="section level2 tabset tabset-fade" number="1.4">
+<h2><span class="header-section-number">1.4</span> Input the static URL you wish to scrape</h2>
+<div id="r-1" class="section level3" number="1.4.1">
+<h3><span class="header-section-number">1.4.1</span> R</h3>
+<!-- ```{r} -->
+<!-- library(chromote) -->
+<!-- b <- ChromoteSession$new() -->
+<!-- b$view() -->
+<!-- b$Page$navigate(url) -->
+<!-- sess <- LiveHTML$new(url) -->
+<!-- sess$view() -->
+<!-- sess$html_elements(".rug-ph-xs")  -->
+<!-- ``` -->
+<pre class="r test"><code>url &lt;- &quot;https://www.rug.nl/about-ug/practical-matters/find-an-expert?lang=en&amp;discipline=Sociology&quot;
+
+
+RugSociology &lt;- read_html(url)</code></pre>
+<p><br></p>
+</div>
+</div>
+<div id="section" class="section level2 unlisted unnumbered">
+<h2 class="unlisted unnumbered"></h2>
+<p><br></p>
+<hr />
+</div>
+</div>
+<div id="scraping-scholar-names" class="section level1 tabset tabset-fade" number="2">
+<h1><span class="header-section-number">2</span> Scraping scholar names</h1>
+<div id="r-2" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> R</h2>
+<p>You will need to know the tags or XPath to the exact types of elements you are looking for. You can do this by inspecting the webpage itself and finding the common code between all items you want to get.</p>
+<p>Alternatively, you can use extensions such as Selector Gadget to get the XPath or tags you are looking for. Here, I am inputting the code used to specify information from an individual staff member</p>
+<pre class="r test"><code>Staffmembers &lt;- RugSociology %&gt;%
+    html_elements(&quot;.rug-ph-xs&quot;)</code></pre>
+<p>Subsequently verify that the first entry into my staff members list is indeed the first person on the webpage</p>
+<pre class="r test"><code>xml_child(Staffmembers[[1]], 1)
+xml_child(Staffmembers[[2]], 1)</code></pre>
+<pre class="test3"><code>#&gt; {html_node}
+#&gt; &lt;div&gt;
+#&gt; [1] &lt;div class=&quot;rug-h3&quot;&gt;\n&lt;a href=&quot;/staff/d.a.e.van.aalst/&quot;&gt;Aalst, dr. D.A.E. van, PhD&lt;/a&gt;\n&lt;/div&gt;
+#&gt; [2] &lt;div class=&quot;rug-mb-s&quot;&gt;Teachers; Bullying; Primary school; School team; Relative Age Effect (R ...
+#&gt; {html_node}
+#&gt; &lt;div&gt;
+#&gt; [1] &lt;div class=&quot;rug-h3&quot;&gt;\n&lt;a href=&quot;/staff/a.albakkor/&quot;&gt;Albakkor, A., MA MSc&lt;/a&gt;\n&lt;/div&gt;
+#&gt; [2] &lt;div class=&quot;rug-mb-s&quot;&gt;\n\n&lt;span&gt;Qualitative ethnographic research&lt;br&gt;&lt;br&gt;Syrian diasporic com ...</code></pre>
+<p>Again, then using Selector Gadget or looking at the similarities between each individual staff members list, we can find the tag that corresponds just to the names, and extract just the text from this using html_text2. For the difference between <a href="https://rvest.tidyverse.org/reference/html_text.html">html_text/2</a></p>
+<pre class="r test"><code>StaffNames &lt;- Staffmembers %&gt;%
+    html_nodes(&quot;div&quot;) %&gt;%
+    html_elements(&quot;.rug-h3&quot;) %&gt;%
+    html_text2()
+head(StaffNames)</code></pre>
+<p>[1] “Aalst, dr. D.A.E. van, PhD” “Albakkor, A., MA MSc”<br />
+[3] “Albornoz Barra, G.A. Gonzalo, MA” “Althoff, M., Dr”<br />
+[5] “Badurdeen, F.A., Dr” “Bakker, dr. D.M.”</p>
+<p>Similarly, this can be done for other information like their email</p>
+<pre class="r test"><code>StaffEmail &lt;- Staffmembers %&gt;%
+    html_element(&quot;.rug-mb-s:nth-child(1) .rug-width-s-20-24&quot;) %&gt;%
+    html_text2()
+# necessary to clean text
+StaffEmail &lt;- gsub(&quot;[\r\n0-9+/]&quot;, &quot;&quot;, StaffEmail)
+# remove all the trailing spaces after cleaning (using the (.nl).*) while still keeping the end of
+# the email (using \\1)
+StaffEmail &lt;- gsub(&quot;(.nl).*&quot;, &quot;\\1&quot;, StaffEmail)
+# Finally, we see we didnt scrape the @ (as it is a symbol that also means something else in html
+# so the html_text function didnt think it was text and subsequently removed it) so we must put it
+# back in place of the space it left
+StaffEmail &lt;- gsub(&quot; &quot;, &quot;@&quot;, StaffEmail)
+# and then we have all 118 emails!
+head(StaffEmail)</code></pre>
+<p>[1] “<a href="mailto:d.a.e.van.aalst@rug.nl" class="email">d.a.e.van.aalst@rug.nl</a>” “<a href="mailto:a.albakkor@rug.nl" class="email">a.albakkor@rug.nl</a>” “<a href="mailto:g.a.albornoz.barra@rug.nl" class="email">g.a.albornoz.barra@rug.nl</a>”
+[4] “<a href="mailto:m.althoff@rug.nl" class="email">m.althoff@rug.nl</a>” “<a href="mailto:f.a.badurdeen@rug.nl" class="email">f.a.badurdeen@rug.nl</a>” “<a href="mailto:d.m.bakker@rug.nl" class="email">d.m.bakker@rug.nl</a>”</p>
+<p>Fiels of research:</p>
+<pre class="r test"><code>StaffExpertese &lt;- Staffmembers %&gt;%
+    html_element(&quot;.rug-mb-s~ .rug-mb-s+ .rug-mb-s .rug-width-s-20-24&quot;) %&gt;%
+    html_text2()
+# Here we remove line breaks and replace them with semi-colons
+StaffExpertese &lt;- gsub(&quot;[\r\n]&quot;, &quot;; &quot;, StaffExpertese)
+head(StaffExpertese)</code></pre>
+<p>[1] “Sociology”<br />
+[2] “Sociology; Social Sciences, Interdisciplinary; Humanities, Multidisciplinary”
+[3] “Law, Multidisciplinary Approaches; Sociology; Cultural Studies”<br />
+[4] “Criminology &amp; Penology; Sociology; Law”<br />
+[5] “Sociology; Social Sciences, Interdisciplinary”<br />
+[6] “Sociology”</p>
+<p>Function/role:</p>
+<pre class="r test"><code>StaffRole &lt;- Staffmembers %&gt;%
+    html_element(&quot;.rug-layout:nth-child(2) .rug-width-s-20-24&quot;) %&gt;%
+    html_text2()
+head(StaffRole)</code></pre>
+<p>[1] “PhD Student” “”<br />
+[3] “PhD student” “Associate Professor of Criminology”
+[5] “” “Postdoctoral Researcher”</p>
+<p>Misc Info:</p>
+<pre class="r test"><code>StaffInfo &lt;- Staffmembers %&gt;%
+    html_element(&quot;.rug-h3+ .rug-mb-s&quot;) %&gt;%
+    html_text2()
+head(StaffInfo)</code></pre>
+<p>[1] “Teachers; Bullying; Primary school; School team; Relative Age Effect (RAE)”<br />
+[2] “Qualitative ethnographic researchSyrian diasporic communities in EuropeMigration studies”<br />
+[3] “Legal socialization, legal literacy, narrative studies, prison studies”<br />
+[4] “Public discourses and public opinion of crime and punishment. Social reactions to criminality and the criminal justice system. Gendered aspects of crime and violence.”
+[5] “violent extremism, conflict transformation, peacebuilding”<br />
+[6] “cooperation, normative behavior, social dilemmas, game theory, experimental sociology”</p>
+<p>After we get all the information we want, we can then combine it into a single dataframe to allow for better storage and data manipulation</p>
+<pre class="r test"><code>RugSociologyEmployees &lt;- data.frame(cbind(StaffNames, StaffEmail, StaffRole, StaffExpertese, StaffInfo))
+
+fshowdf(RugSociologyEmployees, caption = &quot;Our table of all the Sociology Employees in the RuG&quot;)</code></pre>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-10">Table 2.1: </span>Our table of all the Sociology Employees in the RuG
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+StaffNames
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+StaffEmail
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+StaffRole
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+StaffExpertese
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+StaffInfo
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Aalst, dr. D.A.E. van, PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:d.a.e.van.aalst@rug.nl" class="email">d.a.e.van.aalst@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD Student
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Teachers; Bullying; Primary school; School team; Relative Age Effect (RAE)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Albakkor, A., MA MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.albakkor@rug.nl" class="email">a.albakkor@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology; Social Sciences, Interdisciplinary; Humanities, Multidisciplinary
+</td>
+<td style="text-align:left;">
+Qualitative ethnographic researchSyrian diasporic communities in EuropeMigration studies
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Albornoz Barra, G.A. Gonzalo, MA
+</td>
+<td style="text-align:left;">
+<a href="mailto:g.a.albornoz.barra@rug.nl" class="email">g.a.albornoz.barra@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD student
+</td>
+<td style="text-align:left;">
+Law, Multidisciplinary Approaches; Sociology; Cultural Studies
+</td>
+<td style="text-align:left;">
+Legal socialization, legal literacy, narrative studies, prison studies
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Althoff, M., Dr
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.althoff@rug.nl" class="email">m.althoff@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate Professor of Criminology
+</td>
+<td style="text-align:left;">
+Criminology &amp; Penology; Sociology; Law
+</td>
+<td style="text-align:left;">
+Public discourses and public opinion of crime and punishment. Social reactions to criminality and the criminal justice system. Gendered aspects of crime and violence.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Badurdeen, F.A., Dr
+</td>
+<td style="text-align:left;">
+<a href="mailto:f.a.badurdeen@rug.nl" class="email">f.a.badurdeen@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology; Social Sciences, Interdisciplinary
+</td>
+<td style="text-align:left;">
+violent extremism, conflict transformation, peacebuilding
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bakker, dr. D.M.
+</td>
+<td style="text-align:left;">
+<a href="mailto:d.m.bakker@rug.nl" class="email">d.m.bakker@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Postdoctoral Researcher
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+cooperation, normative behavior, social dilemmas, game theory, experimental sociology
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Been, dr. W.M.
+</td>
+<td style="text-align:left;">
+<a href="mailto:wike.been@rug.nl" class="email">wike.been@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Labour sociology
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Belloir, A.C., MA
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.c.belloir@rug.nl" class="email">a.c.belloir@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Lecturer and PhD Candidate
+</td>
+<td style="text-align:left;">
+Criminology &amp; Penology; Sociology; Public Administration
+</td>
+<td style="text-align:left;">
+Public Administration
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bilecen, B., Dr
+</td>
+<td style="text-align:left;">
+<a href="mailto:b.bilecen@rug.nl" class="email">b.bilecen@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate Professor of Sociology and Rosalind Franklin Fellow
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+<ul>
+<li>Sociology of migration and transnationalisation- Sociology of social inequalities - Sociology of higher education- Sociology of health and well-being- Personal network analysis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bock, prof. dr. ir. B.B.
+</td>
+<td style="text-align:left;">
+<a href="mailto:b.b.bock@rug.nl" class="email">b.b.bock@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Professor for Population Decline and Quality of Life in Northern Netherlands
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+rural development, social innovation, rural mobility and migration, rural magrinalisation, rural governance, participatory governance, animal welfare, rural gender, sustainable food production and consumption, green care, multifunctional agriculture
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bosman, dr. M.H.
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.h.bosman@rug.nl" class="email">m.h.bosman@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Lecturer / Policy Officer
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+sociology of education, school careers, inequality and stratification, family sociology
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bosman, M.P.W.J., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.p.w.j.bosman@rug.nl" class="email">m.p.w.j.bosman@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Boulil, D.Z., MA
+</td>
+<td style="text-align:left;">
+<a href="mailto:d.z.boulil@rug.nl" class="email">d.z.boulil@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+Sociology; Art; Social Sciences, Quantitative Methods
+</td>
+<td style="text-align:left;">
+cultural diplomacy, cultural entrepreneurship, cultural leadership
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bouman, dr. L.
+</td>
+<td style="text-align:left;">
+<a href="mailto:l.bouman@rug.nl" class="email">l.bouman@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+<td style="text-align:left;">
+Social Sciences, Interdisciplinary; Sociology; Social Sciences, Quantitative Methods
+</td>
+<td style="text-align:left;">
+Cooperation, Collective action, Social Innovation, Agent-Based Modelling, Experimental methods
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bras, prof. dr. H.A.J.
+</td>
+<td style="text-align:left;">
+<a href="mailto:h.a.j.bras@rug.nl" class="email">h.a.j.bras@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Aletta Jacobs Professor of Economic and Social History, with special attention to Global Demography and Health
+</td>
+<td style="text-align:left;">
+Demography; History of Medicine; Sociology
+</td>
+<td style="text-align:left;">
+Historical demography; Reproductive health; Maternal and child health; History of nursing; Gender; Inequalities; Medical and health humanities; sub-Saharan Africa
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Brennan, C.J., Dr
+</td>
+<td style="text-align:left;">
+<a href="mailto:c.j.brennan@rug.nl" class="email">c.j.brennan@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Marketing Advisor
+</td>
+<td style="text-align:left;">
+Sociology; Marketing
+</td>
+<td style="text-align:left;">
+International marketing and communications. Student recruitment. Social media. KPI analysis.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Carpenedo Rodrigues, M., PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.carpenedo.rodrigues@rug.nl" class="email">m.carpenedo.rodrigues@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant Professor in Christian Cultural Heritage in the Global South and Marie Curie Fellow
+</td>
+<td style="text-align:left;">
+Sociology; Religion; Anthropology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Castelein, prof. dr. S.
+</td>
+<td style="text-align:left;">
+<a href="mailto:s.castelein@rug.nl" class="email">s.castelein@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Professor of Recovery from Severe Mental Illness
+</td>
+<td style="text-align:left;">
+Behavioural Sciences; Psychology, Clinical; Sociology
+</td>
+<td style="text-align:left;">
+Mental health; psychiatry; recovery; psychosis; severe mental illness; psychosocial interventions; research in clinical practice; care standards
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cetinoglu, T., PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:t.cetinoglu@rug.nl" class="email">t.cetinoglu@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology; Political Science
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cowen, D.R., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:d.r.cowen@rug.nl" class="email">d.r.cowen@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD Student
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Agent-based Modeling, Social Networks, Web Scraping, Data Science, Cooperation
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+De Lacey, A.J.D., PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.j.d.de.lacey@rug.nl" class="email">a.j.d.de.lacey@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Music; Journalism; Sociology
+</td>
+<td style="text-align:left;">
+Dr Alex de Lacey is Assistant Professor in Popular Music at the University of Groningen, the Netherlands. He is the author of Level Up: Live Performance and Creative Process in Grime Music (Routledge, 2023). His research on rap music has been published in… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Dietz, M.B., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.b.dietz@rug.nl" class="email">m.b.dietz@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD Candidate
+</td>
+<td style="text-align:left;">
+Behavioural Sciences; Sociology
+</td>
+<td style="text-align:left;">
+Sociology, Clinical and Social Psychology
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Dijk, prof. dr. ir. C.E.M.J. van
+</td>
+<td style="text-align:left;">
+<a href="mailto:c.e.m.j.van.dijk@rug.nl" class="email">c.e.m.j.van.dijk@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Honorary professor Pharmacy Health Services Research
+</td>
+<td style="text-align:left;">
+Health Policy &amp; Services; Sociology; Pharmacy
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Dijkstra, dr. J.
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.dijkstra@rug.nl" class="email">j.dijkstra@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+game theory, exchange networks, collective decision making, mathematical sociology
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Dijkstra, dr. J.K.
+</td>
+<td style="text-align:left;">
+<a href="mailto:jan.dijkstra@rug.nl" class="email">jan.dijkstra@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+status, antisocial behavior, risk behavior,adolescence, social networks
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Duijn, prof. dr. M.A.J. van
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.a.j.van.duijn@rug.nl" class="email">m.a.j.van.duijn@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Full Professor of Statistics, in particular models for Social Network Analysis
+</td>
+<td style="text-align:left;">
+Statistics &amp; Probability; Sociology
+</td>
+<td style="text-align:left;">
+statistics, social network analysis, multilevel analysis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Feliciani, T.
+</td>
+<td style="text-align:left;">
+<a href="mailto:t.feliciani@rug.nl" class="email">t.feliciani@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD Student
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Social influence, opinion polarization, agent-based modeling, ethnic diversity, radical-right
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Flache, A., Prof
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.flache@rug.nl" class="email">a.flache@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Professor
+</td>
+<td style="text-align:left;">
+Sociology; Social Sciences, Quantitative Methods; Social Sciences, Interdisciplinary
+</td>
+<td style="text-align:left;">
+Social integration, Cooperation, Social networks, Agent-based modelling, Social complexity
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Flamind, A.A., MA
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.a.flamind@rug.nl" class="email">a.a.flamind@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+International Relations; Philosophy; Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Frey, V.C., PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:v.c.frey@rug.nl" class="email">v.c.frey@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+trust, cooperation, social networks, social influence, experiments
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gauthier, A.M.H.
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.m.h.gauthier@rug.nl" class="email">a.m.h.gauthier@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Honorary Professor of Comparative Family Studies
+</td>
+<td style="text-align:left;">
+Demography; Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gerner-Haan, M. van, PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:marieke.haan@rug.nl" class="email">marieke.haan@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+Social Sciences, Interdisciplinary; Sociology; Communication Studies
+</td>
+<td style="text-align:left;">
+Survey Methodology: mixed-mode and mixed-device surveys, targeting of hard-to-survey populations, interviewer-respondent interaction.</li>
+</ul>
+<p>Qualitative Research methods: interviews, focus groups, thematic analysis</p>
+Member Educational Committee Sociology
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Giardini, F., PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:f.giardini@rug.nl" class="email">f.giardini@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate professor
+</td>
+<td style="text-align:left;">
+Sociology; Social Sciences, Interdisciplinary; Computer Science, Interdisciplinary Applications
+</td>
+<td style="text-align:left;">
+Francesca is an interdisciplinary social scientist with a strong interest in micro-foundations of social phenomena. She uses theoretical analysis, agent-based modeling and lab experiments to investigate how individual minds are geared to achieve social sustainability and resilience. In her work she focuses on gossip and reputation as social mechanisms that, depending on the interplay betwen individual cognitions and network structure (within and between organizations), shape sustainable cooperation. She is interested in the realistic modeling of human behavior to improve risk communication, emergency management and disaster resilience. She is one of the coordinators of the Special Interest Group of the European Social Simulation Association SIG-BRICSS: Building Resilience with Social Simulations .
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Glebbeek, dr. A.C.
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.c.glebbeek@rug.nl" class="email">a.c.glebbeek@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+sociology of work, public policy, social welfare
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Goedkoop, F., PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:f.goedkoop@rug.nl" class="email">f.goedkoop@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD
+</td>
+<td style="text-align:left;">
+Sociology; Psychology, Social
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Groot, S. de
+</td>
+<td style="text-align:left;">
+<a href="mailto:s.de.groot@umcg.nl" class="email">s.de.groot@umcg.nl</a>
+</td>
+<td style="text-align:left;">
+PhD Candidate
+</td>
+<td style="text-align:left;">
+Public, Environmental &amp; Occupational Health; Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Heyse, dr. L.
+</td>
+<td style="text-align:left;">
+<a href="mailto:l.heyse@rug.nl" class="email">l.heyse@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate Professor of Sociology (with ius promovendi)
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+I study nonprofit and public organizations that aim to improve the situation and position of disadvantaged groups in society. I focus on the relationship between these organizations’ policies and interventions, their organizational features and the… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hiemstra, J.H.J., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.h.j.hiemstra@rug.nl" class="email">j.h.j.hiemstra@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD student
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Sociale netwerkanalyse, criminele netwerken
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hiemstra, S.R.
+</td>
+<td style="text-align:left;">
+<a href="mailto:s.r.hiemstra@rug.nl" class="email">s.r.hiemstra@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Junior Researcher ‘Statushoudersproject’
+</td>
+<td style="text-align:left;">
+Sociology; Public, Environmental &amp; Occupational Health; Psychology, Social
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Huisman, dr. J.M.E.
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.m.e.huisman@rug.nl" class="email">j.m.e.huisman@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+Social Sciences, Quantitative Methods; Statistics &amp; Probability; Sociology
+</td>
+<td style="text-align:left;">
+Statistics, missing data, multiple imputation, social network analysis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Huitsing, dr. G.E.
+</td>
+<td style="text-align:left;">
+<a href="mailto:g.e.huitsing@rug.nl" class="email">g.e.huitsing@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Bullying and victimization; Anti-bullying interventions; Social network analysis and interventions; Social-emotional development; Prosocial and antisocial behavior; Peer relations; Educational sociology.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ignatieva, A.
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.ignatieva@rug.nl" class="email">a.ignatieva@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Janietz, C., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:c.janietz@rug.nl" class="email">c.janietz@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jansen, dr. D.E.M.C.
+</td>
+<td style="text-align:left;">
+<a href="mailto:d.e.m.c.jansen@umcg.nl" class="email">d.e.m.c.jansen@umcg.nl</a>
+</td>
+<td style="text-align:left;">
+Associate professor Health systems and Organisation of care for children and adolescents
+</td>
+<td style="text-align:left;">
+Sociology; Health Policy &amp; Services; Medicine, General &amp; Internal
+</td>
+<td style="text-align:left;">
+Comparison of European health systems, organisation of care (public health, primary care and youth care), evaluation of care, children and adolescents, vulnerable families, medical sociology
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Kalmijn, prof. dr. M.
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.kalmijn@rug.nl" class="email">m.kalmijn@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Professor at NIDI
+</td>
+<td style="text-align:left;">
+Demography; Sociology
+</td>
+<td style="text-align:left;">
+Quantitative research, methods, statistics, demography, datacollection, family and life course, divorce, migration, social inequality, intergenerational relations.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Kiekens, dr. W.J.
+</td>
+<td style="text-align:left;">
+<a href="mailto:w.j.kiekens@rug.nl" class="email">w.j.kiekens@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistent Professor
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+LGBTQ+ youth, substance use (smoking, alcohol, marijuana), mental health (depression, anxiety), sexual orientation, gender identity
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Knibbe, dr. K.E.
+</td>
+<td style="text-align:left;">
+<a href="mailto:k.e.knibbe@rug.nl" class="email">k.e.knibbe@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate Professor Sociology and Anthropology of Religion
+</td>
+<td style="text-align:left;">
+Anthropology; Religion; Sociology
+</td>
+<td style="text-align:left;">
+Kim Knibbe is Associate Professor Anthropology and Sociology of Religion. In her work, she focuses on theorizing religion and culture inductively, based on ethnographic research, in pluralistic contexts. She has recently completed the 5 year project “Sexu… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Kuppens, T., Dr
+</td>
+<td style="text-align:left;">
+<a href="mailto:t.kuppens@rug.nl" class="email">t.kuppens@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+<td style="text-align:left;">
+Psychology, Multidisciplinary; Sociology
+</td>
+<td style="text-align:left;">
+My main current research interest is the study of social class, and educational background in particular. Combining sociological and social psychological approaches, we are using a social identity framework to understand the effect of education on social… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Kuschel, A., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.kuschel@rug.nl" class="email">a.kuschel@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD Student
+</td>
+<td style="text-align:left;">
+Psychology, Social; Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Laninga-Wijnen, A.M., M
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.m.laninga-wijnen@rug.nl" class="email">a.m.laninga-wijnen@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Postdoctoral fellow
+</td>
+<td style="text-align:left;">
+Sociology; Education, Special; Psychology, Clinical
+</td>
+<td style="text-align:left;">
+Lydia Laninga-Wijnen did her PhD at the department of Interdisciplinary Social Science, Utrecht University, The Netherlands. She has worked on the project “Social Network Analysis of Risk behavior in Early Adolescence” and examined the role of popular… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lavrov, I.
+</td>
+<td style="text-align:left;">
+<a href="mailto:i.lavrov@rug.nl" class="email">i.lavrov@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology; Organization Studies; Computer Science, Interdisciplinary Applications
+</td>
+<td style="text-align:left;">
+Ilya Lavrov is an interdisciplinary researcher specialising in resilient societies and decision-making in politics and business. With a keen interest in public policy, digitalisation, transdisciplinarity, cooperation and complex societal issues, he delves… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lee, S., PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:seonok.lee@rug.nl" class="email">seonok.lee@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+Sociology; Social Issues
+</td>
+<td style="text-align:left;">
+Dr. Seonok started working at the Department of Minority and Multilingualism in 2021. As a sociologist, she is interested in social inequalities in general. In particular, her expertise is in global labor migration, labor market integration, inequality,… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lindenberg, prof. dr. S.M., PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:s.m.lindenberg@rug.nl" class="email">s.m.lindenberg@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Full Professor of Cognitive Sociology
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+cognitive sociology, microfoundations for theories on collective phenomena, goal-framing theory, theory of goals and wellbeing (SPF theory), pro- and antisocial behavior solidarity, groups and relationships, community, governance in and of organizations, institutions
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lippényi, Z., PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:z.lippenyi@rug.nl" class="email">z.lippenyi@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Organizational SociologySociology of WorkSocial Inequality, Mobility, and Stratification
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Liu, J.
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.liu@rug.nl" class="email">j.liu@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Cognitive social structures, triadic relations model, perception of friendship
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Loseva, A., MA
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.loseva@rug.nl" class="email">a.loseva@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+intergroup relations, agent-based modeling, social networks
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lucardie, dr. A.P.M.
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.p.m.lucardie@rug.nl" class="email">a.p.m.lucardie@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Senior Research Fellow
+</td>
+<td style="text-align:left;">
+Political Science; Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Markantoni, dr. ing. M.
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.markantoni@rug.nl" class="email">m.markantoni@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Lecturer of Business and Entrepreneurship
+</td>
+<td style="text-align:left;">
+International Business; Business; Sociology
+</td>
+<td style="text-align:left;">
+Sustainable business models, energy citizenship, rural and regional development, community empowerment, community and rural resilience
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Martínez-Ariño, J., Dr
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.martinez.arino@rug.nl" class="email">j.martinez.arino@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant Professor of Sociology of Religion
+</td>
+<td style="text-align:left;">
+Sociology; Religion
+</td>
+<td style="text-align:left;">
+Sociology of religion, secularism, governance of religious diversity, cities, governance networks, public institutions, contempotary Jewish communities, non-religion, apostasy
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Matos Fernandes, C.A. de, MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:c.a.de.matos.fernandes@rug.nl" class="email">c.a.de.matos.fernandes@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD Candidate
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+cooperation, social preferences, social networks
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Michelakis, G., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:g.michelakis@rug.nl" class="email">g.michelakis@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Organizational Psychology; Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nientimp, D., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:d.nientimp@rug.nl" class="email">d.nientimp@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology; Behavioural Sciences
+</td>
+<td style="text-align:left;">
+Behavioral Change, Environmental Psychology, Habits, Human Robot Interaction
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nieuwenhuis, J.G., PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.g.nieuwenhuis@rug.nl" class="email">j.g.nieuwenhuis@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+<td style="text-align:left;">
+Sociology; Urban Studies
+</td>
+<td style="text-align:left;">
+Short clip (in Dutch): <a href="https://www.youtube.com/watch?v=E8WeU7KmIfs" class="uri">https://www.youtube.com/watch?v=E8WeU7KmIfs</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Noord, J.J.L. van
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.van.noord@rug.nl" class="email">j.van.noord@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Post-doc researcher
+</td>
+<td style="text-align:left;">
+Sociology; Psychology, Social
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nowak, T., Dr
+</td>
+<td style="text-align:left;">
+<a href="mailto:t.nowak@rug.nl" class="email">t.nowak@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant Professor of Political Science
+</td>
+<td style="text-align:left;">
+Political Science; Law; Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nuenen, dr. F.M. van
+</td>
+<td style="text-align:left;">
+<a href="mailto:f.m.van.nuenen@umcg.nl" class="email">f.m.van.nuenen@umcg.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology; Social Sciences, Biomedical
+</td>
+<td style="text-align:left;">
+Biopsychosociale benadering van gezondheidszorg
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Odding, M.C., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.c.odding@rug.nl" class="email">m.c.odding@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD student
+</td>
+<td style="text-align:left;">
+Sociology; Social Issues
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ouwendijk, A., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.ouwendijk@rug.nl" class="email">a.ouwendijk@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Junior Teacher Psychology &amp; Educational Sciences
+</td>
+<td style="text-align:left;">
+Education &amp; Educational Research; Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Palomares Linares, dr. M.I.
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.i.palomares@rug.nl" class="email">m.i.palomares@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology; Family Studies; Demography
+</td>
+<td style="text-align:left;">
+Residential (im)mobility, internal migration, family networks, metropolitan areas, neighbourhoods
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pardoel, Z.E.
+</td>
+<td style="text-align:left;">
+<a href="mailto:z.e.pardoel@umcg.nl" class="email">z.e.pardoel@umcg.nl</a>
+</td>
+<td style="text-align:left;">
+Researcher and PhD-student
+</td>
+<td style="text-align:left;">
+Sociology; Anthropology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pistocchi, V.
+</td>
+<td style="text-align:left;">
+<a href="mailto:v.pistocchi@rug.nl" class="email">v.pistocchi@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Hi! I am a sociologist and PhD candidate at the University of Trento.My research interests are in the fields of religion, intergroup relations, immigrant social and cultural integration, stereotyping and discrimination, gender, social network analysis,… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ploeg, dr. R. van der
+</td>
+<td style="text-align:left;">
+<a href="mailto:rozemarijn.van.der.ploeg@rug.nl" class="email">rozemarijn.van.der.ploeg@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+<td style="text-align:left;">
+Sociology; Social Sciences, Quantitative Methods; Social Sciences, Interdisciplinary
+</td>
+<td style="text-align:left;">
+Bullying, group processes and social statusPeer relations (social networks)Intervention research Quantitative research methods for longitudinal research
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Raven, dr. D.
+</td>
+<td style="text-align:left;">
+<a href="mailto:d.raven@rug.nl" class="email">d.raven@rug.nl</a>
+</td>
+<td style="text-align:left;">
+RoQua Scientific Coordinator
+</td>
+<td style="text-align:left;">
+Sociology; Psychiatry
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Redhead, D.J., PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:d.j.redhead@rug.nl" class="email">d.j.redhead@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology; Psychology, Multidisciplinary; Evolutionary Biology
+</td>
+<td style="text-align:left;">
+Social Hierarchy; Inequality; Human Behavioural Ecology; Cultural Evolution; Social Network Analysis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rengers, J.M., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.m.rengers@rug.nl" class="email">j.m.rengers@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology; Psychology, Social
+</td>
+<td style="text-align:left;">
+Workplace inclusion, disclosure, and identity management of employees with a concealable stigmatized minority identity, with a specific focus on lesbian, gay, and bisexual people
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Richardson, J.E.F., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.e.f.richardson@rug.nl" class="email">j.e.f.richardson@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PHD Researcher
+</td>
+<td style="text-align:left;">
+Psychology, Social; Sociology
+</td>
+<td style="text-align:left;">
+My (Phd) research focusses on social relations (e.g. social capital, group identity) and how they influence health and wellbeing. I study these proceses in the context of a larger (applied) project “Gronings Perpectief”, in which we study the social impact… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rol, dr. M.E.G.M.
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.e.g.m.rol@rug.nl" class="email">m.e.g.m.rol@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+Philosophy; Economics, General; Sociology
+</td>
+<td style="text-align:left;">
+scientific concept formation, relationship theory and policy, policy evaluation and policy reconstruction
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Roos, M., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.roos@rug.nl" class="email">m.roos@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+Sociology; Social Sciences, Quantitative Methods; Cultural Studies
+</td>
+<td style="text-align:left;">
+Research methods, problem-based learning, social identity &amp; cooperation
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Santara, S., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:s.santara@rug.nl" class="email">s.santara@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Scheuer, A., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.scheuer@rug.nl" class="email">a.scheuer@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD student
+</td>
+<td style="text-align:left;">
+Psychology; Psychology, Social; Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Schijf, J.E., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.e.schijf@rug.nl" class="email">j.e.schijf@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Policy Adviser Dean Faculty of Arts | PhD-student
+</td>
+<td style="text-align:left;">
+Education &amp; Educational Research; Sociology
+</td>
+<td style="text-align:left;">
+Policy Advisor Dean Faculty of Arts Within the Faculty of Arts, I work as advisor/secretary to the dean. My work focuses on advising on national policy issues related to the humanities discipline. I am secretary of the Disciplineoverleg Letteren en Geesteswetenschappen (Discipline Consultation Committee for the Arts and Humanities, DLG), which consists of the deans of all Faculties of Arts and Humanities in the Netherlands. I coordinate the national implementation of the Sectorplan Geesteswetenschappen (Humanities Sector Plan), administrative processes around the 16 national research schools and coordination with relevant discussion partners, for example the SSH Council, Ministry of Education and NWO (Dutch Research Council). PhD-student research group Higher Education (FBSS) Title: Interdisciplinary Understanding in Higher Education In recent years, higher education institutes have developed more and more interdisciplinary education programmes (in the Dutch context). These programmes aim, among other things, to teach students interdisciplinary understanding, translated into knowledge and skills that make it possible to cross disciplinary borders and contribute to complex solving. In this PhD trajectory, we investigate the acquisition of interdisciplinary understanding by Bachelor’s students who follow an interdisciplinary honours programme. We develop an instrument that measures interdisciplinary understanding, investigate which students participate in interdisciplinary education and their propensity for interdisciplinary understanding, examine what the interdisciplinary learning process looks like according to students and teachers and measure the extent to which students aquire interdisciplinary understanding over the period of a 3-year education programme. The research is conducted within the context of the Honours College of the University of Groningen and among high-achieving students who choose not to follow an interdisciplinary honours programme (control group). Promotores: dr. E.P.W.A. Jansen &amp; prof.dr. M.P.C. van der Werf
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sijtsema, dr. J.J.
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.j.sijtsema@rug.nl" class="email">j.j.sijtsema@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Education &amp; Educational Research; Psychology, Developmental; Sociology
+</td>
+<td style="text-align:left;">
+Adolescent psychology, social relationships, forensic psychology, behavioral development
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Silvestri, C., Dr
+</td>
+<td style="text-align:left;">
+<a href="mailto:c.silvestri@rug.nl" class="email">c.silvestri@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant Professor of Innovation Management &amp; Strategy
+</td>
+<td style="text-align:left;">
+Innovation &amp; Technology Management; Organization Studies; Sociology
+</td>
+<td style="text-align:left;">
+Theory: Impression Management | Social EvaluationsContexts: academic scientists, creative industries, professional cycling, hybrid organizations
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Sivak, E., MA
+</td>
+<td style="text-align:left;">
+<a href="mailto:e.sivak@rug.nl" class="email">e.sivak@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+computational social science, parenting, childhood, machine learning, R, Python
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Slot, L., MA
+</td>
+<td style="text-align:left;">
+<a href="mailto:l.slot@rug.nl" class="email">l.slot@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD student
+</td>
+<td style="text-align:left;">
+Sociology; Communication Studies
+</td>
+<td style="text-align:left;">
+Conversation Analysis, Text Analysis, Survey Research
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Smaniotto, dr. R.C.
+</td>
+<td style="text-align:left;">
+<a href="mailto:r.c.smaniotto@rug.nl" class="email">r.c.smaniotto@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+schrijfvaardigheid; evolutionaire sociologie
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Snijders, prof. dr. T.A.B.
+</td>
+<td style="text-align:left;">
+<a href="mailto:t.a.b.snijders@rug.nl" class="email">t.a.b.snijders@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Full Professor
+</td>
+<td style="text-align:left;">
+Statistics &amp; Probability; Social Sciences, Quantitative Methods; Sociology
+</td>
+<td style="text-align:left;">
+social networks, multilevel analysis, stochastic models in the social and behavioral sciences, statistics
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Soudias, D., Dr
+</td>
+<td style="text-align:left;">
+<a href="mailto:d.soudias@rug.nl" class="email">d.soudias@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology; Political Science; Cultural Studies
+</td>
+<td style="text-align:left;">
+Cultural Economy (Economy as Culture), NeoliberalismSocial Entrepreneurship, Solidarity EconomyHappiness, CreativitySociology of Space, Practice Theory, Governmentality &amp; SubjectivityRadical Politics, Protest, Radical ImaginationGreece, EgyptOrientalismQu… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Spoelder, A.B., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:afra.spoelder@rug.nl" class="email">afra.spoelder@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+As a Researcher in Orthopedagogy at the Academic Workplace for People with Profound Intellectual and Multiple Disabilities (PIMD), I conduct practice-oriented research. For the ‘Binding &amp; Bonding’ Project, I focus on the question: What motivates care… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stadel, M., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.stadel@rug.nl" class="email">m.stadel@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD student
+</td>
+<td style="text-align:left;">
+Psychology, Clinical; Psychometrics; Sociology
+</td>
+<td style="text-align:left;">
+Personal network data collection and experience sampling methodology applied to personalised psychotherapy. I also have a blog together with Nina Schwarzbach where we reflect on our PhD, clinical psychology and academia in general: <a href="https://www" class="uri">https://www</a>… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Steglich, dr. C.E.G.
+</td>
+<td style="text-align:left;">
+<a href="mailto:c.e.g.steglich@rug.nl" class="email">c.e.g.steglich@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+<td style="text-align:left;">
+Social Sciences, Quantitative Methods; Statistics &amp; Probability; Sociology
+</td>
+<td style="text-align:left;">
+social networks, stochastic modelling
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stein, J.D., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.d.stein@rug.nl" class="email">j.d.stein@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Analytical Sociology, Agent-based Modeling, Experimental Sociology, Social Networks, Computational Social Science
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Steverink, prof. dr. B.J.M.
+</td>
+<td style="text-align:left;">
+<a href="mailto:b.j.m.steverink@rug.nl" class="email">b.j.m.steverink@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate professor
+</td>
+<td style="text-align:left;">
+Gerontology; Sociology; Psychology
+</td>
+<td style="text-align:left;">
+aging , lifecourse, social relations,self-management and self-regulation, well-beinghappiness
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Strandvad, S.M., Dr
+</td>
+<td style="text-align:left;">
+<a href="mailto:s.m.strandvad@rug.nl" class="email">s.m.strandvad@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate Professor of Arts in Society
+</td>
+<td style="text-align:left;">
+Sociology; Cultural Studies
+</td>
+<td style="text-align:left;">
+My research focuses on cultural production processes. Merging inspiration from science and technology studies into the domain of sociology of art, I develop a pragmatist approach that turns attention to how evolving objects influence the social settings of… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stulp, dr. G.
+</td>
+<td style="text-align:left;">
+<a href="mailto:g.stulp@rug.nl" class="email">g.stulp@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate professor sociology
+</td>
+<td style="text-align:left;">
+Sociology; Evolutionary Biology; Demography
+</td>
+<td style="text-align:left;">
+fertility outcomes; data science in the social sciences; simulation; R; visualisation; human behavioural ecology; biosocial approach; height
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tang, T., Dr
+</td>
+<td style="text-align:left;">
+<a href="mailto:t.tang@rug.nl" class="email">t.tang@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology; Social Sciences, Interdisciplinary
+</td>
+<td style="text-align:left;">
+Agent-based model, Complex system, Network analysis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Teekens, T.P., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:t.p.teekens@rug.nl" class="email">t.p.teekens@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Postdoctoral Researcher
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+sustainable cooperation; organizational sociology; interprofessional education
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Timmerman, prof. dr. M.C.
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.c.timmerman@rug.nl" class="email">m.c.timmerman@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Full Professor (em)
+</td>
+<td style="text-align:left;">
+Social Sciences, Interdisciplinary; Sociology
+</td>
+<td style="text-align:left;">
+Youth studies; social and educational youth issues; youth participation; educational innovations; learning communities; active learning; gender; diversity
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tol, dr. D.G. van
+</td>
+<td style="text-align:left;">
+<a href="mailto:d.g.van.tol@umcg.nl" class="email">d.g.van.tol@umcg.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+Behavioural Sciences; Medical Ethics; Sociology
+</td>
+<td style="text-align:left;">
+Medische Ethiek, Medische Professionaliteit, Medische Sociologie
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tolsma, J.
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.tolsma@rug.nl" class="email">j.tolsma@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Professor
+</td>
+<td style="text-align:left;">
+Sociology; Social Sciences, Interdisciplinary; Social Issues
+</td>
+<td style="text-align:left;">
+Segregation, Inequality, Social Integration, Social Networks
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Trippenzee, M., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:m.trippenzee@rug.nl" class="email">m.trippenzee@rug.nl</a>
+</td>
+<td style="text-align:left;">
+(Junior) academic teacher
+</td>
+<td style="text-align:left;">
+Sociology; Demography; Language &amp; Linguistics
+</td>
+<td style="text-align:left;">
+As a (junior) academic teacher, I am involved in both giving workshops that are offered by SCOPE and researching the well-being of students. I believe that every student benefits from expanding its worldview. This can be done by having an open attitude… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Troost, dr. A.A.
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.a.troost@rug.nl" class="email">a.a.troost@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Postdoctoral researcher
+</td>
+<td style="text-align:left;">
+Geography; Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tumeltshammer, S.R., MA
+</td>
+<td style="text-align:left;">
+<a href="mailto:s.r.tumeltshammer@rug.nl" class="email">s.r.tumeltshammer@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD student
+</td>
+<td style="text-align:left;">
+Sociology; Organization Studies; Demography
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Valk, H.A.G. de, Prof
+</td>
+<td style="text-align:left;">
+<a href="mailto:h.a.g.de.valk@rug.nl" class="email">h.a.g.de.valk@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Honorary Professor of Migration and the life course
+</td>
+<td style="text-align:left;">
+Demography; Family Studies; Sociology
+</td>
+<td style="text-align:left;">
+International migration, demographic characteristics and behaviour of migrant populations, family formation, intergenerational relationships
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Veenstra, prof. dr. D.R.
+</td>
+<td style="text-align:left;">
+<a href="mailto:d.r.veenstra@rug.nl" class="email">d.r.veenstra@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Professor
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Bullying and victimization, prosocial and antisocial behavior, social network analysis, social norms, criminality and security
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vellinga-Dings, A.D., MA MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:a.d.vellinga-dings@rug.nl" class="email">a.d.vellinga-dings@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD Candidate
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Qualitative research | Self-management of well-being interventions
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Venema, S.D., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:s.d.venema@rug.nl" class="email">s.d.venema@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD student
+</td>
+<td style="text-align:left;">
+Criminology &amp; Penology; Sociology; Demography
+</td>
+<td style="text-align:left;">
+Child wellbeing and parental imprisonment
+Parent-child relationships and parental imprisonment
+Prison-based interventions aimed at strengthening parent-child relationships
+Child-friendly prisons
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vloedbeld, C.D.M., MA
+</td>
+<td style="text-align:left;">
+<a href="mailto:c.d.m.vloedbeld@rug.nl" class="email">c.d.m.vloedbeld@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD student
+</td>
+<td style="text-align:left;">
+Sociology; International Relations; Political Science
+</td>
+<td style="text-align:left;">
+Security studies
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Wal, dr. M. van der
+</td>
+<td style="text-align:left;">
+<a href="mailto:marieke.van.der.wal@rug.nl" class="email">marieke.van.der.wal@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Lecturer, Teacher trainer social science and citizenship
+</td>
+<td style="text-align:left;">
+Education &amp; Educational Research; Sociology
+</td>
+<td style="text-align:left;">
+Specifically teaching and measuring competencies and citizenship
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Weeting, J.C., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.c.weeting@rug.nl" class="email">j.c.weeting@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Graduate School Coordinator and Study Advisor Philosophy
+</td>
+<td style="text-align:left;">
+Psychology; Sociology; Philosophy
+</td>
+<td style="text-align:left;">
+Cooperation, Trust, Identity
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Werf, dr. H.M. van der
+</td>
+<td style="text-align:left;">
+<a href="mailto:h.m.van.der.werf@rug.nl" class="email">h.m.van.der.werf@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Health Policy &amp; Services; Sociology; Nursing
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Wielers, dr. R.J.J.
+</td>
+<td style="text-align:left;">
+<a href="mailto:r.j.j.wielers@rug.nl" class="email">r.j.j.wielers@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+Sociology of Work, Sociology of organisation
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Wiersma, S., MSc
+</td>
+<td style="text-align:left;">
+<a href="mailto:s.wiersma@rug.nl" class="email">s.wiersma@rug.nl</a>
+</td>
+<td style="text-align:left;">
+PhD student
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Wildt, dr. L.A.W.J. de
+</td>
+<td style="text-align:left;">
+<a href="mailto:lars.de.wildt@rug.nl" class="email">lars.de.wildt@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant Professor in Media &amp; Cultural Industries
+</td>
+<td style="text-align:left;">
+Cultural Studies; Sociology; Communication Studies
+</td>
+<td style="text-align:left;">
+Lars de Wildt studies how media cultures and industries make contemporary worldviews. Examples are how media industries construct ‘global’ culture and how local audiences consume it; how Western game developers sold religion to secular audiences; how… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Winkels, J.W.
+</td>
+<td style="text-align:left;">
+<a href="mailto:j.w.winkels@rug.nl" class="email">j.w.winkels@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Winter, P. de
+</td>
+<td style="text-align:left;">
+<a href="mailto:p.de.winter@rug.nl" class="email">p.de.winter@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+Sociology; Social Issues; Public Administration
+</td>
+<td style="text-align:left;">
+Sociology of LawEmpirical ResearchPolicy SciencesSocial Security
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Wittek, R.P.M., Prof
+</td>
+<td style="text-align:left;">
+<a href="mailto:r.p.m.wittek@rug.nl" class="email">r.p.m.wittek@rug.nl</a>
+</td>
+<td style="text-align:left;">
+Full Professor
+</td>
+<td style="text-align:left;">
+Sociology; Behavioural Sciences; Management; Business
+</td>
+<td style="text-align:left;">
+Subdisciplines Sociology of organizations - sociology of work - sociological theory - economic sociology - sociology of agingTopics Sustainable cooperation - governance - organizational control - organizational change - administrative reform -… read more
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Zijlstra, L., PhD
+</td>
+<td style="text-align:left;">
+<a href="mailto:l.zijlstra@rug.nl" class="email">l.zijlstra@rug.nl</a>
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Sociology; Philosophy; Psychology
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="python-1" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Python</h2>
+<pre class="python test"><code># Fetch the webpage
+url = &quot;https://www.rug.nl/about-ug/practical-matters/find-an-expert?lang=en&amp;discipline=Sociology&quot;
+response = requests.get(url)
+webpage = response.content
+
+# Parse the webpage
+soup = BeautifulSoup(webpage, &#39;html.parser&#39;)
+
+# Extract staff members
+staff_members = soup.select(&#39;.rug-ph-xs&#39;)
+
+# Verify the first entry
+first_staff_member = staff_members[0]
+second_staff_member = staff_members[1]
+print(first_staff_member.prettify())
+print(second_staff_member.prettify())
+
+# Extract names
+staff_names = [member.select_one(&#39;.rug-h3&#39;).get_text(strip=True) for member in staff_members]
+print(staff_names[:6])
+
+# Extract emails
+staff_emails = [member.select_one(&#39;.rug-mb-s:nth-child(1) .rug-width-s-20-24&#39;).get_text(strip=True) for member in staff_members]
+# Clean emails
+staff_emails = [re.sub(r&#39;[\r\n0-9+/]&#39;, &#39;&#39;, email) for email in staff_emails]
+staff_emails = [re.sub(r&#39;(.nl).*&#39;, r&#39;\1&#39;, email) for email in staff_emails]
+staff_emails = [email.replace(&#39; &#39;, &#39;@&#39;) for email in staff_emails]
+print(staff_emails[:6])
+
+# Extract fields of research and do the same cleaning (with the different characters we notice are in these fields)
+staff_expertise = [member.select_one(&#39;.rug-mb-s~ .rug-mb-s+ .rug-mb-s .rug-width-s-20-24&#39;).get_text(strip=True) for member in staff_members]
+staff_expertise = [expertise.replace(&#39;\r\n&#39;, &#39;; &#39;) for expertise in staff_expertise]
+print(staff_expertise[:6])
+
+# Extract roles
+staff_roles = [member.select_one(&#39;.rug-layout:nth-child(2) .rug-width-s-20-24&#39;).get_text(strip=True) for member in staff_members]
+print(staff_roles[:6])
+
+# Extract miscellaneous info
+staff_info = [member.select_one(&#39;.rug-h3+ .rug-mb-s&#39;).get_text(strip=True) for member in staff_members]
+print(staff_info[:6])
+
+# Combine data into a DataFrame
+rug_sociology_employees = pd.DataFrame({
+    &#39;Name&#39;: staff_names,
+    &#39;Email&#39;: staff_emails,
+    &#39;Role&#39;: staff_roles,
+    &#39;Expertise&#39;: staff_expertise,
+    &#39;Info&#39;: staff_info
+})
+
+# Display the DataFrame
+print(rug_sociology_employees.head())
+
+# Optionally save to a file
+#rug_sociology_employees.to_csv(&quot;rug_sociology_employees.csv&quot;, index=False)</code></pre>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlNjcmFwaW5nIFJVRyBTb2Npb2xvZ3kgZGVwYXJ0bWVudCINCmJpYmxpb2dyYXBoeTogcmVmZXJlbmNlcy5iaWINCmxpbmstY2l0YXRpb25zOiB5ZXMNCi0tLQ0KDQoNCg0KYGBge3IsIGdsb2JhbHNldHRpbmdzLCBlY2hvPUZBTFNFLCB3YXJuaW5nPUZBTFNFLCByZXN1bHRzPSdoaWRlJywgbWVzc2FnZT1GQUxTRX0NCmxpYnJhcnkoa25pdHIpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkgDQpsaWJyYXJ5KHJldGljdWxhdGUpDQpsaWJyYXJ5KGthYmxlRXh0cmEpDQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpDQpvcHRzX2NodW5rJHNldCh0aWR5Lm9wdHM9bGlzdCh3aWR0aC5jdXRvZmY9MTAwKSx0aWR5PVRSVUUsIHdhcm5pbmcgPSBGQUxTRSwgbWVzc2FnZSA9IEZBTFNFLGNvbW1lbnQgPSAiIz4iLCBjYWNoZT1UUlVFLCBjbGFzcy5zb3VyY2U9YygidGVzdCIpLCBjbGFzcy5vdXRwdXQ9YygidGVzdDMiKSkNCm9wdGlvbnMod2lkdGggPSAxMDApDQpyZ2w6OnNldHVwS25pdHIoKQ0KDQpjb2xvcml6ZSA8LSBmdW5jdGlvbih4LCBjb2xvcikge3NwcmludGYoIjxzcGFuIHN0eWxlPSdjb2xvcjogJXM7Jz4lczwvc3Bhbj4iLCBjb2xvciwgeCkgfQ0KYGBgDQoNCmBgYHtyIGtsaXBweSwgZWNobz1GQUxTRSwgaW5jbHVkZT1UUlVFLCBldmFsPVRSVUV9DQojIGluc3RhbGwucGFja2FnZXMoInJlbW90ZXMiLHJlcG9zID0gImh0dHA6Ly9jcmFuLnVzLnItcHJvamVjdC5vcmciKQ0KIyByZW1vdGVzOjppbnN0YWxsX2dpdGh1Yigicmxlc3VyL2tsaXBweSIpDQojIGtsaXBweTo6a2xpcHB5KGxhbmcgPSBjKCJyIiwgInB5dGhvbiIpLCBwb3NpdGlvbiA9IGMoJ3RvcCcsICdyaWdodCcpKQ0Ka2xpcHB5OjprbGlwcHkocG9zaXRpb24gPSBjKCd0b3AnLCAncmlnaHQnKSkNCiMga2xpcHB5OjprbGlwcHkoY29sb3IgPSAnZGFya3JlZCcpDQojIGtsaXBweTo6a2xpcHB5KHRvb2x0aXBfbWVzc2FnZSA9ICdDbGljayB0byBjb3B5JywgdG9vbHRpcF9zdWNjZXNzID0gJ0RvbmUnKQ0KYGBgDQoNCiMgUHJlcGFyYXRpb24NCg0KIyMgY2xlYW4gdXANCmBgYHtyLCBjbGVhbnVwLCByZXN1bHRzPSdoaWRlJ30NCnJtKGxpc3Q9bHMoKSkNCmdjKCkNCmBgYA0KDQo8YnI+DQoNCiMjIGdlbmVyYWwgY3VzdG9tIFIgZnVuY3Rpb25zDQoNCi0gYGZwYWNrYWdlLmNoZWNrYDogQ2hlY2sgaWYgcGFja2FnZXMgYXJlIGluc3RhbGxlZCAoYW5kIGluc3RhbGwgaWYgbm90KSBpbiBSDQotIGBmc2F2ZWA6IHNhdmUgZGF0YSB3aXRoIHRpbWUgc3RhbXAgaW4gY29ycmVjdCBkaXJlY3RvcnkNCi0gYGZsb2FkYDogbG9hZCBSLW9iamVjdHMgdW5kZXIgbmV3IG5hbWVzDQotIGBmc2hvd2RmYDogUHJpbnQgb2JqZWN0cyAoYHRpYmJsZWAgLyBgZGF0YS5mcmFtZWApIG5pY2VseSBvbiBzY3JlZW4gaW4gYC5SbWRgLg0KDQoNCmBgYHtyLCBjdXN0b21mdW5jfQ0KZnBhY2thZ2UuY2hlY2sgPC0gZnVuY3Rpb24ocGFja2FnZXMpIHsNCiAgICBsYXBwbHkocGFja2FnZXMsIEZVTiA9IGZ1bmN0aW9uKHgpIHsNCiAgICAgICAgaWYgKCFyZXF1aXJlKHgsIGNoYXJhY3Rlci5vbmx5ID0gVFJVRSkpIHsNCiAgICAgICAgICAgIGluc3RhbGwucGFja2FnZXMoeCwgZGVwZW5kZW5jaWVzID0gVFJVRSkNCiAgICAgICAgICAgIGxpYnJhcnkoeCwgY2hhcmFjdGVyLm9ubHkgPSBUUlVFKQ0KICAgICAgICB9DQogICAgfSkNCn0NCg0KZnNhdmUgPC0gZnVuY3Rpb24oeCwgZmlsZSwgbG9jYXRpb24gPSAiLi9sb2NhbC8iLCAuLi4pIHsNCiAgICBpZiAoIWRpci5leGlzdHMobG9jYXRpb24pKQ0KICAgICAgICBkaXIuY3JlYXRlKGxvY2F0aW9uKQ0KICAgIGRhdGVuYW1lIDwtIHN1YnN0cihnc3ViKCJbOi1dIiwgIiIsIFN5cy50aW1lKCkpLCAxLCA4KQ0KICAgIHRvdGFsbmFtZSA8LSBwYXN0ZShsb2NhdGlvbiwgZGF0ZW5hbWUsIGZpbGUsIHNlcCA9ICIiKQ0KICAgIHByaW50KHBhc3RlKCJTQVZFRDogIiwgdG90YWxuYW1lLCBzZXAgPSAiIikpDQogICAgc2F2ZSh4LCBmaWxlID0gdG90YWxuYW1lKQ0KfQ0KDQpmbG9hZCAgPC0gZnVuY3Rpb24oZmlsZU5hbWUpew0KICBsb2FkKGZpbGVOYW1lKQ0KICBnZXQobHMoKVtscygpICE9ICJmaWxlTmFtZSJdKQ0KfQ0KDQoNCmZzaG93ZGYgPC0gZnVuY3Rpb24oeCwgZGlnaXRzID0gMiwgLi4uKSB7DQogICAga25pdHI6OmthYmxlKHgsIGRpZ2l0cyA9IGRpZ2l0cywgImh0bWwiLCAuLi4pICU+JQ0KICAgICAgICBrYWJsZUV4dHJhOjprYWJsZV9zdHlsaW5nKGJvb3RzdHJhcF9vcHRpb25zID0gYygic3RyaXBlZCIsICJob3ZlciIpKSAlPiUNCiAgICAgICAga2FibGVFeHRyYTo6c2Nyb2xsX2JveCh3aWR0aCA9ICIxMDAlIiwgaGVpZ2h0ID0gIjMwMHB4IikNCn0NCmBgYA0KDQo8YnI+DQoNCiMjIG5lY2Vzc2FyeSBwYWNrYWdlcyB7LnRhYnNldCAudGFic2V0LWZhZGV9DQoNCi0gYHJ2ZXN0YDogcGFydCBvZiB0aWR5dmVyc2UsIG5vdCBuZWNlc3NhcnkgdG8gbG9hZCBzZXBlcmF0ZWx5ICANCi0gYHN0cmluZ3JgOiBmb3IgdGV4dCBtYW5pcHVsYXRpb24gIA0KLSBgeG1sMmA6IGBydmVzdGAgaXMgYnVpbGQgb24gYHhtbDJgIGJ1dCBhdCB0aW1lcyBhdCBpcyBoYW5keSB0byB1c2UgYHhtbDJgIGRpcmVjdGx5ICANCg0KIyMjIFINCg0KYGBge3IsIHBhY2thZ2VzLCByZXN1bHRzPSdoaWRlJywgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0NCnBhY2thZ2VzID0gYyggInJ2ZXN0IiwgInRpZHl2ZXJzZSIsICJzdHJpbmdyIiwieG1sMiIpDQpmcGFja2FnZS5jaGVjayhwYWNrYWdlcykNCnJtKHBhY2thZ2VzKQ0KYGBgDQoNCiMjIyBQeXRob24NCg0KTWFrZSBzdXJlIHlvdSBoYXZlIHRoZSByZXF1aXJlZCBsaWJyYXJpZXMgYnkgdHlwaW5nIGluIHRoZSBjb2RlIGJlbG93IGludG8geW91ciBjb25zb2xlDQpgYGB7YmFzaCwgZXZhbCA9IEZBTFNFfQ0KcGlwIGluc3RhbGwgcmVxdWVzdHMgYmVhdXRpZnVsc291cDQgcGFuZGFzDQpgYGAgDQoNCg0KDQo8YnI+DQoNCmFuZCBpbXBvcnQgbmVjZXNzYXJ5IG1vZHVsZXMNCg0KYGBge3B5dGhvbiwgZXZhbCA9IEZBTFNFfQ0KaW1wb3J0IHJlcXVlc3RzDQpmcm9tIGJzNCBpbXBvcnQgQmVhdXRpZnVsU291cA0KaW1wb3J0IHBhbmRhcyBhcyBwZA0KaW1wb3J0IHJlDQpgYGAgDQoNCjxicj4NCg0KIyMgSW5wdXQgdGhlIHN0YXRpYyBVUkwgeW91IHdpc2ggdG8gc2NyYXBlIHsudGFic2V0IC50YWJzZXQtZmFkZX0NCg0KIyMjIFINCg0KPCEtLSBgYGB7cn0gLS0+DQoNCjwhLS0gbGlicmFyeShjaHJvbW90ZSkgLS0+DQoNCjwhLS0gYiA8LSBDaHJvbW90ZVNlc3Npb24kbmV3KCkgLS0+DQoNCg0KPCEtLSBiJHZpZXcoKSAtLT4NCjwhLS0gYiRQYWdlJG5hdmlnYXRlKHVybCkgLS0+DQo8IS0tIHNlc3MgPC0gTGl2ZUhUTUwkbmV3KHVybCkgLS0+DQo8IS0tIHNlc3MkdmlldygpIC0tPg0KPCEtLSBzZXNzJGh0bWxfZWxlbWVudHMoIi5ydWctcGgteHMiKSAgLS0+DQo8IS0tIGBgYCAtLT4NCg0KDQpgYGB7ciwgcnZlc3QsIGV2YWwgPSBUUlVFfQ0KdXJsIDwtICJodHRwczovL3d3dy5ydWcubmwvYWJvdXQtdWcvcHJhY3RpY2FsLW1hdHRlcnMvZmluZC1hbi1leHBlcnQ/bGFuZz1lbiZkaXNjaXBsaW5lPVNvY2lvbG9neSINCg0KDQpSdWdTb2Npb2xvZ3kgPC0gcmVhZF9odG1sKHVybCkNCmBgYCANCjxicj4NCg0KDQojIyB7LnVubGlzdGVkIC51bm51bWJlcmVkfQ0KDQoNCjxicj4NCg0KLS0tDQoNCiMgU2NyYXBpbmcgc2Nob2xhciBuYW1lcyB7LnRhYnNldCAudGFic2V0LWZhZGV9DQoNCiMjIFINCg0KWW91IHdpbGwgbmVlZCB0byBrbm93IHRoZSB0YWdzIG9yIFhQYXRoIHRvIHRoZSBleGFjdCB0eXBlcyBvZiBlbGVtZW50cyB5b3UgYXJlIGxvb2tpbmcgZm9yLiBZb3UgY2FuIGRvIHRoaXMgYnkgaW5zcGVjdGluZyB0aGUgd2VicGFnZSBpdHNlbGYgYW5kIGZpbmRpbmcgdGhlIGNvbW1vbiBjb2RlIGJldHdlZW4gYWxsIGl0ZW1zIHlvdSB3YW50IHRvIGdldC4NCg0KQWx0ZXJuYXRpdmVseSwgeW91IGNhbiB1c2UgZXh0ZW5zaW9ucyBzdWNoIGFzIFNlbGVjdG9yIEdhZGdldCB0byBnZXQgdGhlIFhQYXRoIG9yIHRhZ3MgeW91IGFyZSBsb29raW5nIGZvci4gSGVyZSwgSSBhbSBpbnB1dHRpbmcgdGhlIGNvZGUgdXNlZCB0byBzcGVjaWZ5IGluZm9ybWF0aW9uIGZyb20gYW4gaW5kaXZpZHVhbCBzdGFmZiBtZW1iZXINCg0KYGBge3IsIGV2YWwgPSBUUlVFLCByZXN1bHRzID0gJ2FzaXMnfQ0KU3RhZmZtZW1iZXJzIDwtIFJ1Z1NvY2lvbG9neSAlPiUgaHRtbF9lbGVtZW50cygiLnJ1Zy1waC14cyIpDQpgYGANCg0KU3Vic2VxdWVudGx5IHZlcmlmeSB0aGF0IHRoZSBmaXJzdCBlbnRyeSBpbnRvIG15IHN0YWZmIG1lbWJlcnMgbGlzdCBpcyBpbmRlZWQgdGhlIGZpcnN0IHBlcnNvbiBvbiB0aGUgd2VicGFnZQ0KYGBge3IsIGV2YWwgPSBUUlVFLCByZXN1bHRzID0gJ2hvbGQnfQ0KeG1sX2NoaWxkKFN0YWZmbWVtYmVyc1tbMV1dLCAxKQ0KeG1sX2NoaWxkKFN0YWZmbWVtYmVyc1tbMl1dLCAxKQ0KYGBgDQoNCkFnYWluLCB0aGVuIHVzaW5nIFNlbGVjdG9yIEdhZGdldCBvciBsb29raW5nIGF0IHRoZSBzaW1pbGFyaXRpZXMgYmV0d2VlbiBlYWNoIGluZGl2aWR1YWwgc3RhZmYgbWVtYmVycyBsaXN0LCB3ZSBjYW4gZmluZCB0aGUgdGFnIHRoYXQgY29ycmVzcG9uZHMganVzdCB0byB0aGUgbmFtZXMsIGFuZCBleHRyYWN0IGp1c3QgdGhlIHRleHQgZnJvbSB0aGlzIHVzaW5nIGh0bWxfdGV4dDIuIEZvciB0aGUgZGlmZmVyZW5jZSBiZXR3ZWVuIFtodG1sX3RleHQvMl0oIGh0dHBzOi8vcnZlc3QudGlkeXZlcnNlLm9yZy9yZWZlcmVuY2UvaHRtbF90ZXh0Lmh0bWwpDQoNCmBgYHtyLCBldmFsID0gVFJVRSwgcmVzdWx0cyA9ICdhc2lzJ30NClN0YWZmTmFtZXMgPC0gU3RhZmZtZW1iZXJzICU+JSBodG1sX25vZGVzKCJkaXYiKSAlPiUgaHRtbF9lbGVtZW50cygiLnJ1Zy1oMyIpICU+JSBodG1sX3RleHQyKCkNCmhlYWQoU3RhZmZOYW1lcykNCmBgYA0KDQpTaW1pbGFybHksIHRoaXMgY2FuIGJlIGRvbmUgZm9yIG90aGVyIGluZm9ybWF0aW9uIGxpa2UgdGhlaXIgZW1haWwNCmBgYHtyLCBldmFsID0gVFJVRSwgcmVzdWx0cyA9ICdhc2lzJ30NClN0YWZmRW1haWwgPC0gU3RhZmZtZW1iZXJzICU+JSBodG1sX2VsZW1lbnQoIi5ydWctbWItczpudGgtY2hpbGQoMSkgLnJ1Zy13aWR0aC1zLTIwLTI0IikgJT4lIGh0bWxfdGV4dDIoKQ0KI25lY2Vzc2FyeSB0byBjbGVhbiB0ZXh0DQpTdGFmZkVtYWlsPC0gZ3N1YigiW1xyXG4wLTkrL10iLCAiIiwgU3RhZmZFbWFpbCkNCiNyZW1vdmUgYWxsIHRoZSB0cmFpbGluZyBzcGFjZXMgYWZ0ZXIgY2xlYW5pbmcgKHVzaW5nIHRoZSAoLm5sKS4qKSB3aGlsZSBzdGlsbCBrZWVwaW5nIHRoZSBlbmQgb2YgdGhlIGVtYWlsICh1c2luZyBcXDEpDQpTdGFmZkVtYWlsIDwtIGdzdWIoIigubmwpLioiLCAiXFwxIiwgU3RhZmZFbWFpbCkNCiNGaW5hbGx5LCB3ZSBzZWUgd2UgZGlkbnQgc2NyYXBlIHRoZSBAIChhcyBpdCBpcyBhIHN5bWJvbCB0aGF0IGFsc28gbWVhbnMgc29tZXRoaW5nIGVsc2UgaW4gaHRtbCBzbyB0aGUgaHRtbF90ZXh0IGZ1bmN0aW9uIGRpZG50IHRoaW5rIGl0IHdhcyB0ZXh0IGFuZCBzdWJzZXF1ZW50bHkgcmVtb3ZlZCBpdCkgc28gd2UgbXVzdCBwdXQgaXQgYmFjayBpbiBwbGFjZSBvZiB0aGUgc3BhY2UgaXQgbGVmdA0KU3RhZmZFbWFpbCA8LSBnc3ViKCIgIiwgIkAiLCBTdGFmZkVtYWlsKQ0KI2FuZCB0aGVuIHdlIGhhdmUgYWxsIDExOCBlbWFpbHMhDQpoZWFkKFN0YWZmRW1haWwpDQpgYGANCg0KRmllbHMgb2YgcmVzZWFyY2g6ICANCmBgYHtyLCBldmFsID0gVFJVRSwgcmVzdWx0cyA9ICdhc2lzJ30NClN0YWZmRXhwZXJ0ZXNlIDwtIFN0YWZmbWVtYmVycyAlPiUgaHRtbF9lbGVtZW50KCIucnVnLW1iLXN+IC5ydWctbWItcysgLnJ1Zy1tYi1zIC5ydWctd2lkdGgtcy0yMC0yNCIpICU+JSBodG1sX3RleHQyKCkNCiNIZXJlIHdlIHJlbW92ZSBsaW5lIGJyZWFrcyBhbmQgcmVwbGFjZSB0aGVtIHdpdGggc2VtaS1jb2xvbnMgDQpTdGFmZkV4cGVydGVzZTwtIGdzdWIoIltcclxuXSIsICI7ICIsIFN0YWZmRXhwZXJ0ZXNlKQ0KaGVhZChTdGFmZkV4cGVydGVzZSkNCmBgYA0KDQpGdW5jdGlvbi9yb2xlOiANCmBgYHtyLCBldmFsID0gVFJVRSwgcmVzdWx0cyA9ICdhc2lzJ30NClN0YWZmUm9sZSA8LSBTdGFmZm1lbWJlcnMgJT4lIGh0bWxfZWxlbWVudCgiLnJ1Zy1sYXlvdXQ6bnRoLWNoaWxkKDIpIC5ydWctd2lkdGgtcy0yMC0yNCIpICU+JSBodG1sX3RleHQyKCkNCmhlYWQoU3RhZmZSb2xlKQ0KYGBgDQoNCk1pc2MgSW5mbzoNCmBgYHtyLCAgZXZhbCA9IFRSVUUsIHJlc3VsdHMgPSAnYXNpcyd9DQpTdGFmZkluZm8gPC0gU3RhZmZtZW1iZXJzICU+JSBodG1sX2VsZW1lbnQoIi5ydWctaDMrIC5ydWctbWItcyIpICU+JSBodG1sX3RleHQyKCkNCmhlYWQoU3RhZmZJbmZvKQ0KYGBgDQoNCkFmdGVyIHdlIGdldCBhbGwgdGhlIGluZm9ybWF0aW9uIHdlIHdhbnQsIHdlIGNhbiB0aGVuIGNvbWJpbmUgaXQgaW50byBhIHNpbmdsZSBkYXRhZnJhbWUgdG8gYWxsb3cgZm9yIGJldHRlciBzdG9yYWdlIGFuZCBkYXRhIG1hbmlwdWxhdGlvbg0KYGBge3IsIGV2YWwgPSBUUlVFLCByZXN1bHRzID0gJ2FzaXMnfQ0KDQpSdWdTb2Npb2xvZ3lFbXBsb3llZXMgPC0gZGF0YS5mcmFtZShjYmluZChTdGFmZk5hbWVzLFN0YWZmRW1haWwsU3RhZmZSb2xlLFN0YWZmRXhwZXJ0ZXNlLFN0YWZmSW5mbykpDQoNCmZzaG93ZGYoUnVnU29jaW9sb2d5RW1wbG95ZWVzLCBjYXB0aW9uID0gIk91ciB0YWJsZSBvZiBhbGwgdGhlIFNvY2lvbG9neSBFbXBsb3llZXMgaW4gdGhlIFJ1RyIgKSANCg0KYGBgDQoNCiMjIFB5dGhvbg0KDQpgYGB7cHl0aG9uLCBldmFsID0gRkFMU0V9DQojIEZldGNoIHRoZSB3ZWJwYWdlDQp1cmwgPSAiaHR0cHM6Ly93d3cucnVnLm5sL2Fib3V0LXVnL3ByYWN0aWNhbC1tYXR0ZXJzL2ZpbmQtYW4tZXhwZXJ0P2xhbmc9ZW4mZGlzY2lwbGluZT1Tb2Npb2xvZ3kiDQpyZXNwb25zZSA9IHJlcXVlc3RzLmdldCh1cmwpDQp3ZWJwYWdlID0gcmVzcG9uc2UuY29udGVudA0KDQojIFBhcnNlIHRoZSB3ZWJwYWdlDQpzb3VwID0gQmVhdXRpZnVsU291cCh3ZWJwYWdlLCAnaHRtbC5wYXJzZXInKQ0KDQojIEV4dHJhY3Qgc3RhZmYgbWVtYmVycw0Kc3RhZmZfbWVtYmVycyA9IHNvdXAuc2VsZWN0KCcucnVnLXBoLXhzJykNCg0KIyBWZXJpZnkgdGhlIGZpcnN0IGVudHJ5DQpmaXJzdF9zdGFmZl9tZW1iZXIgPSBzdGFmZl9tZW1iZXJzWzBdDQpzZWNvbmRfc3RhZmZfbWVtYmVyID0gc3RhZmZfbWVtYmVyc1sxXQ0KcHJpbnQoZmlyc3Rfc3RhZmZfbWVtYmVyLnByZXR0aWZ5KCkpDQpwcmludChzZWNvbmRfc3RhZmZfbWVtYmVyLnByZXR0aWZ5KCkpDQoNCiMgRXh0cmFjdCBuYW1lcw0Kc3RhZmZfbmFtZXMgPSBbbWVtYmVyLnNlbGVjdF9vbmUoJy5ydWctaDMnKS5nZXRfdGV4dChzdHJpcD1UcnVlKSBmb3IgbWVtYmVyIGluIHN0YWZmX21lbWJlcnNdDQpwcmludChzdGFmZl9uYW1lc1s6Nl0pDQoNCiMgRXh0cmFjdCBlbWFpbHMNCnN0YWZmX2VtYWlscyA9IFttZW1iZXIuc2VsZWN0X29uZSgnLnJ1Zy1tYi1zOm50aC1jaGlsZCgxKSAucnVnLXdpZHRoLXMtMjAtMjQnKS5nZXRfdGV4dChzdHJpcD1UcnVlKSBmb3IgbWVtYmVyIGluIHN0YWZmX21lbWJlcnNdDQojIENsZWFuIGVtYWlscw0Kc3RhZmZfZW1haWxzID0gW3JlLnN1YihyJ1tcclxuMC05Ky9dJywgJycsIGVtYWlsKSBmb3IgZW1haWwgaW4gc3RhZmZfZW1haWxzXQ0Kc3RhZmZfZW1haWxzID0gW3JlLnN1YihyJygubmwpLionLCByJ1wxJywgZW1haWwpIGZvciBlbWFpbCBpbiBzdGFmZl9lbWFpbHNdDQpzdGFmZl9lbWFpbHMgPSBbZW1haWwucmVwbGFjZSgnICcsICdAJykgZm9yIGVtYWlsIGluIHN0YWZmX2VtYWlsc10NCnByaW50KHN0YWZmX2VtYWlsc1s6Nl0pDQoNCiMgRXh0cmFjdCBmaWVsZHMgb2YgcmVzZWFyY2ggYW5kIGRvIHRoZSBzYW1lIGNsZWFuaW5nICh3aXRoIHRoZSBkaWZmZXJlbnQgY2hhcmFjdGVycyB3ZSBub3RpY2UgYXJlIGluIHRoZXNlIGZpZWxkcykNCnN0YWZmX2V4cGVydGlzZSA9IFttZW1iZXIuc2VsZWN0X29uZSgnLnJ1Zy1tYi1zfiAucnVnLW1iLXMrIC5ydWctbWItcyAucnVnLXdpZHRoLXMtMjAtMjQnKS5nZXRfdGV4dChzdHJpcD1UcnVlKSBmb3IgbWVtYmVyIGluIHN0YWZmX21lbWJlcnNdDQpzdGFmZl9leHBlcnRpc2UgPSBbZXhwZXJ0aXNlLnJlcGxhY2UoJ1xyXG4nLCAnOyAnKSBmb3IgZXhwZXJ0aXNlIGluIHN0YWZmX2V4cGVydGlzZV0NCnByaW50KHN0YWZmX2V4cGVydGlzZVs6Nl0pDQoNCiMgRXh0cmFjdCByb2xlcw0Kc3RhZmZfcm9sZXMgPSBbbWVtYmVyLnNlbGVjdF9vbmUoJy5ydWctbGF5b3V0Om50aC1jaGlsZCgyKSAucnVnLXdpZHRoLXMtMjAtMjQnKS5nZXRfdGV4dChzdHJpcD1UcnVlKSBmb3IgbWVtYmVyIGluIHN0YWZmX21lbWJlcnNdDQpwcmludChzdGFmZl9yb2xlc1s6Nl0pDQoNCiMgRXh0cmFjdCBtaXNjZWxsYW5lb3VzIGluZm8NCnN0YWZmX2luZm8gPSBbbWVtYmVyLnNlbGVjdF9vbmUoJy5ydWctaDMrIC5ydWctbWItcycpLmdldF90ZXh0KHN0cmlwPVRydWUpIGZvciBtZW1iZXIgaW4gc3RhZmZfbWVtYmVyc10NCnByaW50KHN0YWZmX2luZm9bOjZdKQ0KDQojIENvbWJpbmUgZGF0YSBpbnRvIGEgRGF0YUZyYW1lDQpydWdfc29jaW9sb2d5X2VtcGxveWVlcyA9IHBkLkRhdGFGcmFtZSh7DQogICAgJ05hbWUnOiBzdGFmZl9uYW1lcywNCiAgICAnRW1haWwnOiBzdGFmZl9lbWFpbHMsDQogICAgJ1JvbGUnOiBzdGFmZl9yb2xlcywNCiAgICAnRXhwZXJ0aXNlJzogc3RhZmZfZXhwZXJ0aXNlLA0KICAgICdJbmZvJzogc3RhZmZfaW5mbw0KfSkNCg0KIyBEaXNwbGF5IHRoZSBEYXRhRnJhbWUNCnByaW50KHJ1Z19zb2Npb2xvZ3lfZW1wbG95ZWVzLmhlYWQoKSkNCg0KIyBPcHRpb25hbGx5IHNhdmUgdG8gYSBmaWxlDQojcnVnX3NvY2lvbG9neV9lbXBsb3llZXMudG9fY3N2KCJydWdfc29jaW9sb2d5X2VtcGxveWVlcy5jc3YiLCBpbmRleD1GYWxzZSkNCmBgYCANCg0K</div>
+<style>
+  .center {
+    text-align: center;
+    color: red;
+  }
+</style>
+  
+  <hr>
+  <br>
+  <p class="center">Copyright &copy; 2024 Jochem Tolsma </p>
+    
+    
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("11scholars.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

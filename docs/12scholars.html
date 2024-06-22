@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Scraping RU Sociology department</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+<link rel="stylesheet" href="tweaks.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sunbelt 2024 Workshop: Webscraping</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Scholars
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="10scholars.html">Scholars I</a>
+    </li>
+    <li>
+      <a href="11scholars.html">Scholars II</a>
+    </li>
+    <li>
+      <a href="12scholars.html">Scholars III</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Attributes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="20names.html">Names</a>
+    </li>
+    <li>
+      <a href="30genderizeR.html">Genderize</a>
+    </li>
+    <li>
+      <a href="40publications.html">Publications</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/JochemTolsma/webscraping">
+    <span class="fab fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Scraping RU Sociology department</h1>
+
+</div>
+
+
+<p>In this last part of scraping names, we will show how to mimic a human webbrowsing activity. We will use RSelenium / Selenium for this. This can be a bit complicated to get up and running. For example, you need to hava Java installed.</p>
+<p>Especially the R documentation is not great.
+In R, there is a relatively new package <code>selendir</code> which looks promising.</p>
+<p>Because we will be interacting with websites, we did not show our output on this page.</p>
+<div id="preparation" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Preparation</h1>
+<div id="clean-up" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> clean up</h2>
+<pre class="r test"><code>rm(list = ls())
+gc()</code></pre>
+<p><br></p>
+</div>
+<div id="general-custom-r-functions" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> general custom R functions</h2>
+<ul>
+<li><code>fpackage.check</code>: Check if packages are installed (and install if not) in R</li>
+<li><code>fsave</code>: save data with time stamp in correct directory</li>
+<li><code>fload</code>: load R-objects under new names</li>
+<li><code>fshowdf</code>: Print objects (<code>tibble</code> / <code>data.frame</code>) nicely on screen in <code>.Rmd</code>.</li>
+</ul>
+<pre class="r test"><code>fpackage.check &lt;- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave &lt;- function(x, file, location = &quot;./local/&quot;, ...) {
+    if (!dir.exists(location))
+        dir.create(location)
+    datename &lt;- substr(gsub(&quot;[:-]&quot;, &quot;&quot;, Sys.time()), 1, 8)
+    totalname &lt;- paste(location, datename, file, sep = &quot;&quot;)
+    print(paste(&quot;SAVED: &quot;, totalname, sep = &quot;&quot;))
+    save(x, file = totalname)
+}
+
+fload &lt;- function(fileName) {
+    load(fileName)
+    get(ls()[ls() != &quot;fileName&quot;])
+}
+
+fshowdf &lt;- function(x, digits = 2, ...) {
+    knitr::kable(x, digits = digits, &quot;html&quot;, ...) %&gt;%
+        kableExtra::kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;)) %&gt;%
+        kableExtra::scroll_box(width = &quot;100%&quot;, height = &quot;300px&quot;)
+}</code></pre>
+<p><br></p>
+</div>
+<div id="necessary-packages" class="section level2 tabset tabset-fade" number="1.3">
+<h2><span class="header-section-number">1.3</span> necessary packages</h2>
+<div id="r" class="section level3" number="1.3.1">
+<h3><span class="header-section-number">1.3.1</span> R</h3>
+<pre class="r test"><code>packages = c(&quot;RSelenium&quot;, &quot;rvest&quot;, &quot;tidyverse&quot;, &quot;netstat&quot;, &quot;pingr&quot;, &quot;stringr&quot;)
+fpackage.check(packages)
+rm(packages)</code></pre>
+</div>
+<div id="python" class="section level3" number="1.3.2">
+<h3><span class="header-section-number">1.3.2</span> Python</h3>
+<p>Install the newest version of the <code>selenium</code> module inside a virtual environment, by typing in your terminal the below command:</p>
+<pre class="bash test"><code>pip install -U selenium</code></pre>
+<p><br></p>
+<p>and import necessary modules</p>
+<pre class="python test"><code>import selenium
+import time
+
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By</code></pre>
+<p><br></p>
+</div>
+</div>
+<div id="set-up-selenium" class="section level2 tabset tabset-fade" number="1.4">
+<h2><span class="header-section-number">1.4</span> set up Selenium</h2>
+<div id="r-1" class="section level3" number="1.4.1">
+<h3><span class="header-section-number">1.4.1</span> R</h3>
+<pre class="r test"><code># find a free port
+port &lt;- netstat::free_port(random = TRUE)
+
+# ping port for confirmation
+pingr::ping_port(&quot;localhost&quot;, port)</code></pre>
+<p>Set up selenium server and browser (firefox is recommended)
+An issue with <code>RSelenium::rsDriver</code> is that it is configured to launch the Selenium server with the latest versions of Chrome <em>and</em> Firefox drivers, <em>even if you have specified the other browser to run</em>. To solve this, pass in <code>NULL</code> in the Chrome driver version <code>chromever</code>!</p>
+<pre class="r test"><code>rD &lt;- rsDriver(browser = &quot;firefox&quot;, port = port, chromever = NULL, verbose = FALSE)
+remDr &lt;- rD[[&quot;client&quot;]]</code></pre>
+<p><br></p>
+<p>If at any time you wish to terminate the process, use the code:</p>
+<pre class="r test"><code>pid &lt;- rD$server$process$get_pid()  #get process id
+system(paste0(&quot;Taskkill /F /T&quot;, &quot; /PID &quot;, pid))</code></pre>
+</div>
+<div id="python-1" class="section level3" number="1.4.2">
+<h3><span class="header-section-number">1.4.2</span> Python</h3>
+<pre class="python test"><code>remDr = webdriver.Firefox()</code></pre>
+<p><br></p>
+<p>If at any time you wish to terminate the process, use the code:</p>
+<pre class="python test"><code>remDr.close()</code></pre>
+</div>
+</div>
+<div id="section" class="section level2 unlisted unnumbered">
+<h2 class="unlisted unnumbered"></h2>
+<p><br></p>
+<hr />
+</div>
+</div>
+<div id="scraping-scholar-names" class="section level1 tabset tabset-fade" number="2">
+<h1><span class="header-section-number">2</span> Scraping scholar names</h1>
+<div id="r-2" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> R</h2>
+<pre class="r test"><code># navigate to RU staff page
+remDr$navigate(&quot;https://www.ru.nl/en/search/scope/staff/&quot;)
+
+# handle cookies
+remDr$findElement(using = &quot;css&quot;, value = &quot;.agree-button&quot;)$highlightElement()
+remDr$findElement(using = &quot;css&quot;, value = &quot;.agree-button&quot;)$clickElement()
+
+cookies &lt;- remDr$getAllCookies()
+saveRDS(cookies, &quot;cookies.rds&quot;)
+remDr$addCookie(name = cookies[[1]][[&quot;name&quot;]], value = cookies[[1]][[&quot;value&quot;]])
+
+remDr$maxWindowSize()</code></pre>
+<p>We want to get scholars from the sociology department; so we use the website’s collapsible lists
+and expand content under Radboud University.</p>
+<p>We use the <code>highlightElement()</code> function to demonstrate where we are on the website.</p>
+<pre class="r test"><code>remDr$findElement(using = &quot;class name&quot;, value = &quot;facet-list__expand-sub&quot;)$highlightElement()
+remDr$findElement(using = &quot;class name&quot;, value = &quot;facet-list__expand-sub&quot;)$clickElement()
+
+# we have to expand the list
+remDr$findElement(using = &quot;class name&quot;, value = &quot;btn--show-hide&quot;)$highlightElement()
+remDr$findElement(using = &quot;class name&quot;, value = &quot;btn--show-hide&quot;)$clickElement()</code></pre>
+<p>Expand content under Faculty of social science (dep id 961) using its xpath.<br />
+Note, this is the html:</p>
+<pre><code>&lt;button class=&quot;facet-list__expand-sub is-active&quot; aria-controls=&quot;toggle-staff-department-961&quot; aria-expanded=&quot;false&quot; data-once=&quot;ruHierarchicalFacetsClick&quot; style=&quot;&quot;&gt;&lt;span class=&quot;visually-hidden&quot;&gt;Hide filters&lt;/span&gt;-&lt;/button&gt;</code></pre>
+<p>This translates into the xpath shown below. Note here we use a compound class!<br />
+Difficulties with xpath? Have a look <a href="https://www.w3schools.com/xml/xpath_intro.asp">here</a></p>
+<p>There seems to be a small bug in the website which breaks our code. Let us try to fix this in class.</p>
+<pre class="r test"><code>remDr$findElement(using = &quot;xpath&quot;, value = &quot;//button[@class=&#39;facet-list__expand-sub&#39; and @aria-controls=&#39;toggle-staff-department-961&#39;]&quot;)$highlightElement()
+
+#If you would follow the complete html structure you will arrive at the same point. 
+remDr$findElement(using = &quot;xpath&quot;, value = &quot;/html/body/div[1]/div/div[1]/aside/div/div[27]/div/ul/li/div/ul/li[9]/button&quot;)$highlightElement()
+
+#and click
+remDr$findElement(using = &quot;xpath&quot;, value = &quot;//button[@class=&#39;facet-list__expand-sub&#39; and @aria-controls=&#39;toggle-staff-department-961&#39;]&quot;)$clickElement()
+
+#here is the bug. not all departments are shown. you have to click on less and more. 
+
+#click on sociology
+remDr$findElement(using = &quot;xpath&quot;, value = &quot;//input[@type=&#39;checkbox&#39; and @class=&#39;facets-checkbox&#39; and @id=&#39;staff-department-992&#39;]&quot;)$clickElement()
+
+#among all staff members, select researchers
+
+remDr$findElement(using = &quot;xpath&quot;, value = &quot;//input[@type=&#39;checkbox&#39; and @class=&#39;facets-checkbox&#39; and @id=&#39;staff-staff-researchers&#39;]&quot;)$highlightElement()
+
+#more complicated but insightful 
+remDr$findElement(using = &quot;id&quot;, value = &quot;block-staffstaff&quot;)$highlightElement()
+
+remDr$findElement(using = &quot;id&quot;, value = &quot;block-staffstaff&quot;)$getElementText()
+
+#first get categories:
+remDr$findElement(using = &quot;id&quot;, value = &quot;block-staffstaff&quot;)$getElementText() %&gt;% #get element text;
+  unlist(.) %&gt;% #unlist
+  strsplit(., &quot;\n&quot;) %&gt;% #split by \n
+  .[[1]] %&gt;% #take the first element from the list
+  .[-1] -&gt; staff_cats #remove the header &quot;staff&quot;
+
+#take the indicator of researchers
+researchers &lt;- grep(&quot;Researchers&quot;, staff_cats)   
+
+#check the corresponding checkbox
+remDr$findElements(using = &quot;class name&quot;, value = &quot;facets-checkbox&quot;)[[researchers]]$clickElement()</code></pre>
+<p>Naturally, this can also be achieved by using the URL <a href="https://www.ru.nl/en/search/scope/staff/staff-department/X/staff-staff/researchers" class="uri">https://www.ru.nl/en/search/scope/staff/staff-department/X/staff-staff/researchers</a>, where X should be replaced by department-id, which can be stored in a list beforehand (this is useful if we want multiple departments of a faculty)</p>
+<p>Now we have all sociology researchers (or of any other department) but these are spread across multiple pages.<br />
+To know how many pages there are we navigate to the “last” page first, save the last page, go back and loop through all pages:</p>
+<pre class="r test"><code>remDr$findElements(&quot;class name&quot;, &quot;pager__link-text&quot;)[[2]]$clickElement()
+
+#get the page number of this page
+npages &lt;- remDr$findElement(using = &quot;xpath&quot;, &quot;//a[@aria-current=&#39;page&#39;]&quot;)$getElementText() %&gt;%
+  unlist(.) %&gt;% #unlist
+  strsplit(., &quot;\n&quot;) %&gt;% #split by \n
+  .[[1]] %&gt;%
+  .[2] %&gt;%
+  as.numeric(.)
+
+#go back to the first page
+remDr$findElements(&quot;class name&quot;, &quot;pager__link-text&quot;)[[1]]$clickElement()
+
+#get all elements with class name &quot;card__title&quot;; these refer to names of researchers, on the first page. Retrieve the text:
+names_page &lt;- unlist(lapply(remDr$findElements(&quot;class name&quot;, &quot;card__title&quot;),
+                     function(x) x$getElementText()))
+
+#now repeat this for the other pages in 1:npages-1
+page1 &lt;- remDr$getCurrentUrl()
+
+for ( i in 1:(npages-1)) { 
+  #increment page 
+  newpage &lt;- sub(&quot;page=0$&quot;, paste0(&quot;page=&quot;, i), page1)
+  #navigate to the page
+  remDr$navigate(newpage)
+  #retrieve names
+  new_names &lt;- unlist(lapply(remDr$findElements(&quot;class name&quot;, &quot;card__title&quot;),
+                     function(x) x$getElementText()))
+  #and add to the names_page object:
+  names_page &lt;- c(names_page, new_names)
+  #add sleeper:
+  Sys.sleep(2)
+}
+
+#all names!
+print(names_page)
+length(names_page)</code></pre>
+</div>
+<div id="python-2" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Python</h2>
+<pre class="python test"><code>#navigate to RU staff page
+remDr.get(&quot;https://www.ru.nl/en/search/scope/staff/&quot;)
+
+remDr.maximize_window()
+
+#we want to get scholars from the sociology department; so we use the website&#39;s collapsible lists
+#expand content under Radboud University
+remDr.find_element(By.CLASS_NAME, &quot;facet-list__expand-sub&quot;).click()
+
+#expand content under Faculty of social science (dep id 961)
+#using its xpath
+remDr.find_element(By.XPATH, &quot;//button[@class=&#39;facet-list__expand-sub&#39; and @aria-controls=&#39;toggle-staff-department-961&#39;]&quot;).click()
+
+#click on sociology
+remDr.find_element(By.XPATH, &quot;//input[@type=&#39;checkbox&#39; and @class=&#39;facets-checkbox&#39; and @id=&#39;staff-department-992&#39;]&quot;).click()
+
+#among all staff members, select researchers
+#get the indicator of the checkbox that is &quot;Researchers&quot;;
+
+#first get categories:
+staff_cats = remDr.find_element(By.ID, &quot;block-staffstaff&quot;).text.split(&quot;\n&quot;)[1:]
+
+#take the indicator of &quot;researchers&quot;
+researchers = [i for i, cat in enumerate(staff_cats) if &quot;Researchers&quot; in cat][0]
+
+#check the corresponding checkbox
+remDr.find_elements(By.CLASS_NAME, &quot;facets-checkbox&quot;)[researchers].click()
+
+#naturally this can also be achieved by using the URL https://www.ru.nl/en/search/scope/staff/staff-department/X/staff-staff/researchers, where X should be replaced by department-id, which can be stored in a list beforehand (this is useful if we want multiple departments of a faculty)
+
+##################################################################################################
+
+#now we have all sociology researchers (or of any other department);
+#but this is spread across multiple pages;
+#to know how many pages there are - and thus through how many we must scrape - we navigate to the &quot;last&quot; page first;
+remDr.find_elements(By.CLASS_NAME, &quot;pager__link-text&quot;)[1].click()
+
+#get the page number of this page
+npages = int(remDr.find_element(By.XPATH, &quot;//a[@aria-current=&#39;page&#39;]&quot;).text.split(&quot;\n&quot;)[1])
+  
+#go back to the first page
+remDr.find_elements(By.CLASS_NAME, &quot;pager__link-text&quot;)[0].click()
+
+#get all elements with class name &quot;card__title&quot;; these refer to names of researchers, on the first page. Retrieve the text:
+names_page = [elem.text for elem in remDr.find_elements(By.CLASS_NAME, &quot;card__title&quot;)]
+
+#now repeat this for the other pages
+page1 = remDr.current_url
+
+for i in range(1, npages):
+  #increment page
+  newpage = page1.replace(&quot;page=0&quot;, f&quot;page={i}&quot;)
+  print(str(&quot;navigating to: &quot;) + newpage)
+  time.sleep(0.5)
+  #navigate to the page
+  remDr.get(newpage)
+  time.sleep(0.5)
+  #retrieve names
+  new_names = [elem.text for elem in remDr.find_elements(By.CLASS_NAME, &quot;card__title&quot;)]
+  #and add to the names_page object:
+  names_page.extend(new_names)
+  #add sleeper:
+  time.sleep(2)
+
+#all names!
+print(names_page)
+len(names_page)</code></pre>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlNjcmFwaW5nIFJVIFNvY2lvbG9neSBkZXBhcnRtZW50Ig0KYmlibGlvZ3JhcGh5OiByZWZlcmVuY2VzLmJpYg0KbGluay1jaXRhdGlvbnM6IHllcw0KLS0tDQoNCg0KDQpgYGB7ciwgZ2xvYmFsc2V0dGluZ3MsIGVjaG89RkFMU0UsIHdhcm5pbmc9RkFMU0UsIHJlc3VsdHM9J2hpZGUnLCBtZXNzYWdlPUZBTFNFfQ0KbGlicmFyeShrbml0cikNCmxpYnJhcnkodGlkeXZlcnNlKSANCmxpYnJhcnkocmV0aWN1bGF0ZSkNCmtuaXRyOjpvcHRzX2NodW5rJHNldChlY2hvID0gVFJVRSkNCm9wdHNfY2h1bmskc2V0KHRpZHkub3B0cz1saXN0KHdpZHRoLmN1dG9mZj0xMDApLHRpZHk9VFJVRSwgd2FybmluZyA9IEZBTFNFLCBtZXNzYWdlID0gRkFMU0UsIGV2YWwgPSBGQUxTRSwgY29tbWVudCA9ICIjPiIsIGNhY2hlPVRSVUUsIGNsYXNzLnNvdXJjZT1jKCJ0ZXN0IiksIGNsYXNzLm91dHB1dD1jKCJ0ZXN0MyIpKQ0Kb3B0aW9ucyh3aWR0aCA9IDEwMCkNCnJnbDo6c2V0dXBLbml0cigpDQoNCmNvbG9yaXplIDwtIGZ1bmN0aW9uKHgsIGNvbG9yKSB7c3ByaW50ZigiPHNwYW4gc3R5bGU9J2NvbG9yOiAlczsnPiVzPC9zcGFuPiIsIGNvbG9yLCB4KSB9DQpgYGANCg0KYGBge3Iga2xpcHB5LCBlY2hvPUZBTFNFLCBpbmNsdWRlPVRSVUV9DQojaW5zdGFsbC5wYWNrYWdlcygicmVtb3RlcyIpDQojcmVtb3Rlczo6aW5zdGFsbF9naXRodWIoInJsZXN1ci9rbGlwcHkiKQ0Ka2xpcHB5OjprbGlwcHkobGFuZyA9IGMoInIiLCAicHl0aG9uIiksIHBvc2l0aW9uID0gYygndG9wJywgJ3JpZ2h0JykpDQoNCiNrbGlwcHk6OmtsaXBweShjb2xvciA9ICdkYXJrcmVkJykNCiNrbGlwcHk6OmtsaXBweSh0b29sdGlwX21lc3NhZ2UgPSAnQ2xpY2sgdG8gY29weScsIHRvb2x0aXBfc3VjY2VzcyA9ICdEb25lJykNCmBgYA0KDQpJbiB0aGlzIGxhc3QgcGFydCBvZiBzY3JhcGluZyBuYW1lcywgd2Ugd2lsbCBzaG93IGhvdyB0byBtaW1pYyBhIGh1bWFuIHdlYmJyb3dzaW5nIGFjdGl2aXR5LiBXZSB3aWxsIHVzZSBSU2VsZW5pdW0gLyBTZWxlbml1bSBmb3IgdGhpcy4gVGhpcyBjYW4gYmUgYSBiaXQgY29tcGxpY2F0ZWQgdG8gZ2V0IHVwIGFuZCBydW5uaW5nLiBGb3IgZXhhbXBsZSwgeW91IG5lZWQgdG8gaGF2YSBKYXZhIGluc3RhbGxlZC4gDQoNCkVzcGVjaWFsbHkgdGhlIFIgZG9jdW1lbnRhdGlvbiBpcyBub3QgZ3JlYXQuIA0KSW4gUiwgdGhlcmUgaXMgYSByZWxhdGl2ZWx5IG5ldyBwYWNrYWdlIGBzZWxlbmRpcmAgd2hpY2ggbG9va3MgcHJvbWlzaW5nLiANCg0KQmVjYXVzZSB3ZSB3aWxsIGJlIGludGVyYWN0aW5nIHdpdGggd2Vic2l0ZXMsIHdlIGRpZCBub3Qgc2hvdyBvdXIgb3V0cHV0IG9uIHRoaXMgcGFnZS4gDQoNCg0KIyBQcmVwYXJhdGlvbg0KDQojIyBjbGVhbiB1cA0KYGBge3IsIGNsZWFudXAsIHJlc3VsdHM9J2hpZGUnfQ0Kcm0obGlzdD1scygpKQ0KZ2MoKQ0KYGBgDQoNCjxicj4NCg0KIyMgZ2VuZXJhbCBjdXN0b20gUiBmdW5jdGlvbnMNCg0KLSBgZnBhY2thZ2UuY2hlY2tgOiBDaGVjayBpZiBwYWNrYWdlcyBhcmUgaW5zdGFsbGVkIChhbmQgaW5zdGFsbCBpZiBub3QpIGluIFINCi0gYGZzYXZlYDogc2F2ZSBkYXRhIHdpdGggdGltZSBzdGFtcCBpbiBjb3JyZWN0IGRpcmVjdG9yeQ0KLSBgZmxvYWRgOiBsb2FkIFItb2JqZWN0cyB1bmRlciBuZXcgbmFtZXMNCi0gYGZzaG93ZGZgOiBQcmludCBvYmplY3RzIChgdGliYmxlYCAvIGBkYXRhLmZyYW1lYCkgbmljZWx5IG9uIHNjcmVlbiBpbiBgLlJtZGAuDQoNCg0KYGBge3IsIGN1c3RvbWZ1bmN9DQpmcGFja2FnZS5jaGVjayA8LSBmdW5jdGlvbihwYWNrYWdlcykgew0KICAgIGxhcHBseShwYWNrYWdlcywgRlVOID0gZnVuY3Rpb24oeCkgew0KICAgICAgICBpZiAoIXJlcXVpcmUoeCwgY2hhcmFjdGVyLm9ubHkgPSBUUlVFKSkgew0KICAgICAgICAgICAgaW5zdGFsbC5wYWNrYWdlcyh4LCBkZXBlbmRlbmNpZXMgPSBUUlVFKQ0KICAgICAgICAgICAgbGlicmFyeSh4LCBjaGFyYWN0ZXIub25seSA9IFRSVUUpDQogICAgICAgIH0NCiAgICB9KQ0KfQ0KDQpmc2F2ZSA8LSBmdW5jdGlvbih4LCBmaWxlLCBsb2NhdGlvbiA9ICIuL2xvY2FsLyIsIC4uLikgew0KICAgIGlmICghZGlyLmV4aXN0cyhsb2NhdGlvbikpDQogICAgICAgIGRpci5jcmVhdGUobG9jYXRpb24pDQogICAgZGF0ZW5hbWUgPC0gc3Vic3RyKGdzdWIoIls6LV0iLCAiIiwgU3lzLnRpbWUoKSksIDEsIDgpDQogICAgdG90YWxuYW1lIDwtIHBhc3RlKGxvY2F0aW9uLCBkYXRlbmFtZSwgZmlsZSwgc2VwID0gIiIpDQogICAgcHJpbnQocGFzdGUoIlNBVkVEOiAiLCB0b3RhbG5hbWUsIHNlcCA9ICIiKSkNCiAgICBzYXZlKHgsIGZpbGUgPSB0b3RhbG5hbWUpDQp9DQoNCmZsb2FkICA8LSBmdW5jdGlvbihmaWxlTmFtZSl7DQogIGxvYWQoZmlsZU5hbWUpDQogIGdldChscygpW2xzKCkgIT0gImZpbGVOYW1lIl0pDQp9DQoNCmZzaG93ZGYgPC0gZnVuY3Rpb24oeCwgZGlnaXRzID0gMiwgLi4uKSB7DQogICAga25pdHI6OmthYmxlKHgsIGRpZ2l0cyA9IGRpZ2l0cywgImh0bWwiLCAuLi4pICU+JQ0KICAgICAgICBrYWJsZUV4dHJhOjprYWJsZV9zdHlsaW5nKGJvb3RzdHJhcF9vcHRpb25zID0gYygic3RyaXBlZCIsICJob3ZlciIpKSAlPiUNCiAgICAgICAga2FibGVFeHRyYTo6c2Nyb2xsX2JveCh3aWR0aCA9ICIxMDAlIiwgaGVpZ2h0ID0gIjMwMHB4IikNCn0NCmBgYA0KDQo8YnI+DQoNCiMjIG5lY2Vzc2FyeSBwYWNrYWdlcyB7LnRhYnNldCAudGFic2V0LWZhZGV9DQoNCiMjIyBSDQoNCmBgYHtyLCBwYWNrYWdlcywgcmVzdWx0cz0naGlkZScsIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9DQpwYWNrYWdlcyA9IGMoIlJTZWxlbml1bSIsICJydmVzdCIsICJ0aWR5dmVyc2UiLCAibmV0c3RhdCIsICJwaW5nciIsICJzdHJpbmdyIikNCmZwYWNrYWdlLmNoZWNrKHBhY2thZ2VzKQ0Kcm0ocGFja2FnZXMpDQpgYGANCg0KIyMjIFB5dGhvbg0KDQpJbnN0YWxsIHRoZSBuZXdlc3QgdmVyc2lvbiBvZiB0aGUgYHNlbGVuaXVtYCBtb2R1bGUgaW5zaWRlIGEgdmlydHVhbCBlbnZpcm9ubWVudCwgYnkgdHlwaW5nIGluIHlvdXIgdGVybWluYWwgdGhlIGJlbG93IGNvbW1hbmQ6DQoNCg0KDQpgYGB7YmFzaCwgZXZhbCA9IEZBTFNFfQ0KcGlwIGluc3RhbGwgLVUgc2VsZW5pdW0NCmBgYCANCg0KPGJyPg0KDQphbmQgaW1wb3J0IG5lY2Vzc2FyeSBtb2R1bGVzDQoNCmBgYHtweXRob24sIGV2YWwgPSBGQUxTRX0NCmltcG9ydCBzZWxlbml1bQ0KaW1wb3J0IHRpbWUNCg0KZnJvbSBzZWxlbml1bSBpbXBvcnQgd2ViZHJpdmVyDQpmcm9tIHNlbGVuaXVtLndlYmRyaXZlci5jb21tb24ua2V5cyBpbXBvcnQgS2V5cw0KZnJvbSBzZWxlbml1bS53ZWJkcml2ZXIuY29tbW9uLmJ5IGltcG9ydCBCeQ0KYGBgIA0KDQo8YnI+DQoNCiMjIHNldCB1cCBTZWxlbml1bSB7LnRhYnNldCAudGFic2V0LWZhZGV9DQoNCiMjIyBSDQoNCmBgYHtyLCBzZWxlbml1bSwgZXZhbCA9IEZBTFNFfQ0KI2ZpbmQgYSBmcmVlIHBvcnQNCnBvcnQgPC0gbmV0c3RhdDo6ZnJlZV9wb3J0KHJhbmRvbSA9IFRSVUUpDQoNCiNwaW5nIHBvcnQgZm9yIGNvbmZpcm1hdGlvbg0KcGluZ3I6OnBpbmdfcG9ydCgibG9jYWxob3N0IiwgcG9ydCkNCmBgYA0KDQpTZXQgdXAgc2VsZW5pdW0gc2VydmVyIGFuZCBicm93c2VyIChmaXJlZm94IGlzIHJlY29tbWVuZGVkKQ0KQW4gaXNzdWUgd2l0aCBgUlNlbGVuaXVtOjpyc0RyaXZlcmAgaXMgdGhhdCBpdCBpcyBjb25maWd1cmVkIHRvIGxhdW5jaCB0aGUgU2VsZW5pdW0gc2VydmVyIHdpdGggdGhlIGxhdGVzdCB2ZXJzaW9ucyBvZiBDaHJvbWUgKmFuZCogRmlyZWZveCBkcml2ZXJzLCAqZXZlbiBpZiB5b3UgaGF2ZSBzcGVjaWZpZWQgdGhlIG90aGVyIGJyb3dzZXIgdG8gcnVuKi4gVG8gc29sdmUgdGhpcywgcGFzcyBpbiBgTlVMTGAgaW4gdGhlIENocm9tZSBkcml2ZXIgdmVyc2lvbiBgY2hyb21ldmVyYCENCmBgYHtyLCBldmFsID0gRkFMU0V9DQoNCnJEIDwtIHJzRHJpdmVyKGJyb3dzZXI9ImZpcmVmb3giLCBwb3J0PXBvcnQsIGNocm9tZXZlciA9IE5VTEwsIHZlcmJvc2UgPSBGQUxTRSkNCnJlbURyIDwtIHJEW1siY2xpZW50Il1dDQpgYGANCjxicj4NCg0KDQoNCklmIGF0IGFueSB0aW1lIHlvdSB3aXNoIHRvIHRlcm1pbmF0ZSB0aGUgcHJvY2VzcywgdXNlIHRoZSBjb2RlOg0KDQpgYGB7ciwgdGFza2tpbGwsIGV2YWwgPSBGQUxTRX0NCnBpZCA8LSByRCRzZXJ2ZXIkcHJvY2VzcyRnZXRfcGlkKCkjZ2V0IHByb2Nlc3MgaWQNCnN5c3RlbShwYXN0ZTAoIlRhc2traWxsIC9GIC9UIiAsIiAvUElEICIsIHBpZCkpDQpgYGANCg0KIyMjIFB5dGhvbg0KDQpgYGB7cHl0aG9uLCBldmFsID0gRkFMU0V9DQpyZW1EciA9IHdlYmRyaXZlci5GaXJlZm94KCkNCmBgYCANCg0KPGJyPg0KDQpJZiBhdCBhbnkgdGltZSB5b3Ugd2lzaCB0byB0ZXJtaW5hdGUgdGhlIHByb2Nlc3MsIHVzZSB0aGUgY29kZToNCg0KYGBge3B5dGhvbiwgZXZhbCA9IEZBTFNFfQ0KcmVtRHIuY2xvc2UoKQ0KYGBgIA0KDQojIyB7LnVubGlzdGVkIC51bm51bWJlcmVkfQ0KDQoNCjxicj4NCg0KLS0tDQoNCiMgU2NyYXBpbmcgc2Nob2xhciBuYW1lcyB7LnRhYnNldCAudGFic2V0LWZhZGV9DQoNCiMjIFINCg0KYGBge3IsIG5hbWVzLCBldmFsID0gRkFMU0V9DQojbmF2aWdhdGUgdG8gUlUgc3RhZmYgcGFnZQ0KcmVtRHIkbmF2aWdhdGUoImh0dHBzOi8vd3d3LnJ1Lm5sL2VuL3NlYXJjaC9zY29wZS9zdGFmZi8iKQ0KDQojaGFuZGxlIGNvb2tpZXMNCnJlbURyJGZpbmRFbGVtZW50KHVzaW5nID0gImNzcyIsIHZhbHVlID0gIi5hZ3JlZS1idXR0b24iKSRoaWdobGlnaHRFbGVtZW50KCkNCnJlbURyJGZpbmRFbGVtZW50KHVzaW5nID0gImNzcyIsIHZhbHVlID0gIi5hZ3JlZS1idXR0b24iKSRjbGlja0VsZW1lbnQoKQ0KDQpjb29raWVzIDwtIHJlbURyJGdldEFsbENvb2tpZXMoKQ0Kc2F2ZVJEUyhjb29raWVzLCAiY29va2llcy5yZHMiKQ0KcmVtRHIkYWRkQ29va2llKG5hbWUgPSBjb29raWVzW1sxXV1bWyJuYW1lIl1dLCB2YWx1ZSA9IGNvb2tpZXNbWzFdXVtbInZhbHVlIl1dKQ0KDQpyZW1EciRtYXhXaW5kb3dTaXplKCkNCg0KDQpgYGANCg0KV2Ugd2FudCB0byBnZXQgc2Nob2xhcnMgZnJvbSB0aGUgc29jaW9sb2d5IGRlcGFydG1lbnQ7IHNvIHdlIHVzZSB0aGUgd2Vic2l0ZSdzIGNvbGxhcHNpYmxlIGxpc3RzDQphbmQgZXhwYW5kIGNvbnRlbnQgdW5kZXIgUmFkYm91ZCBVbml2ZXJzaXR5LiANCg0KV2UgdXNlIHRoZSBgaGlnaGxpZ2h0RWxlbWVudCgpYCBmdW5jdGlvbiB0byBkZW1vbnN0cmF0ZSB3aGVyZSB3ZSBhcmUgb24gdGhlIHdlYnNpdGUuDQoNCmBgYHtyLCBldmFsID0gRkFMU0V9DQpyZW1EciRmaW5kRWxlbWVudCh1c2luZyA9ICJjbGFzcyBuYW1lIiwgdmFsdWUgPSAiZmFjZXQtbGlzdF9fZXhwYW5kLXN1YiIpJGhpZ2hsaWdodEVsZW1lbnQoKQ0KcmVtRHIkZmluZEVsZW1lbnQodXNpbmcgPSAiY2xhc3MgbmFtZSIsIHZhbHVlID0gImZhY2V0LWxpc3RfX2V4cGFuZC1zdWIiKSRjbGlja0VsZW1lbnQoKQ0KDQojd2UgaGF2ZSB0byBleHBhbmQgdGhlIGxpc3QNCnJlbURyJGZpbmRFbGVtZW50KHVzaW5nID0gImNsYXNzIG5hbWUiLCB2YWx1ZSA9ICJidG4tLXNob3ctaGlkZSIpJGhpZ2hsaWdodEVsZW1lbnQoKQ0KcmVtRHIkZmluZEVsZW1lbnQodXNpbmcgPSAiY2xhc3MgbmFtZSIsIHZhbHVlID0gImJ0bi0tc2hvdy1oaWRlIikkY2xpY2tFbGVtZW50KCkNCmBgYA0KDQpFeHBhbmQgY29udGVudCB1bmRlciBGYWN1bHR5IG9mIHNvY2lhbCBzY2llbmNlIChkZXAgaWQgOTYxKSB1c2luZyBpdHMgeHBhdGguICANCk5vdGUsIHRoaXMgaXMgdGhlIGh0bWw6IA0KDQpgYGANCjxidXR0b24gY2xhc3M9ImZhY2V0LWxpc3RfX2V4cGFuZC1zdWIgaXMtYWN0aXZlIiBhcmlhLWNvbnRyb2xzPSJ0b2dnbGUtc3RhZmYtZGVwYXJ0bWVudC05NjEiIGFyaWEtZXhwYW5kZWQ9ImZhbHNlIiBkYXRhLW9uY2U9InJ1SGllcmFyY2hpY2FsRmFjZXRzQ2xpY2siIHN0eWxlPSIiPjxzcGFuIGNsYXNzPSJ2aXN1YWxseS1oaWRkZW4iPkhpZGUgZmlsdGVyczwvc3Bhbj4tPC9idXR0b24+DQpgYGANCg0KVGhpcyB0cmFuc2xhdGVzIGludG8gdGhlIHhwYXRoIHNob3duIGJlbG93LiBOb3RlIGhlcmUgd2UgdXNlIGEgY29tcG91bmQgY2xhc3MhICAgDQpEaWZmaWN1bHRpZXMgd2l0aCB4cGF0aD8gSGF2ZSBhIGxvb2sgW2hlcmVdKGh0dHBzOi8vd3d3Lnczc2Nob29scy5jb20veG1sL3hwYXRoX2ludHJvLmFzcCkNCg0KVGhlcmUgc2VlbXMgdG8gYmUgYSBzbWFsbCBidWcgaW4gdGhlIHdlYnNpdGUgd2hpY2ggYnJlYWtzIG91ciBjb2RlLiBMZXQgdXMgdHJ5IHRvIGZpeCB0aGlzIGluIGNsYXNzLiANCg0KYGBge3IsIGV2YWwgPSBGQUxTRX0NCnJlbURyJGZpbmRFbGVtZW50KHVzaW5nID0gInhwYXRoIiwgdmFsdWUgPSAiLy9idXR0b25bQGNsYXNzPSdmYWNldC1saXN0X19leHBhbmQtc3ViJyBhbmQgQGFyaWEtY29udHJvbHM9J3RvZ2dsZS1zdGFmZi1kZXBhcnRtZW50LTk2MSddIikkaGlnaGxpZ2h0RWxlbWVudCgpDQoNCiNJZiB5b3Ugd291bGQgZm9sbG93IHRoZSBjb21wbGV0ZSBodG1sIHN0cnVjdHVyZSB5b3Ugd2lsbCBhcnJpdmUgYXQgdGhlIHNhbWUgcG9pbnQuIA0KcmVtRHIkZmluZEVsZW1lbnQodXNpbmcgPSAieHBhdGgiLCB2YWx1ZSA9ICIvaHRtbC9ib2R5L2RpdlsxXS9kaXYvZGl2WzFdL2FzaWRlL2Rpdi9kaXZbMjddL2Rpdi91bC9saS9kaXYvdWwvbGlbOV0vYnV0dG9uIikkaGlnaGxpZ2h0RWxlbWVudCgpDQoNCiNhbmQgY2xpY2sNCnJlbURyJGZpbmRFbGVtZW50KHVzaW5nID0gInhwYXRoIiwgdmFsdWUgPSAiLy9idXR0b25bQGNsYXNzPSdmYWNldC1saXN0X19leHBhbmQtc3ViJyBhbmQgQGFyaWEtY29udHJvbHM9J3RvZ2dsZS1zdGFmZi1kZXBhcnRtZW50LTk2MSddIikkY2xpY2tFbGVtZW50KCkNCg0KI2hlcmUgaXMgdGhlIGJ1Zy4gbm90IGFsbCBkZXBhcnRtZW50cyBhcmUgc2hvd24uIHlvdSBoYXZlIHRvIGNsaWNrIG9uIGxlc3MgYW5kIG1vcmUuIA0KDQojY2xpY2sgb24gc29jaW9sb2d5DQpyZW1EciRmaW5kRWxlbWVudCh1c2luZyA9ICJ4cGF0aCIsIHZhbHVlID0gIi8vaW5wdXRbQHR5cGU9J2NoZWNrYm94JyBhbmQgQGNsYXNzPSdmYWNldHMtY2hlY2tib3gnIGFuZCBAaWQ9J3N0YWZmLWRlcGFydG1lbnQtOTkyJ10iKSRjbGlja0VsZW1lbnQoKQ0KDQojYW1vbmcgYWxsIHN0YWZmIG1lbWJlcnMsIHNlbGVjdCByZXNlYXJjaGVycw0KDQpyZW1EciRmaW5kRWxlbWVudCh1c2luZyA9ICJ4cGF0aCIsIHZhbHVlID0gIi8vaW5wdXRbQHR5cGU9J2NoZWNrYm94JyBhbmQgQGNsYXNzPSdmYWNldHMtY2hlY2tib3gnIGFuZCBAaWQ9J3N0YWZmLXN0YWZmLXJlc2VhcmNoZXJzJ10iKSRoaWdobGlnaHRFbGVtZW50KCkNCg0KI21vcmUgY29tcGxpY2F0ZWQgYnV0IGluc2lnaHRmdWwgDQpyZW1EciRmaW5kRWxlbWVudCh1c2luZyA9ICJpZCIsIHZhbHVlID0gImJsb2NrLXN0YWZmc3RhZmYiKSRoaWdobGlnaHRFbGVtZW50KCkNCg0KcmVtRHIkZmluZEVsZW1lbnQodXNpbmcgPSAiaWQiLCB2YWx1ZSA9ICJibG9jay1zdGFmZnN0YWZmIikkZ2V0RWxlbWVudFRleHQoKQ0KDQojZmlyc3QgZ2V0IGNhdGVnb3JpZXM6DQpyZW1EciRmaW5kRWxlbWVudCh1c2luZyA9ICJpZCIsIHZhbHVlID0gImJsb2NrLXN0YWZmc3RhZmYiKSRnZXRFbGVtZW50VGV4dCgpICU+JSAjZ2V0IGVsZW1lbnQgdGV4dDsNCiAgdW5saXN0KC4pICU+JSAjdW5saXN0DQogIHN0cnNwbGl0KC4sICJcbiIpICU+JSAjc3BsaXQgYnkgXG4NCiAgLltbMV1dICU+JSAjdGFrZSB0aGUgZmlyc3QgZWxlbWVudCBmcm9tIHRoZSBsaXN0DQogIC5bLTFdIC0+IHN0YWZmX2NhdHMgI3JlbW92ZSB0aGUgaGVhZGVyICJzdGFmZiINCg0KI3Rha2UgdGhlIGluZGljYXRvciBvZiByZXNlYXJjaGVycw0KcmVzZWFyY2hlcnMgPC0gZ3JlcCgiUmVzZWFyY2hlcnMiLCBzdGFmZl9jYXRzKSAgIA0KDQojY2hlY2sgdGhlIGNvcnJlc3BvbmRpbmcgY2hlY2tib3gNCnJlbURyJGZpbmRFbGVtZW50cyh1c2luZyA9ICJjbGFzcyBuYW1lIiwgdmFsdWUgPSAiZmFjZXRzLWNoZWNrYm94IilbW3Jlc2VhcmNoZXJzXV0kY2xpY2tFbGVtZW50KCkNCmBgYA0KDQoNCk5hdHVyYWxseSwgdGhpcyBjYW4gYWxzbyBiZSBhY2hpZXZlZCBieSB1c2luZyB0aGUgVVJMIGh0dHBzOi8vd3d3LnJ1Lm5sL2VuL3NlYXJjaC9zY29wZS9zdGFmZi9zdGFmZi1kZXBhcnRtZW50L1gvc3RhZmYtc3RhZmYvcmVzZWFyY2hlcnMsIHdoZXJlIFggc2hvdWxkIGJlIHJlcGxhY2VkIGJ5IGRlcGFydG1lbnQtaWQsIHdoaWNoIGNhbiBiZSBzdG9yZWQgaW4gYSBsaXN0IGJlZm9yZWhhbmQgKHRoaXMgaXMgdXNlZnVsIGlmIHdlIHdhbnQgbXVsdGlwbGUgZGVwYXJ0bWVudHMgb2YgYSBmYWN1bHR5KQ0KDQpOb3cgd2UgaGF2ZSBhbGwgc29jaW9sb2d5IHJlc2VhcmNoZXJzIChvciBvZiBhbnkgb3RoZXIgZGVwYXJ0bWVudCkgYnV0IHRoZXNlIGFyZSBzcHJlYWQgYWNyb3NzIG11bHRpcGxlIHBhZ2VzLiAgDQpUbyBrbm93IGhvdyBtYW55IHBhZ2VzIHRoZXJlIGFyZSB3ZSBuYXZpZ2F0ZSB0byB0aGUgImxhc3QiIHBhZ2UgZmlyc3QsIHNhdmUgdGhlIGxhc3QgcGFnZSwgZ28gYmFjayBhbmQgbG9vcCB0aHJvdWdoIGFsbCBwYWdlczogDQoNCmBgYHtyfQ0KcmVtRHIkZmluZEVsZW1lbnRzKCJjbGFzcyBuYW1lIiwgInBhZ2VyX19saW5rLXRleHQiKVtbMl1dJGNsaWNrRWxlbWVudCgpDQoNCiNnZXQgdGhlIHBhZ2UgbnVtYmVyIG9mIHRoaXMgcGFnZQ0KbnBhZ2VzIDwtIHJlbURyJGZpbmRFbGVtZW50KHVzaW5nID0gInhwYXRoIiwgIi8vYVtAYXJpYS1jdXJyZW50PSdwYWdlJ10iKSRnZXRFbGVtZW50VGV4dCgpICU+JQ0KICB1bmxpc3QoLikgJT4lICN1bmxpc3QNCiAgc3Ryc3BsaXQoLiwgIlxuIikgJT4lICNzcGxpdCBieSBcbg0KICAuW1sxXV0gJT4lDQogIC5bMl0gJT4lDQogIGFzLm51bWVyaWMoLikNCg0KI2dvIGJhY2sgdG8gdGhlIGZpcnN0IHBhZ2UNCnJlbURyJGZpbmRFbGVtZW50cygiY2xhc3MgbmFtZSIsICJwYWdlcl9fbGluay10ZXh0IilbWzFdXSRjbGlja0VsZW1lbnQoKQ0KDQojZ2V0IGFsbCBlbGVtZW50cyB3aXRoIGNsYXNzIG5hbWUgImNhcmRfX3RpdGxlIjsgdGhlc2UgcmVmZXIgdG8gbmFtZXMgb2YgcmVzZWFyY2hlcnMsIG9uIHRoZSBmaXJzdCBwYWdlLiBSZXRyaWV2ZSB0aGUgdGV4dDoNCm5hbWVzX3BhZ2UgPC0gdW5saXN0KGxhcHBseShyZW1EciRmaW5kRWxlbWVudHMoImNsYXNzIG5hbWUiLCAiY2FyZF9fdGl0bGUiKSwNCiAgICAgICAgICAgICAgICAgICAgIGZ1bmN0aW9uKHgpIHgkZ2V0RWxlbWVudFRleHQoKSkpDQoNCiNub3cgcmVwZWF0IHRoaXMgZm9yIHRoZSBvdGhlciBwYWdlcyBpbiAxOm5wYWdlcy0xDQpwYWdlMSA8LSByZW1EciRnZXRDdXJyZW50VXJsKCkNCg0KZm9yICggaSBpbiAxOihucGFnZXMtMSkpIHsgDQogICNpbmNyZW1lbnQgcGFnZSANCiAgbmV3cGFnZSA8LSBzdWIoInBhZ2U9MCQiLCBwYXN0ZTAoInBhZ2U9IiwgaSksIHBhZ2UxKQ0KICAjbmF2aWdhdGUgdG8gdGhlIHBhZ2UNCiAgcmVtRHIkbmF2aWdhdGUobmV3cGFnZSkNCiAgI3JldHJpZXZlIG5hbWVzDQogIG5ld19uYW1lcyA8LSB1bmxpc3QobGFwcGx5KHJlbURyJGZpbmRFbGVtZW50cygiY2xhc3MgbmFtZSIsICJjYXJkX190aXRsZSIpLA0KICAgICAgICAgICAgICAgICAgICAgZnVuY3Rpb24oeCkgeCRnZXRFbGVtZW50VGV4dCgpKSkNCiAgI2FuZCBhZGQgdG8gdGhlIG5hbWVzX3BhZ2Ugb2JqZWN0Og0KICBuYW1lc19wYWdlIDwtIGMobmFtZXNfcGFnZSwgbmV3X25hbWVzKQ0KICAjYWRkIHNsZWVwZXI6DQogIFN5cy5zbGVlcCgyKQ0KfQ0KDQojYWxsIG5hbWVzIQ0KcHJpbnQobmFtZXNfcGFnZSkNCmxlbmd0aChuYW1lc19wYWdlKQ0KYGBgDQoNCiMjIFB5dGhvbg0KDQpgYGB7cHl0aG9uLCBldmFsID0gRkFMU0V9DQojbmF2aWdhdGUgdG8gUlUgc3RhZmYgcGFnZQ0KcmVtRHIuZ2V0KCJodHRwczovL3d3dy5ydS5ubC9lbi9zZWFyY2gvc2NvcGUvc3RhZmYvIikNCg0KcmVtRHIubWF4aW1pemVfd2luZG93KCkNCg0KI3dlIHdhbnQgdG8gZ2V0IHNjaG9sYXJzIGZyb20gdGhlIHNvY2lvbG9neSBkZXBhcnRtZW50OyBzbyB3ZSB1c2UgdGhlIHdlYnNpdGUncyBjb2xsYXBzaWJsZSBsaXN0cw0KI2V4cGFuZCBjb250ZW50IHVuZGVyIFJhZGJvdWQgVW5pdmVyc2l0eQ0KcmVtRHIuZmluZF9lbGVtZW50KEJ5LkNMQVNTX05BTUUsICJmYWNldC1saXN0X19leHBhbmQtc3ViIikuY2xpY2soKQ0KDQojZXhwYW5kIGNvbnRlbnQgdW5kZXIgRmFjdWx0eSBvZiBzb2NpYWwgc2NpZW5jZSAoZGVwIGlkIDk2MSkNCiN1c2luZyBpdHMgeHBhdGgNCnJlbURyLmZpbmRfZWxlbWVudChCeS5YUEFUSCwgIi8vYnV0dG9uW0BjbGFzcz0nZmFjZXQtbGlzdF9fZXhwYW5kLXN1YicgYW5kIEBhcmlhLWNvbnRyb2xzPSd0b2dnbGUtc3RhZmYtZGVwYXJ0bWVudC05NjEnXSIpLmNsaWNrKCkNCg0KI2NsaWNrIG9uIHNvY2lvbG9neQ0KcmVtRHIuZmluZF9lbGVtZW50KEJ5LlhQQVRILCAiLy9pbnB1dFtAdHlwZT0nY2hlY2tib3gnIGFuZCBAY2xhc3M9J2ZhY2V0cy1jaGVja2JveCcgYW5kIEBpZD0nc3RhZmYtZGVwYXJ0bWVudC05OTInXSIpLmNsaWNrKCkNCg0KI2Ftb25nIGFsbCBzdGFmZiBtZW1iZXJzLCBzZWxlY3QgcmVzZWFyY2hlcnMNCiNnZXQgdGhlIGluZGljYXRvciBvZiB0aGUgY2hlY2tib3ggdGhhdCBpcyAiUmVzZWFyY2hlcnMiOw0KDQojZmlyc3QgZ2V0IGNhdGVnb3JpZXM6DQpzdGFmZl9jYXRzID0gcmVtRHIuZmluZF9lbGVtZW50KEJ5LklELCAiYmxvY2stc3RhZmZzdGFmZiIpLnRleHQuc3BsaXQoIlxuIilbMTpdDQoNCiN0YWtlIHRoZSBpbmRpY2F0b3Igb2YgInJlc2VhcmNoZXJzIg0KcmVzZWFyY2hlcnMgPSBbaSBmb3IgaSwgY2F0IGluIGVudW1lcmF0ZShzdGFmZl9jYXRzKSBpZiAiUmVzZWFyY2hlcnMiIGluIGNhdF1bMF0NCg0KI2NoZWNrIHRoZSBjb3JyZXNwb25kaW5nIGNoZWNrYm94DQpyZW1Eci5maW5kX2VsZW1lbnRzKEJ5LkNMQVNTX05BTUUsICJmYWNldHMtY2hlY2tib3giKVtyZXNlYXJjaGVyc10uY2xpY2soKQ0KDQojbmF0dXJhbGx5IHRoaXMgY2FuIGFsc28gYmUgYWNoaWV2ZWQgYnkgdXNpbmcgdGhlIFVSTCBodHRwczovL3d3dy5ydS5ubC9lbi9zZWFyY2gvc2NvcGUvc3RhZmYvc3RhZmYtZGVwYXJ0bWVudC9YL3N0YWZmLXN0YWZmL3Jlc2VhcmNoZXJzLCB3aGVyZSBYIHNob3VsZCBiZSByZXBsYWNlZCBieSBkZXBhcnRtZW50LWlkLCB3aGljaCBjYW4gYmUgc3RvcmVkIGluIGEgbGlzdCBiZWZvcmVoYW5kICh0aGlzIGlzIHVzZWZ1bCBpZiB3ZSB3YW50IG11bHRpcGxlIGRlcGFydG1lbnRzIG9mIGEgZmFjdWx0eSkNCg0KIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMNCg0KI25vdyB3ZSBoYXZlIGFsbCBzb2Npb2xvZ3kgcmVzZWFyY2hlcnMgKG9yIG9mIGFueSBvdGhlciBkZXBhcnRtZW50KTsNCiNidXQgdGhpcyBpcyBzcHJlYWQgYWNyb3NzIG11bHRpcGxlIHBhZ2VzOw0KI3RvIGtub3cgaG93IG1hbnkgcGFnZXMgdGhlcmUgYXJlIC0gYW5kIHRodXMgdGhyb3VnaCBob3cgbWFueSB3ZSBtdXN0IHNjcmFwZSAtIHdlIG5hdmlnYXRlIHRvIHRoZSAibGFzdCIgcGFnZSBmaXJzdDsNCnJlbURyLmZpbmRfZWxlbWVudHMoQnkuQ0xBU1NfTkFNRSwgInBhZ2VyX19saW5rLXRleHQiKVsxXS5jbGljaygpDQoNCiNnZXQgdGhlIHBhZ2UgbnVtYmVyIG9mIHRoaXMgcGFnZQ0KbnBhZ2VzID0gaW50KHJlbURyLmZpbmRfZWxlbWVudChCeS5YUEFUSCwgIi8vYVtAYXJpYS1jdXJyZW50PSdwYWdlJ10iKS50ZXh0LnNwbGl0KCJcbiIpWzFdKQ0KICANCiNnbyBiYWNrIHRvIHRoZSBmaXJzdCBwYWdlDQpyZW1Eci5maW5kX2VsZW1lbnRzKEJ5LkNMQVNTX05BTUUsICJwYWdlcl9fbGluay10ZXh0IilbMF0uY2xpY2soKQ0KDQojZ2V0IGFsbCBlbGVtZW50cyB3aXRoIGNsYXNzIG5hbWUgImNhcmRfX3RpdGxlIjsgdGhlc2UgcmVmZXIgdG8gbmFtZXMgb2YgcmVzZWFyY2hlcnMsIG9uIHRoZSBmaXJzdCBwYWdlLiBSZXRyaWV2ZSB0aGUgdGV4dDoNCm5hbWVzX3BhZ2UgPSBbZWxlbS50ZXh0IGZvciBlbGVtIGluIHJlbURyLmZpbmRfZWxlbWVudHMoQnkuQ0xBU1NfTkFNRSwgImNhcmRfX3RpdGxlIildDQoNCiNub3cgcmVwZWF0IHRoaXMgZm9yIHRoZSBvdGhlciBwYWdlcw0KcGFnZTEgPSByZW1Eci5jdXJyZW50X3VybA0KDQpmb3IgaSBpbiByYW5nZSgxLCBucGFnZXMpOg0KICAjaW5jcmVtZW50IHBhZ2UNCiAgbmV3cGFnZSA9IHBhZ2UxLnJlcGxhY2UoInBhZ2U9MCIsIGYicGFnZT17aX0iKQ0KICBwcmludChzdHIoIm5hdmlnYXRpbmcgdG86ICIpICsgbmV3cGFnZSkNCiAgdGltZS5zbGVlcCgwLjUpDQogICNuYXZpZ2F0ZSB0byB0aGUgcGFnZQ0KICByZW1Eci5nZXQobmV3cGFnZSkNCiAgdGltZS5zbGVlcCgwLjUpDQogICNyZXRyaWV2ZSBuYW1lcw0KICBuZXdfbmFtZXMgPSBbZWxlbS50ZXh0IGZvciBlbGVtIGluIHJlbURyLmZpbmRfZWxlbWVudHMoQnkuQ0xBU1NfTkFNRSwgImNhcmRfX3RpdGxlIildDQogICNhbmQgYWRkIHRvIHRoZSBuYW1lc19wYWdlIG9iamVjdDoNCiAgbmFtZXNfcGFnZS5leHRlbmQobmV3X25hbWVzKQ0KICAjYWRkIHNsZWVwZXI6DQogIHRpbWUuc2xlZXAoMikNCg0KI2FsbCBuYW1lcyENCnByaW50KG5hbWVzX3BhZ2UpDQpsZW4obmFtZXNfcGFnZSkNCmBgYCANCg0K</div>
+<style>
+  .center {
+    text-align: center;
+    color: red;
+  }
+</style>
+  
+  <hr>
+  <br>
+  <p class="center">Copyright &copy; 2024 Jochem Tolsma </p>
+    
+    
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("12scholars.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Webscraping scholars</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/clipboard-1.7.1/clipboard.min.js"></script>
+<link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
+<link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
+<script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+<link rel="stylesheet" href="tweaks.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sunbelt 2024 Workshop: Webscraping</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Scholars
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="10scholars.html">Scholars I</a>
+    </li>
+    <li>
+      <a href="11scholars.html">Scholars II</a>
+    </li>
+    <li>
+      <a href="12scholars.html">Scholars III</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Attributes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="20names.html">Names</a>
+    </li>
+    <li>
+      <a href="30genderizeR.html">Genderize</a>
+    </li>
+    <li>
+      <a href="40publications.html">Publications</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/JochemTolsma/webscraping">
+    <span class="fab fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Webscraping scholars</h1>
+
+</div>
+
+
+<script>
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<div id="goal" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Goal</h1>
+<p><strong>Hands-on webscraping</strong></p>
+<p>It is time to do some webscraping ourselves. In what follows is a short first tutorial on webscraping where we will be collecting data from webpages on the internet. We will use the specific use case of the political science department staff of the university of Leiden.</p>
+<p>What do they publish? Where? And with whom do they collaborate? We assume you have at least some experience with coding in R. In the rest of this part of the tutorial, we will switch between base R and Tidyverse (just a bit), whatever is most convenient. (Note that this will happen often if you become an applied computational sociologist.) We also offer Python code.</p>
+<p>There are different strategies in scraping. There is often a trade-off between complex scraping techniques versus complex string manipulations. In this first example, we will use quite a lot of string manipulations.</p>
+<p>For even more info see our <a href="https://snass.netlify.app/webintro.html">SNASS book - Chapter 11</a></p>
+<hr />
+</div>
+<div id="preparation" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Preparation</h1>
+<div id="clean-up" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> clean up</h2>
+<pre class="r test"><code>rm(list = ls())
+gc()</code></pre>
+</div>
+<div id="custom-functions" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Custom functions</h2>
+<ul>
+<li><code>fpackage.check</code>: Check if packages are installed (and install if not) in R (<a href="https://vbaliga.github.io/verify-that-r-packages-are-installed-and-loaded/">source</a>).<br />
+</li>
+<li><code>fsave</code>: Save to processed data in repository<br />
+</li>
+<li><code>fload</code>: To load the files back after an <code>fsave</code><br />
+</li>
+<li><code>fshowdf</code>: To print objects (tibbles / data.frame) nicely on screen in .rmd</li>
+</ul>
+<pre class="r test"><code>rm(list = ls())  #clean up your environment
+
+fpackage.check &lt;- function(packages) {
+    lapply(packages, FUN = function(x) {
+        if (!require(x, character.only = TRUE)) {
+            install.packages(x, dependencies = TRUE)
+            library(x, character.only = TRUE)
+        }
+    })
+}
+
+fsave &lt;- function(x, file = NULL, location = &quot;./data/processed/&quot;) {
+    ifelse(!dir.exists(&quot;data&quot;), dir.create(&quot;data&quot;), FALSE)
+    ifelse(!dir.exists(&quot;data/processed&quot;), dir.create(&quot;data/processed&quot;), FALSE)
+    if (is.null(file))
+        file = deparse(substitute(x))
+    datename &lt;- substr(gsub(&quot;[:-]&quot;, &quot;&quot;, Sys.time()), 1, 8)
+    totalname &lt;- paste(location, datename, file, &quot;.rda&quot;, sep = &quot;&quot;)
+    save(x, file = totalname)  #need to fix if file is reloaded as input name, not as x. 
+}
+
+fload &lt;- function(filename) {
+    load(filename)
+    get(ls()[ls() != &quot;filename&quot;])
+}
+
+fshowdf &lt;- function(x, ...) {
+    knitr::kable(x, digits = 2, &quot;html&quot;, ...) %&gt;%
+        kableExtra::kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;)) %&gt;%
+        kableExtra::scroll_box(width = &quot;100%&quot;, height = &quot;300px&quot;)
+}
+
+colorize &lt;- function(x, color) {
+    sprintf(&quot;&lt;span style=&#39;color: %s;&#39;&gt;%s&lt;/span&gt;&quot;, color, x)
+}</code></pre>
+<hr />
+</div>
+<div id="packages" class="section level2 tabset tabset-fade" number="2.3">
+<h2><span class="header-section-number">2.3</span> Packages</h2>
+<div id="r" class="section level3" number="2.3.1">
+<h3><span class="header-section-number">2.3.1</span> R</h3>
+<ul>
+<li><code>tidyverse</code>: for piping etc.</li>
+<li><code>httr</code>: Tools for Working with URLs and HTTP<br />
+</li>
+<li><code>xml2</code>: Work with XML files using a simple, consistent interface.<br />
+</li>
+<li><code>rvest</code>: Wrappers around the ‘xml2’ and ‘httr’ packages to make it easy to download, then manipulate, HTML and XML.<br />
+</li>
+<li><code>reshape2</code>: Flexibly Reshape Data</li>
+</ul>
+<pre class="r test"><code>packages = c(&quot;tidyverse&quot;, &quot;httr&quot;, &quot;rvest&quot;, &quot;reshape2&quot;, &quot;xml2&quot;)
+fpackage.check(packages)</code></pre>
+<hr />
+</div>
+<div id="python" class="section level3" number="2.3.2">
+<h3><span class="header-section-number">2.3.2</span> Python</h3>
+<p>Make sure you have the required libraries by typing in the code below into your console</p>
+<pre class="bash test"><code>pip install requests beautifulsoup4 pandas</code></pre>
+<p><br></p>
+<p>and import necessary modules</p>
+<pre class="python test"><code>import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import re</code></pre>
+<p><br></p>
+</div>
+</div>
+</div>
+<div id="leiden-university-political-science" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Leiden University: Political Science</h1>
+<p>What do we mean by anchor data? Our goal is to get to know:</p>
+<ol style="list-style-type: lower-roman">
+<li>who the Political Science staff is at several universities,<br />
+</li>
+<li>what they publish with respect to scientific work, and<br />
+</li>
+<li>who they collaborate with.</li>
+</ol>
+<p>So that means at least three data sources we need to collect from somewhere. What would be a nice starting (read: anchor) point be? First, we have to know who is staff. Let’s check out <a href="https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1">the Leiden political science staff website</a>. Here we see a nice list on who is on the staff in several pages. How do we get that data? It is actually quite simple, the package <a href="https://rvest.tidyverse.org/index.html"><code>rvest</code></a> has a very nice function <a href="https://rvest.tidyverse.org/reference/read_html.html"><code>html_read()</code></a> (actually this comes from the <code>xml2</code> package) which simply derives the source html of a <em>static</em> webpage:</p>
+<p><span style="color: red;">How incredibly annoying, when trying to do the final knit for the workshop, Leiden university decided to do maintance work on their website on Saturday 22 and Sunday 23 June!!!!!!!</span></p>
+<div id="staff-pages" class="section level2 tabset tabset-fade" number="3.1">
+<h2><span class="header-section-number">3.1</span> Staff pages</h2>
+<div id="r-1" class="section level3" number="3.1.1">
+<h3><span class="header-section-number">3.1.1</span> R</h3>
+<p>Let’s first simply get the staff pages.
+<code>read_html()</code> is a function that simply extracts html webpages and puts them in xml format.</p>
+<pre class="r test"><code>lpol_staff &lt;- read_html(&quot;https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1&quot;)
+head(lpol_staff)</code></pre>
+<p>That looks kinda weird. What type of object did we store it by putting the html into <code>lpol_staff1</code>?</p>
+<pre class="r test"><code>class(lpol_staff)</code></pre>
+<p>So it is is stored in something that’s called an xml object. Not important for now what that is. But it is important to extract the relevant table that we saw on the staff website. How do we do that? Go to one of the links above in a browser and then press “Inspect” on the webpage (usually: right click–&gt;Inspect). In the html code we extracted, we need to go to one of the nodes first. If you move your cursor over <strong>“div”</strong> in the html code on the screen, the entire <strong>“body”</strong> of the page should become some shade of blue. This means that the elements encapsulated in the <strong>“body”</strong> node captures everything that turned blue.</p>
+</div>
+<div id="python-1" class="section level3" number="3.1.2">
+<h3><span class="header-section-number">3.1.2</span> Python</h3>
+<pre class="python test"><code># Fetch the webpage
+url = &quot;https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1&quot;
+
+response = requests.get(url)
+webpage = response.content
+
+# Parse the webpage
+soup = BeautifulSoup(webpage, &#39;html.parser&#39;)
+
+#print(soup.prettify())
+
+#or to print just a few lines
+result = soup.prettify().splitlines()
+print(&#39;\n&#39;.join(result[:10]))</code></pre>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html data-version=&quot;1.178.00&quot; lang=&quot;en&quot;&gt;
+ &lt;head&gt;
+  &lt;!-- standard page html head --&gt;
+  &lt;title&gt;
+   Staff - Leiden University
+  &lt;/title&gt;
+  &lt;meta content=&quot;o8KYuFAiSZi6QWW1wxqKFvT1WQwN-BxruU42si9YjXw&quot; name=&quot;google-site-verification&quot;/&gt;
+  &lt;meta content=&quot;hRUxrqIARMinLW2dRXrPpmtLtymnOTsg0Pl3WjHWQ4w&quot; name=&quot;google-site-verification&quot;/&gt;
+  &lt;link href=&quot;https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff&quot; rel=&quot;canonical&quot;/&gt;</code></pre>
+</div>
+</div>
+<div id="nodes-and-tags" class="section level2 tabset tabset-fade" number="3.2">
+<h2><span class="header-section-number">3.2</span> Nodes and tags</h2>
+<p>Next, we need to look at the specific elements on the page that we need to extract. Somewhat by informed trial and error, looking for the correct code, we can select the elements we want. So we need code that looks for the node <strong>“main”</strong> and the <strong>“td”</strong> elements in the xml object and then extract those elements in it. Note that you can click on the arrows once you are in the “Inspect” mode in the web browser to trial-and-error to get at the correct elements.</p>
+<p>There are many ways to find the CSS or Xpath of the elements you want.
+The package <code>rvest</code> also has a SelectorGadget tool. See <a href="https://rvest.tidyverse.org/articles/selectorgadget.html">here</a></p>
+<p>Wo we need to find WHERE the table is located in the html.</p>
+<p>Assignment:<br />
+- use firefox ‘inspect’<br />
+- use rstudio<br />
+- use <code>rvest</code> SelectorGadget</p>
+<div id="r-2" class="section level3" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> R</h3>
+<pre class="r test"><code>lpol_staff &lt;- lpol_staff %&gt;%
+    html_nodes(&quot;body&quot;) %&gt;%
+    html_nodes(xpath = &quot;//a&quot;) %&gt;%
+    html_text()</code></pre>
+<p>Let us for now assume you are satisfied with the above output.</p>
+</div>
+<div id="python-2" class="section level3" number="3.2.2">
+<h3><span class="header-section-number">3.2.2</span> Python</h3>
+<pre class="python test"><code>lpol_staff = soup.body.find_all(&#39;a&#39;)
+
+lpol_staff = [tags.prettify() for tags in lpol_staff]
+print(lpol_staff[:10])</code></pre>
+<pre><code>[&#39;&lt;a class=&quot;active track-event&quot; data-event-category=&quot;external-site&quot; data-event-label=&quot;Topmenu external-site&quot; href=&quot;/en&quot;&gt;\n Leiden University\n&lt;/a&gt;\n&#39;, &#39;&lt;a class=&quot;track-event&quot; data-event-category=&quot;student-site&quot; data-event-label=&quot;Topmenu external-site&quot; href=&quot;https://www.student.universiteitleiden.nl/en&quot;&gt;\n Students\n&lt;/a&gt;\n&#39;, &#39;&lt;a class=&quot;track-event&quot; data-event-category=&quot;staffmember-site&quot; data-event-label=&quot;Topmenu external-site&quot; href=&quot;https://www.staff.universiteitleiden.nl/&quot;&gt;\n Staff members\n&lt;/a&gt;\n&#39;, &#39;&lt;a class=&quot;track-event&quot; data-event-category=&quot;org-site&quot; data-event-label=&quot;Topmenu external-site&quot; href=&quot;https://www.organisatiegids.universiteitleiden.nl/en&quot;&gt;\n Organisational structure\n&lt;/a&gt;\n&#39;, &#39;&lt;a class=&quot;track-event&quot; data-event-category=&quot;library-site&quot; data-event-label=&quot;Topmenu external-site&quot; href=&quot;https://www.library.universiteitleiden.nl/&quot;&gt;\n Library\n&lt;/a&gt;\n&#39;, &#39;&lt;a href=&quot;/en&quot;&gt;\n &lt;img alt=&quot;Universiteit Leiden&quot; height=&quot;64&quot; src=&quot;/en/design-1.0/assets/images/zegel.png&quot; width=&quot;151&quot;/&gt;\n&lt;/a&gt;\n&#39;, &#39;&lt;a data-hidden=&quot;&quot; data-hint=&quot;Search for subject or person&quot; href=&quot;/en/search&quot;&gt;\n All categories\n&lt;/a&gt;\n&#39;, &#39;&lt;a data-hidden=\&#39;{&quot;content-category&quot;:&quot;staffmember&quot;}\&#39; data-hint=&quot;Search for\xa0persons&quot; href=&quot;/en/search&quot;&gt;\n Persons\n&lt;/a&gt;\n&#39;, &#39;&lt;a data-hidden=\&#39;{&quot;content-category&quot;:&quot;education&quot;}\&#39; data-hint=&quot;Search for\xa0education&quot; href=&quot;/en/search&quot;&gt;\n Education\n&lt;/a&gt;\n&#39;, &#39;&lt;a data-hidden=\&#39;{&quot;content-category&quot;:&quot;research&quot;}\&#39; data-hint=&quot;Search for\xa0research&quot; href=&quot;/en/search&quot;&gt;\n Research\n&lt;/a&gt;\n&#39;]</code></pre>
+</div>
+</div>
+<div id="cleaning" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Cleaning</h2>
+<div id="r-3" class="section level3" number="3.3.1">
+<h3><span class="header-section-number">3.3.1</span> R</h3>
+<p>Seems like more useful data now. But can we improve by deleting some elements we do not need? Let’s first delete some of the useless information.</p>
+<pre class="r test"><code>head(lpol_staff)
+lpol_staff &lt;- lpol_staff[-c(1:39)]
+lpol_staff &lt;- lpol_staff[-c(133:length(lpol_staff))]
+head(lpol_staff)
+
+fshowdf(lpol_staff)</code></pre>
+<p>Still looks a bit messy. Can we get it into a dataframe and split the column into useful columns?</p>
+<pre class="r test"><code>lpol_staff &lt;- data.frame(lpol_staff)
+lpol_staff &lt;- colsplit(lpol_staff$lpol_staff, &quot;          &quot;, names = c(&quot;v1&quot;, &quot;v2&quot;, &quot;v3&quot;, &quot;v4&quot;, &quot;v5&quot;))
+fshowdf(lpol_staff, caption = &quot;lpol_staff&quot;)</code></pre>
+<p>Nice! I think we only need column 4 and 5? And let’s name them nicely and delete any trailing or leading whitespace.</p>
+<pre class="r test"><code>lpol_staff &lt;- lpol_staff[, c(&quot;v3&quot;, &quot;v4&quot;)]
+names(lpol_staff) &lt;- c(&quot;name&quot;, &quot;func&quot;)
+
+lpol_staff$name &lt;- trimws(lpol_staff$name, which = c(&quot;both&quot;), whitespace = &quot;[ \t\r\n]&quot;)
+lpol_staff$func &lt;- trimws(lpol_staff$func, which = c(&quot;both&quot;), whitespace = &quot;[ \t\r\n]&quot;)
+fshowdf(lpol_staff, caption = &quot;lpol_staff&quot;)</code></pre>
+<p>Not bad.</p>
+</div>
+</div>
+<div id="love-scraping" class="section level2 tabset tabset-fade" number="3.4">
+<h2><span class="header-section-number">3.4</span> Love Scraping?</h2>
+<p>Suppose you do not like datawrangling but simply love scraping.</p>
+<div id="r-4" class="section level3" number="3.4.1">
+<h3><span class="header-section-number">3.4.1</span> R</h3>
+<pre class="r test"><code>lpol_staff_names &lt;- read_html(&quot;https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1&quot;) %&gt;%
+    html_element(&quot;section.tab.active&quot;) %&gt;%
+    html_elements(&quot;ul.table-list&quot;) %&gt;%
+    html_elements(&quot;li&quot;) %&gt;%
+    html_elements(&quot;a&quot;) %&gt;%
+    html_elements(&quot;div&quot;) %&gt;%
+    html_elements(&quot;strong&quot;) %&gt;%
+    html_text()
+
+lpol_staff_functions &lt;- read_html(&quot;https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1&quot;) %&gt;%
+    html_element(&quot;section.tab.active&quot;) %&gt;%
+    html_elements(&quot;ul.table-list&quot;) %&gt;%
+    html_elements(&quot;li&quot;) %&gt;%
+    html_elements(&quot;a&quot;) %&gt;%
+    html_elements(&quot;div&quot;) %&gt;%
+    html_elements(&quot;span&quot;) %&gt;%
+    html_text()
+
+lpol_staff2 &lt;- data.frame(name = lpol_staff_names, funct = lpol_staff_functions)
+fshowdf(lpol_staff2)</code></pre>
+</div>
+<div id="python-3" class="section level3" number="3.4.2">
+<h3><span class="header-section-number">3.4.2</span> Python</h3>
+<pre class="python test"><code>url = &quot;https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1&quot;
+response = requests.get(url)
+webpage = response.content
+
+# Parse the webpage
+soup = BeautifulSoup(webpage, &#39;html.parser&#39;)
+
+#save the tags &#39;li&#39; in a list
+soup2 = soup.select_one(&#39;section.tab.active&#39;).select_one(&#39;ul.table-list&#39;).find_all(&quot;li&quot;)
+
+#loop through the list to find what we want
+lpol_staff_names = [taga.select_one(&quot;strong&quot;).get_text() for taga in soup2]
+lpol_staff_functions = [taga.select_one(&quot;span&quot;).get_text() for taga in soup2]
+
+# Combine data into a DataFrame
+lpol_staff_df = pd.DataFrame({
+    &#39;name&#39;: lpol_staff_names,
+    &#39;funct&#39;: lpol_staff_functions
+})
+
+# Display the DataFrame
+print(lpol_staff_df.head())  </code></pre>
+<pre><code>                name                                            funct
+0        Adina Akbik                       Senior Assistant Professor
+1       Femke Bakker                       Senior assistant professor
+2  Ingrid van Biezen                Professor of Comparative Politics
+3     Nicolas Blarel                              Associate Professor
+4         Arjen Boin  Professor of Public Institutions and Governance</code></pre>
+</div>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIldlYnNjcmFwaW5nIHNjaG9sYXJzIg0KYmlibGlvZ3JhcGh5OiByZWZlcmVuY2VzLmJpYg0KbGluay1jaXRhdGlvbnM6IHllcw0KLS0tDQoNCg0KYGBge3IsIGdsb2JhbHNldHRpbmdzLCBlY2hvPUZBTFNFLCB3YXJuaW5nPUZBTFNFLCBtZXNzYWdlPUZBTFNFLCByZXN1bHRzPSdoaWRlJ30NCmxpYnJhcnkoa25pdHIpDQpvcHRzX2NodW5rJHNldCh0aWR5Lm9wdHM9bGlzdCh3aWR0aC5jdXRvZmY9MTAwKSx0aWR5PVRSVUUsIGV2YWwgPSBGQUxTRSwgd2FybmluZyA9IEZBTFNFLCBtZXNzYWdlID0gRkFMU0UsY29tbWVudCA9ICIjPiIsIGNhY2hlPVRSVUUsIGNsYXNzLnNvdXJjZT1jKCJ0ZXN0IiksIGNsYXNzLm91dHB1dD1jKCJ0ZXN0MiIpLCBjYWNoZS5sYXp5ID0gRkFMU0UpDQpvcHRpb25zKHdpZHRoID0gMTAwKSANCnJnbDo6c2V0dXBLbml0cigpDQpgYGANCg0KYGBge3Iga2xpcHB5LCBlY2hvPUZBTFNFLCBpbmNsdWRlPVRSVUUsIG1lc3NhZ2U9RkFMU0UsIGV2YWw9VFJVRX0NCiMgaW5zdGFsbC5wYWNrYWdlcygicmVtb3RlcyIpDQojcmVtb3Rlczo6aW5zdGFsbF9naXRodWIoInJsZXN1ci9rbGlwcHkiKQ0Ka2xpcHB5OjprbGlwcHkocG9zaXRpb24gPSBjKCd0b3AnLCAncmlnaHQnKSkNCiNrbGlwcHk6OmtsaXBweShjb2xvciA9ICdkYXJrcmVkJykNCiNrbGlwcHk6OmtsaXBweSh0b29sdGlwX21lc3NhZ2UgPSAnQ2xpY2sgdG8gY29weScsIHRvb2x0aXBfc3VjY2VzcyA9ICdEb25lJykNCmBgYA0KDQojIEdvYWwgIA0KDQoqKkhhbmRzLW9uIHdlYnNjcmFwaW5nKiogIA0KDQpJdCBpcyB0aW1lIHRvIGRvIHNvbWUgd2Vic2NyYXBpbmcgb3Vyc2VsdmVzLiBJbiB3aGF0IGZvbGxvd3MgaXMgYSBzaG9ydCBmaXJzdCB0dXRvcmlhbCBvbiB3ZWJzY3JhcGluZyB3aGVyZSB3ZSB3aWxsIGJlIGNvbGxlY3RpbmcgZGF0YSBmcm9tIHdlYnBhZ2VzIG9uIHRoZSBpbnRlcm5ldC4gV2Ugd2lsbCB1c2UgdGhlIHNwZWNpZmljIHVzZSBjYXNlIG9mIHRoZSBwb2xpdGljYWwgc2NpZW5jZSBkZXBhcnRtZW50IHN0YWZmIG9mIHRoZSB1bml2ZXJzaXR5IG9mIExlaWRlbi4gDQoNCldoYXQgZG8gdGhleSBwdWJsaXNoPyBXaGVyZT8gQW5kIHdpdGggd2hvbSBkbyB0aGV5IGNvbGxhYm9yYXRlPyBXZSBhc3N1bWUgeW91IGhhdmUgYXQgbGVhc3Qgc29tZSBleHBlcmllbmNlIHdpdGggY29kaW5nIGluIFIuIEluIHRoZSByZXN0IG9mIHRoaXMgcGFydCBvZiB0aGUgdHV0b3JpYWwsIHdlIHdpbGwgc3dpdGNoIGJldHdlZW4gYmFzZSBSIGFuZCBUaWR5dmVyc2UgKGp1c3QgYSBiaXQpLCB3aGF0ZXZlciBpcyBtb3N0IGNvbnZlbmllbnQuIChOb3RlIHRoYXQgdGhpcyB3aWxsIGhhcHBlbiBvZnRlbiBpZiB5b3UgYmVjb21lIGFuIGFwcGxpZWQgY29tcHV0YXRpb25hbCBzb2Npb2xvZ2lzdC4pIFdlIGFsc28gb2ZmZXIgUHl0aG9uIGNvZGUuIA0KDQpUaGVyZSBhcmUgZGlmZmVyZW50IHN0cmF0ZWdpZXMgaW4gc2NyYXBpbmcuIFRoZXJlIGlzIG9mdGVuIGEgdHJhZGUtb2ZmIGJldHdlZW4gY29tcGxleCBzY3JhcGluZyB0ZWNobmlxdWVzIHZlcnN1cyBjb21wbGV4IHN0cmluZyBtYW5pcHVsYXRpb25zLiBJbiB0aGlzIGZpcnN0IGV4YW1wbGUsIHdlIHdpbGwgdXNlIHF1aXRlIGEgbG90IG9mIHN0cmluZyBtYW5pcHVsYXRpb25zLiANCg0KRm9yIGV2ZW4gbW9yZSBpbmZvIHNlZSBvdXIgW1NOQVNTIGJvb2sgLSBDaGFwdGVyIDExXShodHRwczovL3NuYXNzLm5ldGxpZnkuYXBwL3dlYmludHJvLmh0bWwpICANCg0KLS0tICANCg0KIyBQcmVwYXJhdGlvbg0KDQojIyBjbGVhbiB1cA0KYGBge3IsIGNsZWFudXAsIHJlc3VsdHM9J2hpZGUnfQ0Kcm0obGlzdD1scygpKQ0KZ2MoKQ0KYGBgDQoNCiMjIEN1c3RvbSBmdW5jdGlvbnMNCg0KLSBgZnBhY2thZ2UuY2hlY2tgOiBDaGVjayBpZiBwYWNrYWdlcyBhcmUgaW5zdGFsbGVkIChhbmQgaW5zdGFsbCBpZiBub3QpIGluIFIgKFtzb3VyY2VdKGh0dHBzOi8vdmJhbGlnYS5naXRodWIuaW8vdmVyaWZ5LXRoYXQtci1wYWNrYWdlcy1hcmUtaW5zdGFsbGVkLWFuZC1sb2FkZWQvKSkuICANCi0gYGZzYXZlYDogU2F2ZSB0byBwcm9jZXNzZWQgZGF0YSBpbiByZXBvc2l0b3J5ICANCi0gYGZsb2FkYDogVG8gbG9hZCB0aGUgZmlsZXMgYmFjayBhZnRlciBhbiBgZnNhdmVgICANCi0gYGZzaG93ZGZgOiBUbyBwcmludCBvYmplY3RzICh0aWJibGVzIC8gZGF0YS5mcmFtZSkgbmljZWx5IG9uIHNjcmVlbiBpbiAucm1kICANCg0KDQpgYGB7ciBjdXN0b21mdW5jdGlvbnMsIHJlc3VsdHM9J2hpZGUnLCBldmFsID0gVFJVRX0NCnJtKGxpc3QgPSBscygpKSAjY2xlYW4gdXAgeW91ciBlbnZpcm9ubWVudA0KDQpmcGFja2FnZS5jaGVjayA8LSBmdW5jdGlvbihwYWNrYWdlcykgew0KICBsYXBwbHkocGFja2FnZXMsIEZVTiA9IGZ1bmN0aW9uKHgpIHsNCiAgICBpZiAoIXJlcXVpcmUoeCwgY2hhcmFjdGVyLm9ubHkgPSBUUlVFKSkgew0KICAgICAgaW5zdGFsbC5wYWNrYWdlcyh4LCBkZXBlbmRlbmNpZXMgPSBUUlVFKQ0KICAgICAgbGlicmFyeSh4LCBjaGFyYWN0ZXIub25seSA9IFRSVUUpDQogICAgfQ0KICB9KQ0KfQ0KDQpmc2F2ZSA8LSBmdW5jdGlvbih4LCBmaWxlPU5VTEwsIGxvY2F0aW9uPSIuL2RhdGEvcHJvY2Vzc2VkLyIpIHsNCiAgaWZlbHNlKCFkaXIuZXhpc3RzKCJkYXRhIiksIGRpci5jcmVhdGUoImRhdGEiKSwgRkFMU0UpDQogIGlmZWxzZSghZGlyLmV4aXN0cygiZGF0YS9wcm9jZXNzZWQiKSwgZGlyLmNyZWF0ZSgiZGF0YS9wcm9jZXNzZWQiKSwgRkFMU0UpDQogIGlmIChpcy5udWxsKGZpbGUpKSBmaWxlPSBkZXBhcnNlKHN1YnN0aXR1dGUoeCkpDQogIGRhdGVuYW1lIDwtIHN1YnN0cihnc3ViKCJbOi1dIiwgIiIsIFN5cy50aW1lKCkpLCAxLDgpICANCiAgdG90YWxuYW1lIDwtIHBhc3RlKGxvY2F0aW9uLCBkYXRlbmFtZSwgZmlsZSwgIi5yZGEiLCBzZXA9IiIpDQogIHNhdmUoeCwgZmlsZSA9IHRvdGFsbmFtZSkgICNuZWVkIHRvIGZpeCBpZiBmaWxlIGlzIHJlbG9hZGVkIGFzIGlucHV0IG5hbWUsIG5vdCBhcyB4LiANCn0NCg0KZmxvYWQgPC0gZnVuY3Rpb24oZmlsZW5hbWUpIHsNCiAgbG9hZChmaWxlbmFtZSkNCiAgZ2V0KGxzKClbbHMoKSAhPSAiZmlsZW5hbWUiXSkNCn0NCg0KZnNob3dkZiA8LSAgZnVuY3Rpb24oeCwgLi4uKSB7DQogIGtuaXRyOjprYWJsZSh4LCBkaWdpdHM9MiwgImh0bWwiLCAuLi4pICU+JQ0KICBrYWJsZUV4dHJhOjprYWJsZV9zdHlsaW5nKGJvb3RzdHJhcF9vcHRpb25zID0gYygic3RyaXBlZCIsICJob3ZlciIpKSAlPiUNCiAga2FibGVFeHRyYTo6c2Nyb2xsX2JveCh3aWR0aD0iMTAwJSIsIGhlaWdodD0gIjMwMHB4IikNCn0gDQoNCmNvbG9yaXplIDwtIGZ1bmN0aW9uKHgsIGNvbG9yKSB7c3ByaW50ZigiPHNwYW4gc3R5bGU9J2NvbG9yOiAlczsnPiVzPC9zcGFuPiIsIGNvbG9yLCB4KSB9DQoNCmBgYA0KDQotLS0tDQoNCiMjIFBhY2thZ2VzIHsudGFic2V0IC50YWJzZXQtZmFkZX0NCg0KIyMjIFIgDQoNCi0gYHRpZHl2ZXJzZWA6IGZvciBwaXBpbmcgZXRjLiANCi0gYGh0dHJgOiBUb29scyBmb3IgV29ya2luZyB3aXRoIFVSTHMgYW5kIEhUVFAgIA0KLSBgeG1sMmA6IFdvcmsgd2l0aCBYTUwgZmlsZXMgdXNpbmcgYSBzaW1wbGUsIGNvbnNpc3RlbnQgaW50ZXJmYWNlLiAgDQotIGBydmVzdGA6IFdyYXBwZXJzIGFyb3VuZCB0aGUgJ3htbDInIGFuZCAnaHR0cicgcGFja2FnZXMgdG8gbWFrZSBpdCBlYXN5IHRvIGRvd25sb2FkLCB0aGVuIG1hbmlwdWxhdGUsIEhUTUwgYW5kIFhNTC4gIA0KLSBgcmVzaGFwZTJgOiBGbGV4aWJseSBSZXNoYXBlIERhdGEgIA0KDQpgYGB7ciwgcmVzdWx0cz0naGlkZSd9DQpwYWNrYWdlcyA9IGMoInRpZHl2ZXJzZSIsICJodHRyIiwgInJ2ZXN0IiwgInJlc2hhcGUyIiwgInhtbDIiKQ0KZnBhY2thZ2UuY2hlY2socGFja2FnZXMpDQpgYGANCg0KLS0tICANCg0KIyMjIFB5dGhvbg0KDQpNYWtlIHN1cmUgeW91IGhhdmUgdGhlIHJlcXVpcmVkIGxpYnJhcmllcyBieSB0eXBpbmcgaW4gdGhlIGNvZGUgYmVsb3cgaW50byB5b3VyIGNvbnNvbGUNCg0KYGBge2Jhc2gsIGV2YWwgPSBGQUxTRX0NCnBpcCBpbnN0YWxsIHJlcXVlc3RzIGJlYXV0aWZ1bHNvdXA0IHBhbmRhcw0KYGBgIA0KDQo8YnI+DQoNCmFuZCBpbXBvcnQgbmVjZXNzYXJ5IG1vZHVsZXMNCg0KYGBge3B5dGhvbiwgZXZhbCA9IEZBTFNFfQ0KDQppbXBvcnQgcmVxdWVzdHMNCmZyb20gYnM0IGltcG9ydCBCZWF1dGlmdWxTb3VwDQppbXBvcnQgcGFuZGFzIGFzIHBkDQppbXBvcnQgcmUNCg0KYGBgIA0KDQo8YnI+DQoNCg0KIyBMZWlkZW4gVW5pdmVyc2l0eTogUG9saXRpY2FsIFNjaWVuY2UNCg0KV2hhdCBkbyB3ZSBtZWFuIGJ5IGFuY2hvciBkYXRhPyBPdXIgZ29hbCBpcyB0byBnZXQgdG8ga25vdzogIA0KDQppLiB3aG8gdGhlIFBvbGl0aWNhbCBTY2llbmNlIHN0YWZmIGlzIGF0IHNldmVyYWwgdW5pdmVyc2l0aWVzLCAgDQppaS4gd2hhdCB0aGV5IHB1Ymxpc2ggd2l0aCByZXNwZWN0IHRvIHNjaWVudGlmaWMgd29yaywgYW5kICANCmlpaS4gd2hvIHRoZXkgY29sbGFib3JhdGUgd2l0aC4gIA0KDQpTbyB0aGF0IG1lYW5zIGF0IGxlYXN0IHRocmVlIGRhdGEgc291cmNlcyB3ZSBuZWVkIHRvIGNvbGxlY3QgZnJvbSBzb21ld2hlcmUuIFdoYXQgd291bGQgYmUgYSBuaWNlIHN0YXJ0aW5nIChyZWFkOiBhbmNob3IpIHBvaW50IGJlPyBGaXJzdCwgd2UgaGF2ZSB0byBrbm93IHdobyBpcyBzdGFmZi4gTGV0J3MgY2hlY2sgb3V0IFt0aGUgTGVpZGVuIHBvbGl0aWNhbCBzY2llbmNlIHN0YWZmIHdlYnNpdGVdKGh0dHBzOi8vd3d3LnVuaXZlcnNpdGVpdGxlaWRlbi5ubC9lbi9zb2NpYWwtYmVoYXZpb3VyYWwtc2NpZW5jZXMvcG9saXRpY2FsLXNjaWVuY2Uvc3RhZmYjdGFiLTEpLiBIZXJlIHdlIHNlZSBhIG5pY2UgbGlzdCBvbiB3aG8gaXMgb24gdGhlIHN0YWZmIGluIHNldmVyYWwgcGFnZXMuIEhvdyBkbyB3ZSBnZXQgdGhhdCBkYXRhPyBJdCBpcyBhY3R1YWxseSBxdWl0ZSBzaW1wbGUsIHRoZSBwYWNrYWdlIFtgcnZlc3RgXShodHRwczovL3J2ZXN0LnRpZHl2ZXJzZS5vcmcvaW5kZXguaHRtbCkgaGFzIGEgdmVyeSBuaWNlIGZ1bmN0aW9uIFtgaHRtbF9yZWFkKClgXShodHRwczovL3J2ZXN0LnRpZHl2ZXJzZS5vcmcvcmVmZXJlbmNlL3JlYWRfaHRtbC5odG1sKSAoYWN0dWFsbHkgdGhpcyBjb21lcyBmcm9tIHRoZSBgeG1sMmAgcGFja2FnZSkgd2hpY2ggc2ltcGx5IGRlcml2ZXMgdGhlIHNvdXJjZSBodG1sIG9mIGEgKnN0YXRpYyogd2VicGFnZToNCg0KDQpgciBjb2xvcml6ZSgiSG93IGluY3JlZGlibHkgYW5ub3lpbmcsIHdoZW4gdHJ5aW5nIHRvIGRvIHRoZSBmaW5hbCBrbml0IGZvciB0aGUgd29ya3Nob3AsIExlaWRlbiB1bml2ZXJzaXR5IGRlY2lkZWQgdG8gZG8gbWFpbnRhbmNlIHdvcmsgb24gdGhlaXIgd2Vic2l0ZSBvbiBTYXR1cmRheSAyMiBhbmQgU3VuZGF5IDIzIEp1bmUhISEhISEhIiwgInJlZCIpYA0KDQojIyBTdGFmZiBwYWdlcyB7LnRhYnNldCAudGFic2V0LWZhZGV9DQoNCiMjIyBSIA0KDQpMZXQncyBmaXJzdCBzaW1wbHkgZ2V0IHRoZSBzdGFmZiBwYWdlcy4NCmByZWFkX2h0bWwoKWAgaXMgYSBmdW5jdGlvbiB0aGF0IHNpbXBseSBleHRyYWN0cyBodG1sIHdlYnBhZ2VzIGFuZCBwdXRzIHRoZW0gaW4geG1sIGZvcm1hdC4NCg0KYGBge3J9DQpscG9sX3N0YWZmIDwtIHJlYWRfaHRtbCgiaHR0cHM6Ly93d3cudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuL3NvY2lhbC1iZWhhdmlvdXJhbC1zY2llbmNlcy9wb2xpdGljYWwtc2NpZW5jZS9zdGFmZiN0YWItMSIpDQpoZWFkKGxwb2xfc3RhZmYpDQpgYGANClRoYXQgbG9va3Mga2luZGEgd2VpcmQuIFdoYXQgdHlwZSBvZiBvYmplY3QgZGlkIHdlIHN0b3JlIGl0IGJ5IHB1dHRpbmcgdGhlIGh0bWwgaW50byBgbHBvbF9zdGFmZjFgPw0KDQpgYGB7cn0NCmNsYXNzKGxwb2xfc3RhZmYpDQpgYGANCg0KU28gaXQgaXMgaXMgc3RvcmVkIGluIHNvbWV0aGluZyB0aGF0J3MgY2FsbGVkIGFuIHhtbCBvYmplY3QuIE5vdCBpbXBvcnRhbnQgZm9yIG5vdyB3aGF0IHRoYXQgaXMuIEJ1dCBpdCBpcyBpbXBvcnRhbnQgdG8gZXh0cmFjdCB0aGUgcmVsZXZhbnQgdGFibGUgdGhhdCB3ZSBzYXcgb24gdGhlIHN0YWZmIHdlYnNpdGUuIEhvdyBkbyB3ZSBkbyB0aGF0PyBHbyB0byBvbmUgb2YgdGhlIGxpbmtzIGFib3ZlIGluIGEgYnJvd3NlciBhbmQgdGhlbiBwcmVzcyAiSW5zcGVjdCIgb24gdGhlIHdlYnBhZ2UgKHVzdWFsbHk6IHJpZ2h0IGNsaWNrLS1cPkluc3BlY3QpLiBJbiB0aGUgaHRtbCBjb2RlIHdlIGV4dHJhY3RlZCwgd2UgbmVlZCB0byBnbyB0byBvbmUgb2YgdGhlIG5vZGVzIGZpcnN0LiBJZiB5b3UgbW92ZSB5b3VyIGN1cnNvciBvdmVyICoqImRpdiIqKiBpbiB0aGUgaHRtbCBjb2RlIG9uIHRoZSBzY3JlZW4sIHRoZSBlbnRpcmUgKioiYm9keSIqKiBvZiB0aGUgcGFnZSBzaG91bGQgYmVjb21lIHNvbWUgc2hhZGUgb2YgYmx1ZS4gVGhpcyBtZWFucyB0aGF0IHRoZSBlbGVtZW50cyBlbmNhcHN1bGF0ZWQgaW4gdGhlICoqImJvZHkiKiogbm9kZSBjYXB0dXJlcyBldmVyeXRoaW5nIHRoYXQgdHVybmVkIGJsdWUuDQoNCg0KIyMjIFB5dGhvbg0KDQpgYGB7cHl0aG9uLCBldmFsID0gRkFMU0V9DQojIEZldGNoIHRoZSB3ZWJwYWdlDQp1cmwgPSAiaHR0cHM6Ly93d3cudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuL3NvY2lhbC1iZWhhdmlvdXJhbC1zY2llbmNlcy9wb2xpdGljYWwtc2NpZW5jZS9zdGFmZiN0YWItMSINCg0KcmVzcG9uc2UgPSByZXF1ZXN0cy5nZXQodXJsKQ0Kd2VicGFnZSA9IHJlc3BvbnNlLmNvbnRlbnQNCg0KIyBQYXJzZSB0aGUgd2VicGFnZQ0Kc291cCA9IEJlYXV0aWZ1bFNvdXAod2VicGFnZSwgJ2h0bWwucGFyc2VyJykNCg0KI3ByaW50KHNvdXAucHJldHRpZnkoKSkNCg0KI29yIHRvIHByaW50IGp1c3QgYSBmZXcgbGluZXMNCnJlc3VsdCA9IHNvdXAucHJldHRpZnkoKS5zcGxpdGxpbmVzKCkNCnByaW50KCdcbicuam9pbihyZXN1bHRbOjEwXSkpDQpgYGANCmBgYA0KPCFET0NUWVBFIGh0bWw+DQo8aHRtbCBkYXRhLXZlcnNpb249IjEuMTc4LjAwIiBsYW5nPSJlbiI+DQogPGhlYWQ+DQogIDwhLS0gc3RhbmRhcmQgcGFnZSBodG1sIGhlYWQgLS0+DQogIDx0aXRsZT4NCiAgIFN0YWZmIC0gTGVpZGVuIFVuaXZlcnNpdHkNCiAgPC90aXRsZT4NCiAgPG1ldGEgY29udGVudD0ibzhLWXVGQWlTWmk2UVdXMXd4cUtGdlQxV1F3Ti1CeHJ1VTQyc2k5WWpYdyIgbmFtZT0iZ29vZ2xlLXNpdGUtdmVyaWZpY2F0aW9uIi8+DQogIDxtZXRhIGNvbnRlbnQ9ImhSVXhycUlBUk1pbkxXMmRSWHJQcG10THR5bW5PVHNnMFBsM1dqSFdRNHciIG5hbWU9Imdvb2dsZS1zaXRlLXZlcmlmaWNhdGlvbiIvPg0KICA8bGluayBocmVmPSJodHRwczovL3d3dy51bml2ZXJzaXRlaXRsZWlkZW4ubmwvZW4vc29jaWFsLWJlaGF2aW91cmFsLXNjaWVuY2VzL3BvbGl0aWNhbC1zY2llbmNlL3N0YWZmIiByZWw9ImNhbm9uaWNhbCIvPg0KYGBgDQoNCg0KIyMgTm9kZXMgYW5kIHRhZ3Mgey50YWJzZXQgLnRhYnNldC1mYWRlfQ0KDQoNCk5leHQsIHdlIG5lZWQgdG8gbG9vayBhdCB0aGUgc3BlY2lmaWMgZWxlbWVudHMgb24gdGhlIHBhZ2UgdGhhdCB3ZSBuZWVkIHRvIGV4dHJhY3QuIFNvbWV3aGF0IGJ5IGluZm9ybWVkIHRyaWFsIGFuZCBlcnJvciwgbG9va2luZyBmb3IgdGhlIGNvcnJlY3QgY29kZSwgd2UgY2FuIHNlbGVjdCB0aGUgZWxlbWVudHMgd2Ugd2FudC4gU28gd2UgbmVlZCBjb2RlIHRoYXQgbG9va3MgZm9yIHRoZSBub2RlICoqIm1haW4iKiogYW5kIHRoZSAqKiJ0ZCIqKiBlbGVtZW50cyBpbiB0aGUgeG1sIG9iamVjdCBhbmQgdGhlbiBleHRyYWN0IHRob3NlIGVsZW1lbnRzIGluIGl0LiBOb3RlIHRoYXQgeW91IGNhbiBjbGljayBvbiB0aGUgYXJyb3dzIG9uY2UgeW91IGFyZSBpbiB0aGUgIkluc3BlY3QiIG1vZGUgaW4gdGhlIHdlYiBicm93c2VyIHRvIHRyaWFsLWFuZC1lcnJvciB0byBnZXQgYXQgdGhlIGNvcnJlY3QgZWxlbWVudHMuICANCg0KVGhlcmUgYXJlIG1hbnkgd2F5cyB0byBmaW5kIHRoZSBDU1Mgb3IgWHBhdGggb2YgdGhlIGVsZW1lbnRzIHlvdSB3YW50LiANClRoZSBwYWNrYWdlIGBydmVzdGAgYWxzbyBoYXMgYSBTZWxlY3RvckdhZGdldCB0b29sLiBTZWUgW2hlcmVdKGh0dHBzOi8vcnZlc3QudGlkeXZlcnNlLm9yZy9hcnRpY2xlcy9zZWxlY3RvcmdhZGdldC5odG1sKQ0KDQpXbyB3ZSBuZWVkIHRvIGZpbmQgV0hFUkUgdGhlIHRhYmxlIGlzIGxvY2F0ZWQgaW4gdGhlIGh0bWwuIA0KDQpBc3NpZ25tZW50OiAgDQotIHVzZSBmaXJlZm94ICdpbnNwZWN0JyAgDQotIHVzZSByc3R1ZGlvICANCi0gdXNlIGBydmVzdGAgU2VsZWN0b3JHYWRnZXQNCg0KIyMjIFIgDQoNCmBgYHtyfQ0KbHBvbF9zdGFmZiA8LSBscG9sX3N0YWZmICU+JSANCiAgaHRtbF9ub2RlcygiYm9keSIpICU+JQ0KICBodG1sX25vZGVzKHhwYXRoID0gIi8vYSIpICU+JSANCiAgaHRtbF90ZXh0KCkNCmBgYA0KDQpMZXQgdXMgZm9yIG5vdyBhc3N1bWUgeW91IGFyZSBzYXRpc2ZpZWQgd2l0aCB0aGUgYWJvdmUgb3V0cHV0Lg0KDQojIyMgUHl0aG9uDQpgYGB7cHl0aG9uLCBldmFsID0gRkFMU0V9DQpscG9sX3N0YWZmID0gc291cC5ib2R5LmZpbmRfYWxsKCdhJykNCg0KbHBvbF9zdGFmZiA9IFt0YWdzLnByZXR0aWZ5KCkgZm9yIHRhZ3MgaW4gbHBvbF9zdGFmZl0NCnByaW50KGxwb2xfc3RhZmZbOjEwXSkNCmBgYA0KYGBgDQpbJzxhIGNsYXNzPSJhY3RpdmUgdHJhY2stZXZlbnQiIGRhdGEtZXZlbnQtY2F0ZWdvcnk9ImV4dGVybmFsLXNpdGUiIGRhdGEtZXZlbnQtbGFiZWw9IlRvcG1lbnUgZXh0ZXJuYWwtc2l0ZSIgaHJlZj0iL2VuIj5cbiBMZWlkZW4gVW5pdmVyc2l0eVxuPC9hPlxuJywgJzxhIGNsYXNzPSJ0cmFjay1ldmVudCIgZGF0YS1ldmVudC1jYXRlZ29yeT0ic3R1ZGVudC1zaXRlIiBkYXRhLWV2ZW50LWxhYmVsPSJUb3BtZW51IGV4dGVybmFsLXNpdGUiIGhyZWY9Imh0dHBzOi8vd3d3LnN0dWRlbnQudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuIj5cbiBTdHVkZW50c1xuPC9hPlxuJywgJzxhIGNsYXNzPSJ0cmFjay1ldmVudCIgZGF0YS1ldmVudC1jYXRlZ29yeT0ic3RhZmZtZW1iZXItc2l0ZSIgZGF0YS1ldmVudC1sYWJlbD0iVG9wbWVudSBleHRlcm5hbC1zaXRlIiBocmVmPSJodHRwczovL3d3dy5zdGFmZi51bml2ZXJzaXRlaXRsZWlkZW4ubmwvIj5cbiBTdGFmZiBtZW1iZXJzXG48L2E+XG4nLCAnPGEgY2xhc3M9InRyYWNrLWV2ZW50IiBkYXRhLWV2ZW50LWNhdGVnb3J5PSJvcmctc2l0ZSIgZGF0YS1ldmVudC1sYWJlbD0iVG9wbWVudSBleHRlcm5hbC1zaXRlIiBocmVmPSJodHRwczovL3d3dy5vcmdhbmlzYXRpZWdpZHMudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuIj5cbiBPcmdhbmlzYXRpb25hbCBzdHJ1Y3R1cmVcbjwvYT5cbicsICc8YSBjbGFzcz0idHJhY2stZXZlbnQiIGRhdGEtZXZlbnQtY2F0ZWdvcnk9ImxpYnJhcnktc2l0ZSIgZGF0YS1ldmVudC1sYWJlbD0iVG9wbWVudSBleHRlcm5hbC1zaXRlIiBocmVmPSJodHRwczovL3d3dy5saWJyYXJ5LnVuaXZlcnNpdGVpdGxlaWRlbi5ubC8iPlxuIExpYnJhcnlcbjwvYT5cbicsICc8YSBocmVmPSIvZW4iPlxuIDxpbWcgYWx0PSJVbml2ZXJzaXRlaXQgTGVpZGVuIiBoZWlnaHQ9IjY0IiBzcmM9Ii9lbi9kZXNpZ24tMS4wL2Fzc2V0cy9pbWFnZXMvemVnZWwucG5nIiB3aWR0aD0iMTUxIi8+XG48L2E+XG4nLCAnPGEgZGF0YS1oaWRkZW49IiIgZGF0YS1oaW50PSJTZWFyY2ggZm9yIHN1YmplY3Qgb3IgcGVyc29uIiBocmVmPSIvZW4vc2VhcmNoIj5cbiBBbGwgY2F0ZWdvcmllc1xuPC9hPlxuJywgJzxhIGRhdGEtaGlkZGVuPVwneyJjb250ZW50LWNhdGVnb3J5Ijoic3RhZmZtZW1iZXIifVwnIGRhdGEtaGludD0iU2VhcmNoIGZvclx4YTBwZXJzb25zIiBocmVmPSIvZW4vc2VhcmNoIj5cbiBQZXJzb25zXG48L2E+XG4nLCAnPGEgZGF0YS1oaWRkZW49XCd7ImNvbnRlbnQtY2F0ZWdvcnkiOiJlZHVjYXRpb24ifVwnIGRhdGEtaGludD0iU2VhcmNoIGZvclx4YTBlZHVjYXRpb24iIGhyZWY9Ii9lbi9zZWFyY2giPlxuIEVkdWNhdGlvblxuPC9hPlxuJywgJzxhIGRhdGEtaGlkZGVuPVwneyJjb250ZW50LWNhdGVnb3J5IjoicmVzZWFyY2gifVwnIGRhdGEtaGludD0iU2VhcmNoIGZvclx4YTByZXNlYXJjaCIgaHJlZj0iL2VuL3NlYXJjaCI+XG4gUmVzZWFyY2hcbjwvYT5cbiddDQpgYGANCg0KIyMgQ2xlYW5pbmcgDQoNCiMjIyBSIA0KDQpTZWVtcyBsaWtlIG1vcmUgdXNlZnVsIGRhdGEgbm93LiBCdXQgY2FuIHdlIGltcHJvdmUgYnkgZGVsZXRpbmcgc29tZSBlbGVtZW50cyB3ZSBkbyBub3QgbmVlZD8gTGV0J3MgZmlyc3QgZGVsZXRlIHNvbWUgb2YgdGhlIHVzZWxlc3MgaW5mb3JtYXRpb24uDQoNCmBgYHtyfQ0KaGVhZChscG9sX3N0YWZmKQ0KbHBvbF9zdGFmZiA8LWxwb2xfc3RhZmZbLWMoMTozOSldDQpscG9sX3N0YWZmPC0gbHBvbF9zdGFmZlstYygxMzM6bGVuZ3RoKGxwb2xfc3RhZmYpKV0NCmhlYWQobHBvbF9zdGFmZikNCg0KZnNob3dkZihscG9sX3N0YWZmKQ0KYGBgDQoNClN0aWxsIGxvb2tzIGEgYml0IG1lc3N5LiBDYW4gd2UgZ2V0IGl0IGludG8gYSBkYXRhZnJhbWUgYW5kIHNwbGl0IHRoZSBjb2x1bW4gaW50byB1c2VmdWwgY29sdW1ucz8NCg0KYGBge3J9DQpscG9sX3N0YWZmIDwtIGRhdGEuZnJhbWUobHBvbF9zdGFmZikNCmxwb2xfc3RhZmYgPC0gY29sc3BsaXQobHBvbF9zdGFmZiRscG9sX3N0YWZmLCAiICAgICAgICAgICIsIG5hbWVzID0gYygidjEiLCJ2MiIsInYzIiwidjQiLCJ2NSIpKQ0KZnNob3dkZihscG9sX3N0YWZmLCBjYXB0aW9uPSJscG9sX3N0YWZmIikNCmBgYA0KDQpOaWNlISBJIHRoaW5rIHdlIG9ubHkgbmVlZCBjb2x1bW4gNCBhbmQgNT8gQW5kIGxldCdzIG5hbWUgdGhlbSBuaWNlbHkgYW5kIGRlbGV0ZSBhbnkgdHJhaWxpbmcgb3IgbGVhZGluZyB3aGl0ZXNwYWNlLg0KDQpgYGB7cn0NCmxwb2xfc3RhZmYgPC0gbHBvbF9zdGFmZlssIGMoInYzIiwidjQiKV0NCm5hbWVzKGxwb2xfc3RhZmYpIDwtIGMoIm5hbWUiLCAiZnVuYyIpDQoNCmxwb2xfc3RhZmYkbmFtZSA8LSB0cmltd3MobHBvbF9zdGFmZiRuYW1lLCB3aGljaCA9IGMoImJvdGgiKSwgd2hpdGVzcGFjZSA9ICJbIFx0XHJcbl0iKQ0KbHBvbF9zdGFmZiRmdW5jIDwtIHRyaW13cyhscG9sX3N0YWZmJGZ1bmMsIHdoaWNoID0gYygiYm90aCIpLCB3aGl0ZXNwYWNlID0gIlsgXHRcclxuXSIpDQpmc2hvd2RmKGxwb2xfc3RhZmYsIGNhcHRpb249Imxwb2xfc3RhZmYiKQ0KYGBgDQoNCk5vdCBiYWQuIA0KDQojIyBMb3ZlIFNjcmFwaW5nPyB7LnRhYnNldCAudGFic2V0LWZhZGV9DQoNClN1cHBvc2UgeW91IGRvIG5vdCBsaWtlIGRhdGF3cmFuZ2xpbmcgYnV0IHNpbXBseSBsb3ZlIHNjcmFwaW5nLiANCg0KIyMjIFINCg0KYGBge3J9DQpscG9sX3N0YWZmX25hbWVzIDwtIHJlYWRfaHRtbCgiaHR0cHM6Ly93d3cudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuL3NvY2lhbC1iZWhhdmlvdXJhbC1zY2llbmNlcy9wb2xpdGljYWwtc2NpZW5jZS9zdGFmZiN0YWItMSIpICU+JQ0KICBodG1sX2VsZW1lbnQoInNlY3Rpb24udGFiLmFjdGl2ZSIpICU+JQ0KICBodG1sX2VsZW1lbnRzKCJ1bC50YWJsZS1saXN0IikgJT4lDQogIGh0bWxfZWxlbWVudHMoImxpIikgJT4lIA0KICBodG1sX2VsZW1lbnRzKCJhIikgJT4lIA0KICBodG1sX2VsZW1lbnRzKCJkaXYiKSAlPiUNCiAgaHRtbF9lbGVtZW50cygic3Ryb25nIiklPiUNCiAgaHRtbF90ZXh0KCkNCg0KbHBvbF9zdGFmZl9mdW5jdGlvbnMgPC0gcmVhZF9odG1sKCJodHRwczovL3d3dy51bml2ZXJzaXRlaXRsZWlkZW4ubmwvZW4vc29jaWFsLWJlaGF2aW91cmFsLXNjaWVuY2VzL3BvbGl0aWNhbC1zY2llbmNlL3N0YWZmI3RhYi0xIikgJT4lDQogIGh0bWxfZWxlbWVudCgic2VjdGlvbi50YWIuYWN0aXZlIikgJT4lDQogIGh0bWxfZWxlbWVudHMoInVsLnRhYmxlLWxpc3QiKSAlPiUNCiAgaHRtbF9lbGVtZW50cygibGkiKSAlPiUgDQogIGh0bWxfZWxlbWVudHMoImEiKSAlPiUgDQogIGh0bWxfZWxlbWVudHMoImRpdiIpICU+JQ0KICBodG1sX2VsZW1lbnRzKCJzcGFuIiklPiUNCiAgaHRtbF90ZXh0KCkNCiAgDQogIGxwb2xfc3RhZmYyIDwtIGRhdGEuZnJhbWUobmFtZSA9IGxwb2xfc3RhZmZfbmFtZXMsIGZ1bmN0ID0gbHBvbF9zdGFmZl9mdW5jdGlvbnMpDQogIGZzaG93ZGYobHBvbF9zdGFmZjIpDQoNCmBgYA0KIyMjIFB5dGhvbg0KDQpgYGB7cHl0aG9uLCBldmFsID0gRkFMU0V9DQp1cmwgPSAiaHR0cHM6Ly93d3cudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuL3NvY2lhbC1iZWhhdmlvdXJhbC1zY2llbmNlcy9wb2xpdGljYWwtc2NpZW5jZS9zdGFmZiN0YWItMSINCnJlc3BvbnNlID0gcmVxdWVzdHMuZ2V0KHVybCkNCndlYnBhZ2UgPSByZXNwb25zZS5jb250ZW50DQoNCiMgUGFyc2UgdGhlIHdlYnBhZ2UNCnNvdXAgPSBCZWF1dGlmdWxTb3VwKHdlYnBhZ2UsICdodG1sLnBhcnNlcicpDQoNCiNzYXZlIHRoZSB0YWdzICdsaScgaW4gYSBsaXN0DQpzb3VwMiA9IHNvdXAuc2VsZWN0X29uZSgnc2VjdGlvbi50YWIuYWN0aXZlJykuc2VsZWN0X29uZSgndWwudGFibGUtbGlzdCcpLmZpbmRfYWxsKCJsaSIpDQoNCiNsb29wIHRocm91Z2ggdGhlIGxpc3QgdG8gZmluZCB3aGF0IHdlIHdhbnQNCmxwb2xfc3RhZmZfbmFtZXMgPSBbdGFnYS5zZWxlY3Rfb25lKCJzdHJvbmciKS5nZXRfdGV4dCgpIGZvciB0YWdhIGluIHNvdXAyXQ0KbHBvbF9zdGFmZl9mdW5jdGlvbnMgPSBbdGFnYS5zZWxlY3Rfb25lKCJzcGFuIikuZ2V0X3RleHQoKSBmb3IgdGFnYSBpbiBzb3VwMl0NCg0KIyBDb21iaW5lIGRhdGEgaW50byBhIERhdGFGcmFtZQ0KbHBvbF9zdGFmZl9kZiA9IHBkLkRhdGFGcmFtZSh7DQogICAgJ25hbWUnOiBscG9sX3N0YWZmX25hbWVzLA0KICAgICdmdW5jdCc6IGxwb2xfc3RhZmZfZnVuY3Rpb25zDQp9KQ0KDQojIERpc3BsYXkgdGhlIERhdGFGcmFtZQ0KcHJpbnQobHBvbF9zdGFmZl9kZi5oZWFkKCkpICANCg0KYGBgDQpgYGANCiAgICAgICAgICAgICAgICBuYW1lICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBmdW5jdA0KMCAgICAgICAgQWRpbmEgQWtiaWsgICAgICAgICAgICAgICAgICAgICAgIFNlbmlvciBBc3Npc3RhbnQgUHJvZmVzc29yDQoxICAgICAgIEZlbWtlIEJha2tlciAgICAgICAgICAgICAgICAgICAgICAgU2VuaW9yIGFzc2lzdGFudCBwcm9mZXNzb3INCjIgIEluZ3JpZCB2YW4gQmllemVuICAgICAgICAgICAgICAgIFByb2Zlc3NvciBvZiBDb21wYXJhdGl2ZSBQb2xpdGljcw0KMyAgICAgTmljb2xhcyBCbGFyZWwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBBc3NvY2lhdGUgUHJvZmVzc29yDQo0ICAgICAgICAgQXJqZW4gQm9pbiAgUHJvZmVzc29yIG9mIFB1YmxpYyBJbnN0aXR1dGlvbnMgYW5kIEdvdmVybmFuY2UNCmBgYA0KDQoNCg==</div>
+<style>
+  .center {
+    text-align: center;
+    color: red;
+  }
+</style>
+  
+  <hr>
+  <br>
+  <p class="center">Copyright &copy; 2024 Jochem Tolsma </p>
+    
+    
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("10scholars.Rmd");
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
