@@ -130,7 +130,8 @@ from selenium.webdriver.common.by import By
 port <- netstat::free_port(random = TRUE)
 
 #ping port for confirmation
-pingr::ping_port("localhost", port)
+pingr::ping_port("www.jochemtolsma.nl", port = port)
+ping_port("r-project.org")
 ```
 
 Set up selenium server and browser (firefox is recommended)
@@ -227,9 +228,15 @@ remDr$findElement(using = "xpath", value = "/html/body/div[1]/div/div[1]/aside/d
 
 #and click
 remDr$findElement(using = "xpath", value = "//button[@class='facet-list__expand-sub' and @aria-controls='toggle-staff-department-961']")$clickElement()
+```
 
-#here is the bug. not all departments are shown. you have to click on less and more. 
+Here we encounter the bug: not all departments are shown. You have to click on less and more. 
 
+> **Assignment:**
+>  Let your crawler click on less and more (of fix the bug in a better way)  
+
+Once done, we can continue
+```{r, eval = FALSE}
 #click on sociology
 remDr$findElement(using = "xpath", value = "//input[@type='checkbox' and @class='facets-checkbox' and @id='staff-department-992']")$clickElement()
 

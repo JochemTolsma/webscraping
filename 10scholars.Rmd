@@ -7,7 +7,7 @@ link-citations: yes
 
 ```{r, globalsettings, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
 library(knitr)
-opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE, eval = FALSE, warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"), cache.lazy = FALSE)
+opts_chunk$set(tidy.opts=list(width.cutoff=100),tidy=TRUE,  warning = FALSE, message = FALSE,comment = "#>", cache=TRUE, class.source=c("test"), class.output=c("test2"), cache.lazy = FALSE)
 options(width = 100) 
 rgl::setupKnitr()
 ```
@@ -44,7 +44,7 @@ gc()
 
 ## Custom functions
 
-- `fpackage.check`: Check if packages are installed (and install if not) in R ([source](https://vbaliga.github.io/verify-that-r-packages-are-installed-and-loaded/)).  
+- `fpackage.check`: Check if packages are installed (and install if not) in R.  
 - `fsave`: Save to processed data in repository  
 - `fload`: To load the files back after an `fsave`  
 - `fshowdf`: To print objects (tibbles / data.frame) nicely on screen in .rmd  
@@ -140,7 +140,7 @@ iii. who they collaborate with.
 So that means at least three data sources we need to collect from somewhere. What would be a nice starting (read: anchor) point be? First, we have to know who is staff. Let's check out [the Leiden political science staff website](https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1). Here we see a nice list on who is on the staff in several pages. How do we get that data? It is actually quite simple, the package [`rvest`](https://rvest.tidyverse.org/index.html) has a very nice function [`html_read()`](https://rvest.tidyverse.org/reference/read_html.html) (actually this comes from the `xml2` package) which simply derives the source html of a *static* webpage:
 
 
-`r colorize("How incredibly annoying, when trying to do the final knit for the workshop, Leiden university decided to do maintance work on their website on Saturday 22 and Sunday 23 June!!!!!!!", "red")`
+<!-- `r colorize("How incredibly annoying, when trying to do the final knit for the workshop, Leiden university decided to do maintance work on their website on Saturday 22 and Sunday 23 June!!!!!!!", "red")` -->
 
 ## Staff pages {.tabset .tabset-fade}
 

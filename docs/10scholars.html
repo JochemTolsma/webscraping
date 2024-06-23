@@ -40,6 +40,8 @@
 <link href="site_libs/primer-tooltips-1.4.0/build.css" rel="stylesheet" />
 <link href="site_libs/klippy-0.0.0.9500/css/klippy.min.css" rel="stylesheet" />
 <script src="site_libs/klippy-0.0.0.9500/js/klippy.min.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
 
@@ -428,7 +430,7 @@ gc()</code></pre>
 <div id="custom-functions" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Custom functions</h2>
 <ul>
-<li><code>fpackage.check</code>: Check if packages are installed (and install if not) in R (<a href="https://vbaliga.github.io/verify-that-r-packages-are-installed-and-loaded/">source</a>).<br />
+<li><code>fpackage.check</code>: Check if packages are installed (and install if not) in R.<br />
 </li>
 <li><code>fsave</code>: Save to processed data in repository<br />
 </li>
@@ -516,7 +518,7 @@ import re</code></pre>
 <li>who they collaborate with.</li>
 </ol>
 <p>So that means at least three data sources we need to collect from somewhere. What would be a nice starting (read: anchor) point be? First, we have to know who is staff. Let’s check out <a href="https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1">the Leiden political science staff website</a>. Here we see a nice list on who is on the staff in several pages. How do we get that data? It is actually quite simple, the package <a href="https://rvest.tidyverse.org/index.html"><code>rvest</code></a> has a very nice function <a href="https://rvest.tidyverse.org/reference/read_html.html"><code>html_read()</code></a> (actually this comes from the <code>xml2</code> package) which simply derives the source html of a <em>static</em> webpage:</p>
-<p><span style="color: red;">How incredibly annoying, when trying to do the final knit for the workshop, Leiden university decided to do maintance work on their website on Saturday 22 and Sunday 23 June!!!!!!!</span></p>
+<!-- <span style='color: red;'>How incredibly annoying, when trying to do the final knit for the workshop, Leiden university decided to do maintance work on their website on Saturday 22 and Sunday 23 June!!!!!!!</span> -->
 <div id="staff-pages" class="section level2 tabset tabset-fade" number="3.1">
 <h2><span class="header-section-number">3.1</span> Staff pages</h2>
 <div id="r-1" class="section level3" number="3.1.1">
@@ -525,8 +527,14 @@ import re</code></pre>
 <code>read_html()</code> is a function that simply extracts html webpages and puts them in xml format.</p>
 <pre class="r test"><code>lpol_staff &lt;- read_html(&quot;https://www.universiteitleiden.nl/en/social-behavioural-sciences/political-science/staff#tab-1&quot;)
 head(lpol_staff)</code></pre>
+<pre class="test2"><code>#&gt; $node
+#&gt; &lt;pointer: 0x000001ba7b7fedd0&gt;
+#&gt; 
+#&gt; $doc
+#&gt; &lt;pointer: 0x000001ba87cfd050&gt;</code></pre>
 <p>That looks kinda weird. What type of object did we store it by putting the html into <code>lpol_staff1</code>?</p>
 <pre class="r test"><code>class(lpol_staff)</code></pre>
+<pre class="test2"><code>#&gt; [1] &quot;xml_document&quot; &quot;xml_node&quot;</code></pre>
 <p>So it is is stored in something that’s called an xml object. Not important for now what that is. But it is important to extract the relevant table that we saw on the staff website. How do we do that? Go to one of the links above in a browser and then press “Inspect” on the webpage (usually: right click–&gt;Inspect). In the html code we extracted, we need to go to one of the nodes first. If you move your cursor over <strong>“div”</strong> in the html code on the screen, the entire <strong>“body”</strong> of the page should become some shade of blue. This means that the elements encapsulated in the <strong>“body”</strong> node captures everything that turned blue.</p>
 </div>
 <div id="python-1" class="section level3" number="3.1.2">
@@ -589,16 +597,2964 @@ print(lpol_staff[:10])</code></pre>
 <div id="r-3" class="section level3" number="3.3.1">
 <h3><span class="header-section-number">3.3.1</span> R</h3>
 <p>Seems like more useful data now. But can we improve by deleting some elements we do not need? Let’s first delete some of the useless information.</p>
-<pre class="r test"><code>head(lpol_staff)
-lpol_staff &lt;- lpol_staff[-c(1:39)]
+<pre class="r test"><code>head(lpol_staff)</code></pre>
+<pre class="test2"><code>#&gt; [1] &quot;Leiden University&quot;        &quot;Students&quot;                 &quot;Staff members&quot;           
+#&gt; [4] &quot;Organisational structure&quot; &quot;Library&quot;                  &quot;\n&quot;</code></pre>
+<pre class="r test"><code>lpol_staff &lt;- lpol_staff[-c(1:39)]
 lpol_staff &lt;- lpol_staff[-c(133:length(lpol_staff))]
-head(lpol_staff)
-
-fshowdf(lpol_staff)</code></pre>
+head(lpol_staff)</code></pre>
+<pre class="test2"><code>#&gt; [1] &quot;\n\n\n\n\n                    \n        Adina Akbik\n            Senior Assistant Professor\n    \n&quot;                               
+#&gt; [2] &quot;\n\n\n\n\n                    \n        Femke Bakker\n            Senior assistant professor\n    \n&quot;                              
+#&gt; [3] &quot;\n\n\n\n\n                    \n        Ingrid van Biezen\n            Professor of Comparative Politics\n    \n&quot;                  
+#&gt; [4] &quot;\n\n\n\n\n                    \n        Nicolas Blarel\n            Associate Professor\n    \n&quot;                                   
+#&gt; [5] &quot;\n\n\n\n\n                    \n        Arjen Boin\n            Professor of Public Institutions and Governance\n    \n&quot;           
+#&gt; [6] &quot;\n\n\n\n\n                    \n        Theo Brinkel\n            Professor by Special Appointment Military-social studies\n    \n&quot;</code></pre>
+<pre class="r test"><code>fshowdf(lpol_staff)</code></pre>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Adina Akbik
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Femke Bakker
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ingrid van Biezen
+Professor of Comparative Politics
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nicolas Blarel
+Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Arjen Boin
+Professor of Public Institutions and Governance
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Theo Brinkel
+Professor by Special Appointment Military-social studies
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Manuel Cabal Lopez
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Valentina Carraro
+Assistant Professor in Global Transformations and Governance Challenges
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stefan Cetkovic
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Leila Demarest
+Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Matthew di Giuseppe
+Director of Studies / Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Roos van der Haer
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gisela Hirschmann
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Joop van Holsteijn
+Professor Political Behaviour and Research Methods
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Corinna Jentzsch
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Petr Kopecky
+Professor of Comparative Studies Political Parties and Party Systems
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Matthew Longo
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tom Louwerse
+Director of Research / Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Floris Mansvelt Beck
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Juan Masullo Jimenez
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hilde van Meegdenburg
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Michael Meffert
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Frits Meijerink
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tim Mickler
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Martijn Mos
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Katharina Natter
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Paul Nieuwenburg
+Professor Political Philosophy
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Simon Otjes
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hans Oversloot
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jonathan Phillips
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rebecca Ploof
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Karolina Pomorska
+Associate professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Francesco Ragazzi
+Associate professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Babak Rezaeedaryakenari
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Josh Robison
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Michael Sampson
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jan Aart Scholte
+Professor Global Transformations and Governance Challenges
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jonah Schulhofer-Wohl
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Maria Spirova
+Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tom Theuns
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Daniel Thomas
+Professor of International Relations
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Christina Luise Toenshoff
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vasiliki (Billy) Tsagkroni
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Wouter Veenendaal
+Professor by Special Appointment Kingdom Relations
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Claire Vergerio
+Guest
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Marco Verschoor
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cynthia van Vonno
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Niels van Willigen
+Director of Studies/Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nikoleta Yordanova
+Associate professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Yuan Yi Zhu
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Frank de Zwart
+Guest
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Alessia Aspide
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cyan Bae
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Kathleen Brown
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mateo Cohen
+External PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Josette Daemen
+Postdoc
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jesse Doornenbal
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Eleftherios Karchimakis
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Aleksandra Khokhlova
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stijn Koenraads
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hannah Kuhn
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Alex Schilin
+Guest researcher
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pawan Sen
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ruben van de Ven
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Anouk van Vliet
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Denny van der Vlist
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Thijs Vos
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rick van Well
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Daan van den Wollenberg
+PhD candidate / self funded
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Elina Zorina
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rudy Andeweg
+Professor emeritus of Empirical Political Science
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ivan Bakalov
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Agha Bayramov
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jelena Belic
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jelke Bethlehem
+Professor emeritus Survey Methodology
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Peter Castenmiller
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Diana Davila Gordillo
+Guest - researcher
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Henk Dekker
+Emeritus professor of Political Socialization and Integration
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Katerina Galanopoulou
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rutger Hagen
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Henriëtte van den Heuvel
+Scientific Director ad interim
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Galen Irwin
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Devrim Kabasakal Badamchi-
+Guest researcher
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Eleftherios Karchimakis
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Müge Kinacioglu
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ruud Koole
+Professor emeritus Politicologie
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Amber Lauwers
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+José Lourenço
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gjovalin Macaj
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jan Meijer
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Marijn Nagtzaam
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Christoph Niessen
+Guest
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Alexandros Ntaflos
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Joyce Outshoorn
+Emeritus professor vrouwenstudies
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jimena Pacheco Miranda
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Julia Puente Duyn
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ellen van Reuler
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Thomas Scarff
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Radostina Sharenkova-Toshkova
+Guest
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Justin Spruit
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vishwesh Sundar
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Harmen van der Veer
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Amy Verdun
+Guest professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ruben Verheul
+Web editor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Anouk van Vliet
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Carina van de Wetering
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gul-i-Hina van der Zwan
+Postdoc / guest
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Wencke Appelman
+Study adviser
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ester Blom
+Study Adviser
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Anna van Dijk
+Management/office-assistent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nathalie van Dooren
+Coordinator Marketing &amp; Student Recruitment
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Desiree van Drongelen
+Staff Member Studentregistrations
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nynke Heegstra
+Study Advisor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ingrid van Heeringen-Göbbels
+Institute manager
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Marit van der Heide
+Student member institute board
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Katie Hudson
+Data Steward
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lianne Janssen
+Policy Officer Education and Quality Assurance
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Eline Joor
+Internationalisation Officer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ian Lau
+Study adviser
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Daniëlle Lovink
+Study Adviser
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Carien Nelissen
+Education manager
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Caroline Remmerswaal
+Secretary board of examiners
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Marjan Rijnja
+Teaching Coordinator
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Elka Smith
+Research Project Manager
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Judy Spruit
+Management/office-assistent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tessa Thomas
+Management assistant
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Debbie Tromper
+Management assistant
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gerard van der Veer
+Secretary board of examiners
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ruben Verheul
+Web editor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jeanne Viet
+Communication staff member
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Denise Zeeuw-van Veen
+Management/office assistant
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bachelor’s programmes
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>Still looks a bit messy. Can we get it into a dataframe and split the column into useful columns?</p>
 <pre class="r test"><code>lpol_staff &lt;- data.frame(lpol_staff)
 lpol_staff &lt;- colsplit(lpol_staff$lpol_staff, &quot;          &quot;, names = c(&quot;v1&quot;, &quot;v2&quot;, &quot;v3&quot;, &quot;v4&quot;, &quot;v5&quot;))
 fshowdf(lpol_staff, caption = &quot;lpol_staff&quot;)</code></pre>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-10">Table 3.1: </span>lpol_staff
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+v1
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+v2
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+v3
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+v4
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+v5
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Adina Akbik
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Femke Bakker
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Ingrid van Biezen
+</td>
+<td style="text-align:left;">
+Professor of Comparative Politics
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Nicolas Blarel
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Arjen Boin
+</td>
+<td style="text-align:left;">
+Professor of Public Institutions and Governance
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Theo Brinkel
+</td>
+<td style="text-align:left;">
+Professor by Special Appointment Military-social studies
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Manuel Cabal Lopez
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Valentina Carraro
+</td>
+<td style="text-align:left;">
+Assistant Professor in Global Transformations and Governance Challenges
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Stefan Cetkovic
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Leila Demarest
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Matthew di Giuseppe
+</td>
+<td style="text-align:left;">
+Director of Studies / Associate Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Roos van der Haer
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Gisela Hirschmann
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Joop van Holsteijn
+</td>
+<td style="text-align:left;">
+Professor Political Behaviour and Research Methods
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Corinna Jentzsch
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Petr Kopecky
+</td>
+<td style="text-align:left;">
+Professor of Comparative Studies Political Parties and Party Systems
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Matthew Longo
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Tom Louwerse
+</td>
+<td style="text-align:left;">
+Director of Research / Associate Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Floris Mansvelt Beck
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Juan Masullo Jimenez
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Hilde van Meegdenburg
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Michael Meffert
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Frits Meijerink
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Tim Mickler
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Martijn Mos
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Katharina Natter
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Paul Nieuwenburg
+</td>
+<td style="text-align:left;">
+Professor Political Philosophy
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Simon Otjes
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Hans Oversloot
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Jonathan Phillips
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Rebecca Ploof
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Karolina Pomorska
+</td>
+<td style="text-align:left;">
+Associate professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Francesco Ragazzi
+</td>
+<td style="text-align:left;">
+Associate professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Babak Rezaeedaryakenari
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Josh Robison
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Michael Sampson
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Jan Aart Scholte
+</td>
+<td style="text-align:left;">
+Professor Global Transformations and Governance Challenges
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Jonah Schulhofer-Wohl
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Maria Spirova
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Tom Theuns
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Daniel Thomas
+</td>
+<td style="text-align:left;">
+Professor of International Relations
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Christina Luise Toenshoff
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Vasiliki (Billy) Tsagkroni
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Wouter Veenendaal
+</td>
+<td style="text-align:left;">
+Professor by Special Appointment Kingdom Relations
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Claire Vergerio
+</td>
+<td style="text-align:left;">
+Guest
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Marco Verschoor
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Cynthia van Vonno
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Niels van Willigen
+</td>
+<td style="text-align:left;">
+Director of Studies/Associate Professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Nikoleta Yordanova
+</td>
+<td style="text-align:left;">
+Associate professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Yuan Yi Zhu
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Frank de Zwart
+</td>
+<td style="text-align:left;">
+Guest
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Alessia Aspide
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Cyan Bae
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Kathleen Brown
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Mateo Cohen
+</td>
+<td style="text-align:left;">
+External PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Josette Daemen
+</td>
+<td style="text-align:left;">
+Postdoc
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Jesse Doornenbal
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Eleftherios Karchimakis
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Aleksandra Khokhlova
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Stijn Koenraads
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Hannah Kuhn
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Alex Schilin
+</td>
+<td style="text-align:left;">
+Guest researcher
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Pawan Sen
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Ruben van de Ven
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Anouk van Vliet
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Denny van der Vlist
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Thijs Vos
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Rick van Well
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Daan van den Wollenberg
+</td>
+<td style="text-align:left;">
+PhD candidate / self funded
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Elina Zorina
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Rudy Andeweg
+</td>
+<td style="text-align:left;">
+Professor emeritus of Empirical Political Science
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Ivan Bakalov
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Agha Bayramov
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Jelena Belic
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Jelke Bethlehem
+</td>
+<td style="text-align:left;">
+Professor emeritus Survey Methodology
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Peter Castenmiller
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Diana Davila Gordillo
+</td>
+<td style="text-align:left;">
+Guest - researcher
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Henk Dekker
+</td>
+<td style="text-align:left;">
+Emeritus professor of Political Socialization and Integration
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Katerina Galanopoulou
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Rutger Hagen
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Henriëtte van den Heuvel
+</td>
+<td style="text-align:left;">
+Scientific Director ad interim
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Galen Irwin
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Devrim Kabasakal Badamchi-
+</td>
+<td style="text-align:left;">
+Guest researcher
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Eleftherios Karchimakis
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Müge Kinacioglu
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Ruud Koole
+</td>
+<td style="text-align:left;">
+Professor emeritus Politicologie
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Amber Lauwers
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+José Lourenço
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Gjovalin Macaj
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Jan Meijer
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Marijn Nagtzaam
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Christoph Niessen
+</td>
+<td style="text-align:left;">
+Guest
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Alexandros Ntaflos
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Joyce Outshoorn
+</td>
+<td style="text-align:left;">
+Emeritus professor vrouwenstudies
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Jimena Pacheco Miranda
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Julia Puente Duyn
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Ellen van Reuler
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Thomas Scarff
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Radostina Sharenkova-Toshkova
+</td>
+<td style="text-align:left;">
+Guest
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Justin Spruit
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Vishwesh Sundar
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Harmen van der Veer
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Amy Verdun
+</td>
+<td style="text-align:left;">
+Guest professor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Ruben Verheul
+</td>
+<td style="text-align:left;">
+Web editor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Anouk van Vliet
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Carina van de Wetering
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Gul-i-Hina van der Zwan
+</td>
+<td style="text-align:left;">
+Postdoc / guest
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Wencke Appelman
+</td>
+<td style="text-align:left;">
+Study adviser
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Ester Blom
+</td>
+<td style="text-align:left;">
+Study Adviser
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Anna van Dijk
+</td>
+<td style="text-align:left;">
+Management/office-assistent
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Nathalie van Dooren
+</td>
+<td style="text-align:left;">
+Coordinator Marketing &amp; Student Recruitment
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Desiree van Drongelen
+</td>
+<td style="text-align:left;">
+Staff Member Studentregistrations
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Nynke Heegstra
+</td>
+<td style="text-align:left;">
+Study Advisor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Ingrid van Heeringen-Göbbels
+</td>
+<td style="text-align:left;">
+Institute manager
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Marit van der Heide
+</td>
+<td style="text-align:left;">
+Student member institute board
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Katie Hudson
+</td>
+<td style="text-align:left;">
+Data Steward
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Lianne Janssen
+</td>
+<td style="text-align:left;">
+Policy Officer Education and Quality Assurance
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Eline Joor
+</td>
+<td style="text-align:left;">
+Internationalisation Officer
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Ian Lau
+</td>
+<td style="text-align:left;">
+Study adviser
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Daniëlle Lovink
+</td>
+<td style="text-align:left;">
+Study Adviser
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Carien Nelissen
+</td>
+<td style="text-align:left;">
+Education manager
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Caroline Remmerswaal
+</td>
+<td style="text-align:left;">
+Secretary board of examiners
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Marjan Rijnja
+</td>
+<td style="text-align:left;">
+Teaching Coordinator
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Elka Smith
+</td>
+<td style="text-align:left;">
+Research Project Manager
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Judy Spruit
+</td>
+<td style="text-align:left;">
+Management/office-assistent
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Tessa Thomas
+</td>
+<td style="text-align:left;">
+Management assistant
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Debbie Tromper
+</td>
+<td style="text-align:left;">
+Management assistant
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Gerard van der Veer
+</td>
+<td style="text-align:left;">
+Secretary board of examiners
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Ruben Verheul
+</td>
+<td style="text-align:left;">
+Web editor
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Jeanne Viet
+</td>
+<td style="text-align:left;">
+Communication staff member
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+Denise Zeeuw-van Veen
+</td>
+<td style="text-align:left;">
+Management/office assistant
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bachelor’s programmes
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>Nice! I think we only need column 4 and 5? And let’s name them nicely and delete any trailing or leading whitespace.</p>
 <pre class="r test"><code>lpol_staff &lt;- lpol_staff[, c(&quot;v3&quot;, &quot;v4&quot;)]
 names(lpol_staff) &lt;- c(&quot;name&quot;, &quot;func&quot;)
@@ -606,6 +3562,1078 @@ names(lpol_staff) &lt;- c(&quot;name&quot;, &quot;func&quot;)
 lpol_staff$name &lt;- trimws(lpol_staff$name, which = c(&quot;both&quot;), whitespace = &quot;[ \t\r\n]&quot;)
 lpol_staff$func &lt;- trimws(lpol_staff$func, which = c(&quot;both&quot;), whitespace = &quot;[ \t\r\n]&quot;)
 fshowdf(lpol_staff, caption = &quot;lpol_staff&quot;)</code></pre>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-11">Table 3.2: </span>lpol_staff
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+func
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Adina Akbik
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Femke Bakker
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ingrid van Biezen
+</td>
+<td style="text-align:left;">
+Professor of Comparative Politics
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nicolas Blarel
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Arjen Boin
+</td>
+<td style="text-align:left;">
+Professor of Public Institutions and Governance
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Theo Brinkel
+</td>
+<td style="text-align:left;">
+Professor by Special Appointment Military-social studies
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Manuel Cabal Lopez
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Valentina Carraro
+</td>
+<td style="text-align:left;">
+Assistant Professor in Global Transformations and Governance Challenges
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stefan Cetkovic
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Leila Demarest
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Matthew di Giuseppe
+</td>
+<td style="text-align:left;">
+Director of Studies / Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Roos van der Haer
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gisela Hirschmann
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Joop van Holsteijn
+</td>
+<td style="text-align:left;">
+Professor Political Behaviour and Research Methods
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Corinna Jentzsch
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Petr Kopecky
+</td>
+<td style="text-align:left;">
+Professor of Comparative Studies Political Parties and Party Systems
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Matthew Longo
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tom Louwerse
+</td>
+<td style="text-align:left;">
+Director of Research / Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Floris Mansvelt Beck
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Juan Masullo Jimenez
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hilde van Meegdenburg
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Michael Meffert
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Frits Meijerink
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tim Mickler
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Martijn Mos
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Katharina Natter
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Paul Nieuwenburg
+</td>
+<td style="text-align:left;">
+Professor Political Philosophy
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Simon Otjes
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hans Oversloot
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jonathan Phillips
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rebecca Ploof
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Karolina Pomorska
+</td>
+<td style="text-align:left;">
+Associate professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Francesco Ragazzi
+</td>
+<td style="text-align:left;">
+Associate professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Babak Rezaeedaryakenari
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Josh Robison
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Michael Sampson
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jan Aart Scholte
+</td>
+<td style="text-align:left;">
+Professor Global Transformations and Governance Challenges
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jonah Schulhofer-Wohl
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Maria Spirova
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tom Theuns
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Daniel Thomas
+</td>
+<td style="text-align:left;">
+Professor of International Relations
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Christina Luise Toenshoff
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vasiliki (Billy) Tsagkroni
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Wouter Veenendaal
+</td>
+<td style="text-align:left;">
+Professor by Special Appointment Kingdom Relations
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Claire Vergerio
+</td>
+<td style="text-align:left;">
+Guest
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Marco Verschoor
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cynthia van Vonno
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Niels van Willigen
+</td>
+<td style="text-align:left;">
+Director of Studies/Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nikoleta Yordanova
+</td>
+<td style="text-align:left;">
+Associate professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Yuan Yi Zhu
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Frank de Zwart
+</td>
+<td style="text-align:left;">
+Guest
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Alessia Aspide
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cyan Bae
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Kathleen Brown
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mateo Cohen
+</td>
+<td style="text-align:left;">
+External PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Josette Daemen
+</td>
+<td style="text-align:left;">
+Postdoc
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jesse Doornenbal
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Eleftherios Karchimakis
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Aleksandra Khokhlova
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stijn Koenraads
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hannah Kuhn
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Alex Schilin
+</td>
+<td style="text-align:left;">
+Guest researcher
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Pawan Sen
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ruben van de Ven
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Anouk van Vliet
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Denny van der Vlist
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Thijs Vos
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rick van Well
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Daan van den Wollenberg
+</td>
+<td style="text-align:left;">
+PhD candidate / self funded
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Elina Zorina
+</td>
+<td style="text-align:left;">
+PhD candidate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rudy Andeweg
+</td>
+<td style="text-align:left;">
+Professor emeritus of Empirical Political Science
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ivan Bakalov
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Agha Bayramov
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jelena Belic
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jelke Bethlehem
+</td>
+<td style="text-align:left;">
+Professor emeritus Survey Methodology
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Peter Castenmiller
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Diana Davila Gordillo
+</td>
+<td style="text-align:left;">
+Guest - researcher
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Henk Dekker
+</td>
+<td style="text-align:left;">
+Emeritus professor of Political Socialization and Integration
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Katerina Galanopoulou
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rutger Hagen
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Henriëtte van den Heuvel
+</td>
+<td style="text-align:left;">
+Scientific Director ad interim
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Galen Irwin
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Devrim Kabasakal Badamchi-
+</td>
+<td style="text-align:left;">
+Guest researcher
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Eleftherios Karchimakis
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Müge Kinacioglu
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ruud Koole
+</td>
+<td style="text-align:left;">
+Professor emeritus Politicologie
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Amber Lauwers
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+José Lourenço
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gjovalin Macaj
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jan Meijer
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Marijn Nagtzaam
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Christoph Niessen
+</td>
+<td style="text-align:left;">
+Guest
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Alexandros Ntaflos
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Joyce Outshoorn
+</td>
+<td style="text-align:left;">
+Emeritus professor vrouwenstudies
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jimena Pacheco Miranda
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Julia Puente Duyn
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ellen van Reuler
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Thomas Scarff
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Radostina Sharenkova-Toshkova
+</td>
+<td style="text-align:left;">
+Guest
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Justin Spruit
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vishwesh Sundar
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Harmen van der Veer
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Amy Verdun
+</td>
+<td style="text-align:left;">
+Guest professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ruben Verheul
+</td>
+<td style="text-align:left;">
+Web editor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Anouk van Vliet
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Carina van de Wetering
+</td>
+<td style="text-align:left;">
+Lecturer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gul-i-Hina van der Zwan
+</td>
+<td style="text-align:left;">
+Postdoc / guest
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Wencke Appelman
+</td>
+<td style="text-align:left;">
+Study adviser
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ester Blom
+</td>
+<td style="text-align:left;">
+Study Adviser
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Anna van Dijk
+</td>
+<td style="text-align:left;">
+Management/office-assistent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nathalie van Dooren
+</td>
+<td style="text-align:left;">
+Coordinator Marketing &amp; Student Recruitment
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Desiree van Drongelen
+</td>
+<td style="text-align:left;">
+Staff Member Studentregistrations
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nynke Heegstra
+</td>
+<td style="text-align:left;">
+Study Advisor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ingrid van Heeringen-Göbbels
+</td>
+<td style="text-align:left;">
+Institute manager
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Marit van der Heide
+</td>
+<td style="text-align:left;">
+Student member institute board
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Katie Hudson
+</td>
+<td style="text-align:left;">
+Data Steward
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lianne Janssen
+</td>
+<td style="text-align:left;">
+Policy Officer Education and Quality Assurance
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Eline Joor
+</td>
+<td style="text-align:left;">
+Internationalisation Officer
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ian Lau
+</td>
+<td style="text-align:left;">
+Study adviser
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Daniëlle Lovink
+</td>
+<td style="text-align:left;">
+Study Adviser
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Carien Nelissen
+</td>
+<td style="text-align:left;">
+Education manager
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Caroline Remmerswaal
+</td>
+<td style="text-align:left;">
+Secretary board of examiners
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Marjan Rijnja
+</td>
+<td style="text-align:left;">
+Teaching Coordinator
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Elka Smith
+</td>
+<td style="text-align:left;">
+Research Project Manager
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Judy Spruit
+</td>
+<td style="text-align:left;">
+Management/office-assistent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tessa Thomas
+</td>
+<td style="text-align:left;">
+Management assistant
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Debbie Tromper
+</td>
+<td style="text-align:left;">
+Management assistant
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gerard van der Veer
+</td>
+<td style="text-align:left;">
+Secretary board of examiners
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ruben Verheul
+</td>
+<td style="text-align:left;">
+Web editor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jeanne Viet
+</td>
+<td style="text-align:left;">
+Communication staff member
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Denise Zeeuw-van Veen
+</td>
+<td style="text-align:left;">
+Management/office assistant
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>Not bad.</p>
 </div>
 </div>
@@ -634,6 +4662,430 @@ lpol_staff_functions &lt;- read_html(&quot;https://www.universiteitleiden.nl/en/
 
 lpol_staff2 &lt;- data.frame(name = lpol_staff_names, funct = lpol_staff_functions)
 fshowdf(lpol_staff2)</code></pre>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+name
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+funct
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Adina Akbik
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Femke Bakker
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ingrid van Biezen
+</td>
+<td style="text-align:left;">
+Professor of Comparative Politics
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nicolas Blarel
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Arjen Boin
+</td>
+<td style="text-align:left;">
+Professor of Public Institutions and Governance
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Theo Brinkel
+</td>
+<td style="text-align:left;">
+Professor by Special Appointment Military-social studies
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Manuel Cabal Lopez
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Valentina Carraro
+</td>
+<td style="text-align:left;">
+Assistant Professor in Global Transformations and Governance Challenges
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stefan Cetkovic
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Leila Demarest
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Matthew di Giuseppe
+</td>
+<td style="text-align:left;">
+Director of Studies / Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Roos van der Haer
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gisela Hirschmann
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Joop van Holsteijn
+</td>
+<td style="text-align:left;">
+Professor Political Behaviour and Research Methods
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Corinna Jentzsch
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Petr Kopecky
+</td>
+<td style="text-align:left;">
+Professor of Comparative Studies Political Parties and Party Systems
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Matthew Longo
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tom Louwerse
+</td>
+<td style="text-align:left;">
+Director of Research / Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Floris Mansvelt Beck
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Juan Masullo Jimenez
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hilde van Meegdenburg
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Michael Meffert
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Frits Meijerink
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tim Mickler
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Martijn Mos
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Katharina Natter
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Paul Nieuwenburg
+</td>
+<td style="text-align:left;">
+Professor Political Philosophy
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Simon Otjes
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hans Oversloot
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jonathan Phillips
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rebecca Ploof
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Karolina Pomorska
+</td>
+<td style="text-align:left;">
+Associate professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Francesco Ragazzi
+</td>
+<td style="text-align:left;">
+Associate professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Babak Rezaeedaryakenari
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Josh Robison
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Michael Sampson
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jan Aart Scholte
+</td>
+<td style="text-align:left;">
+Professor Global Transformations and Governance Challenges
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Jonah Schulhofer-Wohl
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Maria Spirova
+</td>
+<td style="text-align:left;">
+Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tom Theuns
+</td>
+<td style="text-align:left;">
+Senior Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Daniel Thomas
+</td>
+<td style="text-align:left;">
+Professor of International Relations
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Christina Luise Toenshoff
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vasiliki (Billy) Tsagkroni
+</td>
+<td style="text-align:left;">
+Senior assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Wouter Veenendaal
+</td>
+<td style="text-align:left;">
+Professor by Special Appointment Kingdom Relations
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Claire Vergerio
+</td>
+<td style="text-align:left;">
+Guest
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Marco Verschoor
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cynthia van Vonno
+</td>
+<td style="text-align:left;">
+Assistant Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Niels van Willigen
+</td>
+<td style="text-align:left;">
+Director of Studies/Associate Professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nikoleta Yordanova
+</td>
+<td style="text-align:left;">
+Associate professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Yuan Yi Zhu
+</td>
+<td style="text-align:left;">
+Assistant professor
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Frank de Zwart
+</td>
+<td style="text-align:left;">
+Guest
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="python-3" class="section level3" number="3.4.2">
 <h3><span class="header-section-number">3.4.2</span> Python</h3>
@@ -669,7 +5121,7 @@ print(lpol_staff_df.head())  </code></pre>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIldlYnNjcmFwaW5nIHNjaG9sYXJzIg0KYmlibGlvZ3JhcGh5OiByZWZlcmVuY2VzLmJpYg0KbGluay1jaXRhdGlvbnM6IHllcw0KLS0tDQoNCg0KYGBge3IsIGdsb2JhbHNldHRpbmdzLCBlY2hvPUZBTFNFLCB3YXJuaW5nPUZBTFNFLCBtZXNzYWdlPUZBTFNFLCByZXN1bHRzPSdoaWRlJ30NCmxpYnJhcnkoa25pdHIpDQpvcHRzX2NodW5rJHNldCh0aWR5Lm9wdHM9bGlzdCh3aWR0aC5jdXRvZmY9MTAwKSx0aWR5PVRSVUUsIGV2YWwgPSBGQUxTRSwgd2FybmluZyA9IEZBTFNFLCBtZXNzYWdlID0gRkFMU0UsY29tbWVudCA9ICIjPiIsIGNhY2hlPVRSVUUsIGNsYXNzLnNvdXJjZT1jKCJ0ZXN0IiksIGNsYXNzLm91dHB1dD1jKCJ0ZXN0MiIpLCBjYWNoZS5sYXp5ID0gRkFMU0UpDQpvcHRpb25zKHdpZHRoID0gMTAwKSANCnJnbDo6c2V0dXBLbml0cigpDQpgYGANCg0KYGBge3Iga2xpcHB5LCBlY2hvPUZBTFNFLCBpbmNsdWRlPVRSVUUsIG1lc3NhZ2U9RkFMU0UsIGV2YWw9VFJVRX0NCiMgaW5zdGFsbC5wYWNrYWdlcygicmVtb3RlcyIpDQojcmVtb3Rlczo6aW5zdGFsbF9naXRodWIoInJsZXN1ci9rbGlwcHkiKQ0Ka2xpcHB5OjprbGlwcHkocG9zaXRpb24gPSBjKCd0b3AnLCAncmlnaHQnKSkNCiNrbGlwcHk6OmtsaXBweShjb2xvciA9ICdkYXJrcmVkJykNCiNrbGlwcHk6OmtsaXBweSh0b29sdGlwX21lc3NhZ2UgPSAnQ2xpY2sgdG8gY29weScsIHRvb2x0aXBfc3VjY2VzcyA9ICdEb25lJykNCmBgYA0KDQojIEdvYWwgIA0KDQoqKkhhbmRzLW9uIHdlYnNjcmFwaW5nKiogIA0KDQpJdCBpcyB0aW1lIHRvIGRvIHNvbWUgd2Vic2NyYXBpbmcgb3Vyc2VsdmVzLiBJbiB3aGF0IGZvbGxvd3MgaXMgYSBzaG9ydCBmaXJzdCB0dXRvcmlhbCBvbiB3ZWJzY3JhcGluZyB3aGVyZSB3ZSB3aWxsIGJlIGNvbGxlY3RpbmcgZGF0YSBmcm9tIHdlYnBhZ2VzIG9uIHRoZSBpbnRlcm5ldC4gV2Ugd2lsbCB1c2UgdGhlIHNwZWNpZmljIHVzZSBjYXNlIG9mIHRoZSBwb2xpdGljYWwgc2NpZW5jZSBkZXBhcnRtZW50IHN0YWZmIG9mIHRoZSB1bml2ZXJzaXR5IG9mIExlaWRlbi4gDQoNCldoYXQgZG8gdGhleSBwdWJsaXNoPyBXaGVyZT8gQW5kIHdpdGggd2hvbSBkbyB0aGV5IGNvbGxhYm9yYXRlPyBXZSBhc3N1bWUgeW91IGhhdmUgYXQgbGVhc3Qgc29tZSBleHBlcmllbmNlIHdpdGggY29kaW5nIGluIFIuIEluIHRoZSByZXN0IG9mIHRoaXMgcGFydCBvZiB0aGUgdHV0b3JpYWwsIHdlIHdpbGwgc3dpdGNoIGJldHdlZW4gYmFzZSBSIGFuZCBUaWR5dmVyc2UgKGp1c3QgYSBiaXQpLCB3aGF0ZXZlciBpcyBtb3N0IGNvbnZlbmllbnQuIChOb3RlIHRoYXQgdGhpcyB3aWxsIGhhcHBlbiBvZnRlbiBpZiB5b3UgYmVjb21lIGFuIGFwcGxpZWQgY29tcHV0YXRpb25hbCBzb2Npb2xvZ2lzdC4pIFdlIGFsc28gb2ZmZXIgUHl0aG9uIGNvZGUuIA0KDQpUaGVyZSBhcmUgZGlmZmVyZW50IHN0cmF0ZWdpZXMgaW4gc2NyYXBpbmcuIFRoZXJlIGlzIG9mdGVuIGEgdHJhZGUtb2ZmIGJldHdlZW4gY29tcGxleCBzY3JhcGluZyB0ZWNobmlxdWVzIHZlcnN1cyBjb21wbGV4IHN0cmluZyBtYW5pcHVsYXRpb25zLiBJbiB0aGlzIGZpcnN0IGV4YW1wbGUsIHdlIHdpbGwgdXNlIHF1aXRlIGEgbG90IG9mIHN0cmluZyBtYW5pcHVsYXRpb25zLiANCg0KRm9yIGV2ZW4gbW9yZSBpbmZvIHNlZSBvdXIgW1NOQVNTIGJvb2sgLSBDaGFwdGVyIDExXShodHRwczovL3NuYXNzLm5ldGxpZnkuYXBwL3dlYmludHJvLmh0bWwpICANCg0KLS0tICANCg0KIyBQcmVwYXJhdGlvbg0KDQojIyBjbGVhbiB1cA0KYGBge3IsIGNsZWFudXAsIHJlc3VsdHM9J2hpZGUnfQ0Kcm0obGlzdD1scygpKQ0KZ2MoKQ0KYGBgDQoNCiMjIEN1c3RvbSBmdW5jdGlvbnMNCg0KLSBgZnBhY2thZ2UuY2hlY2tgOiBDaGVjayBpZiBwYWNrYWdlcyBhcmUgaW5zdGFsbGVkIChhbmQgaW5zdGFsbCBpZiBub3QpIGluIFIgKFtzb3VyY2VdKGh0dHBzOi8vdmJhbGlnYS5naXRodWIuaW8vdmVyaWZ5LXRoYXQtci1wYWNrYWdlcy1hcmUtaW5zdGFsbGVkLWFuZC1sb2FkZWQvKSkuICANCi0gYGZzYXZlYDogU2F2ZSB0byBwcm9jZXNzZWQgZGF0YSBpbiByZXBvc2l0b3J5ICANCi0gYGZsb2FkYDogVG8gbG9hZCB0aGUgZmlsZXMgYmFjayBhZnRlciBhbiBgZnNhdmVgICANCi0gYGZzaG93ZGZgOiBUbyBwcmludCBvYmplY3RzICh0aWJibGVzIC8gZGF0YS5mcmFtZSkgbmljZWx5IG9uIHNjcmVlbiBpbiAucm1kICANCg0KDQpgYGB7ciBjdXN0b21mdW5jdGlvbnMsIHJlc3VsdHM9J2hpZGUnLCBldmFsID0gVFJVRX0NCnJtKGxpc3QgPSBscygpKSAjY2xlYW4gdXAgeW91ciBlbnZpcm9ubWVudA0KDQpmcGFja2FnZS5jaGVjayA8LSBmdW5jdGlvbihwYWNrYWdlcykgew0KICBsYXBwbHkocGFja2FnZXMsIEZVTiA9IGZ1bmN0aW9uKHgpIHsNCiAgICBpZiAoIXJlcXVpcmUoeCwgY2hhcmFjdGVyLm9ubHkgPSBUUlVFKSkgew0KICAgICAgaW5zdGFsbC5wYWNrYWdlcyh4LCBkZXBlbmRlbmNpZXMgPSBUUlVFKQ0KICAgICAgbGlicmFyeSh4LCBjaGFyYWN0ZXIub25seSA9IFRSVUUpDQogICAgfQ0KICB9KQ0KfQ0KDQpmc2F2ZSA8LSBmdW5jdGlvbih4LCBmaWxlPU5VTEwsIGxvY2F0aW9uPSIuL2RhdGEvcHJvY2Vzc2VkLyIpIHsNCiAgaWZlbHNlKCFkaXIuZXhpc3RzKCJkYXRhIiksIGRpci5jcmVhdGUoImRhdGEiKSwgRkFMU0UpDQogIGlmZWxzZSghZGlyLmV4aXN0cygiZGF0YS9wcm9jZXNzZWQiKSwgZGlyLmNyZWF0ZSgiZGF0YS9wcm9jZXNzZWQiKSwgRkFMU0UpDQogIGlmIChpcy5udWxsKGZpbGUpKSBmaWxlPSBkZXBhcnNlKHN1YnN0aXR1dGUoeCkpDQogIGRhdGVuYW1lIDwtIHN1YnN0cihnc3ViKCJbOi1dIiwgIiIsIFN5cy50aW1lKCkpLCAxLDgpICANCiAgdG90YWxuYW1lIDwtIHBhc3RlKGxvY2F0aW9uLCBkYXRlbmFtZSwgZmlsZSwgIi5yZGEiLCBzZXA9IiIpDQogIHNhdmUoeCwgZmlsZSA9IHRvdGFsbmFtZSkgICNuZWVkIHRvIGZpeCBpZiBmaWxlIGlzIHJlbG9hZGVkIGFzIGlucHV0IG5hbWUsIG5vdCBhcyB4LiANCn0NCg0KZmxvYWQgPC0gZnVuY3Rpb24oZmlsZW5hbWUpIHsNCiAgbG9hZChmaWxlbmFtZSkNCiAgZ2V0KGxzKClbbHMoKSAhPSAiZmlsZW5hbWUiXSkNCn0NCg0KZnNob3dkZiA8LSAgZnVuY3Rpb24oeCwgLi4uKSB7DQogIGtuaXRyOjprYWJsZSh4LCBkaWdpdHM9MiwgImh0bWwiLCAuLi4pICU+JQ0KICBrYWJsZUV4dHJhOjprYWJsZV9zdHlsaW5nKGJvb3RzdHJhcF9vcHRpb25zID0gYygic3RyaXBlZCIsICJob3ZlciIpKSAlPiUNCiAga2FibGVFeHRyYTo6c2Nyb2xsX2JveCh3aWR0aD0iMTAwJSIsIGhlaWdodD0gIjMwMHB4IikNCn0gDQoNCmNvbG9yaXplIDwtIGZ1bmN0aW9uKHgsIGNvbG9yKSB7c3ByaW50ZigiPHNwYW4gc3R5bGU9J2NvbG9yOiAlczsnPiVzPC9zcGFuPiIsIGNvbG9yLCB4KSB9DQoNCmBgYA0KDQotLS0tDQoNCiMjIFBhY2thZ2VzIHsudGFic2V0IC50YWJzZXQtZmFkZX0NCg0KIyMjIFIgDQoNCi0gYHRpZHl2ZXJzZWA6IGZvciBwaXBpbmcgZXRjLiANCi0gYGh0dHJgOiBUb29scyBmb3IgV29ya2luZyB3aXRoIFVSTHMgYW5kIEhUVFAgIA0KLSBgeG1sMmA6IFdvcmsgd2l0aCBYTUwgZmlsZXMgdXNpbmcgYSBzaW1wbGUsIGNvbnNpc3RlbnQgaW50ZXJmYWNlLiAgDQotIGBydmVzdGA6IFdyYXBwZXJzIGFyb3VuZCB0aGUgJ3htbDInIGFuZCAnaHR0cicgcGFja2FnZXMgdG8gbWFrZSBpdCBlYXN5IHRvIGRvd25sb2FkLCB0aGVuIG1hbmlwdWxhdGUsIEhUTUwgYW5kIFhNTC4gIA0KLSBgcmVzaGFwZTJgOiBGbGV4aWJseSBSZXNoYXBlIERhdGEgIA0KDQpgYGB7ciwgcmVzdWx0cz0naGlkZSd9DQpwYWNrYWdlcyA9IGMoInRpZHl2ZXJzZSIsICJodHRyIiwgInJ2ZXN0IiwgInJlc2hhcGUyIiwgInhtbDIiKQ0KZnBhY2thZ2UuY2hlY2socGFja2FnZXMpDQpgYGANCg0KLS0tICANCg0KIyMjIFB5dGhvbg0KDQpNYWtlIHN1cmUgeW91IGhhdmUgdGhlIHJlcXVpcmVkIGxpYnJhcmllcyBieSB0eXBpbmcgaW4gdGhlIGNvZGUgYmVsb3cgaW50byB5b3VyIGNvbnNvbGUNCg0KYGBge2Jhc2gsIGV2YWwgPSBGQUxTRX0NCnBpcCBpbnN0YWxsIHJlcXVlc3RzIGJlYXV0aWZ1bHNvdXA0IHBhbmRhcw0KYGBgIA0KDQo8YnI+DQoNCmFuZCBpbXBvcnQgbmVjZXNzYXJ5IG1vZHVsZXMNCg0KYGBge3B5dGhvbiwgZXZhbCA9IEZBTFNFfQ0KDQppbXBvcnQgcmVxdWVzdHMNCmZyb20gYnM0IGltcG9ydCBCZWF1dGlmdWxTb3VwDQppbXBvcnQgcGFuZGFzIGFzIHBkDQppbXBvcnQgcmUNCg0KYGBgIA0KDQo8YnI+DQoNCg0KIyBMZWlkZW4gVW5pdmVyc2l0eTogUG9saXRpY2FsIFNjaWVuY2UNCg0KV2hhdCBkbyB3ZSBtZWFuIGJ5IGFuY2hvciBkYXRhPyBPdXIgZ29hbCBpcyB0byBnZXQgdG8ga25vdzogIA0KDQppLiB3aG8gdGhlIFBvbGl0aWNhbCBTY2llbmNlIHN0YWZmIGlzIGF0IHNldmVyYWwgdW5pdmVyc2l0aWVzLCAgDQppaS4gd2hhdCB0aGV5IHB1Ymxpc2ggd2l0aCByZXNwZWN0IHRvIHNjaWVudGlmaWMgd29yaywgYW5kICANCmlpaS4gd2hvIHRoZXkgY29sbGFib3JhdGUgd2l0aC4gIA0KDQpTbyB0aGF0IG1lYW5zIGF0IGxlYXN0IHRocmVlIGRhdGEgc291cmNlcyB3ZSBuZWVkIHRvIGNvbGxlY3QgZnJvbSBzb21ld2hlcmUuIFdoYXQgd291bGQgYmUgYSBuaWNlIHN0YXJ0aW5nIChyZWFkOiBhbmNob3IpIHBvaW50IGJlPyBGaXJzdCwgd2UgaGF2ZSB0byBrbm93IHdobyBpcyBzdGFmZi4gTGV0J3MgY2hlY2sgb3V0IFt0aGUgTGVpZGVuIHBvbGl0aWNhbCBzY2llbmNlIHN0YWZmIHdlYnNpdGVdKGh0dHBzOi8vd3d3LnVuaXZlcnNpdGVpdGxlaWRlbi5ubC9lbi9zb2NpYWwtYmVoYXZpb3VyYWwtc2NpZW5jZXMvcG9saXRpY2FsLXNjaWVuY2Uvc3RhZmYjdGFiLTEpLiBIZXJlIHdlIHNlZSBhIG5pY2UgbGlzdCBvbiB3aG8gaXMgb24gdGhlIHN0YWZmIGluIHNldmVyYWwgcGFnZXMuIEhvdyBkbyB3ZSBnZXQgdGhhdCBkYXRhPyBJdCBpcyBhY3R1YWxseSBxdWl0ZSBzaW1wbGUsIHRoZSBwYWNrYWdlIFtgcnZlc3RgXShodHRwczovL3J2ZXN0LnRpZHl2ZXJzZS5vcmcvaW5kZXguaHRtbCkgaGFzIGEgdmVyeSBuaWNlIGZ1bmN0aW9uIFtgaHRtbF9yZWFkKClgXShodHRwczovL3J2ZXN0LnRpZHl2ZXJzZS5vcmcvcmVmZXJlbmNlL3JlYWRfaHRtbC5odG1sKSAoYWN0dWFsbHkgdGhpcyBjb21lcyBmcm9tIHRoZSBgeG1sMmAgcGFja2FnZSkgd2hpY2ggc2ltcGx5IGRlcml2ZXMgdGhlIHNvdXJjZSBodG1sIG9mIGEgKnN0YXRpYyogd2VicGFnZToNCg0KDQpgciBjb2xvcml6ZSgiSG93IGluY3JlZGlibHkgYW5ub3lpbmcsIHdoZW4gdHJ5aW5nIHRvIGRvIHRoZSBmaW5hbCBrbml0IGZvciB0aGUgd29ya3Nob3AsIExlaWRlbiB1bml2ZXJzaXR5IGRlY2lkZWQgdG8gZG8gbWFpbnRhbmNlIHdvcmsgb24gdGhlaXIgd2Vic2l0ZSBvbiBTYXR1cmRheSAyMiBhbmQgU3VuZGF5IDIzIEp1bmUhISEhISEhIiwgInJlZCIpYA0KDQojIyBTdGFmZiBwYWdlcyB7LnRhYnNldCAudGFic2V0LWZhZGV9DQoNCiMjIyBSIA0KDQpMZXQncyBmaXJzdCBzaW1wbHkgZ2V0IHRoZSBzdGFmZiBwYWdlcy4NCmByZWFkX2h0bWwoKWAgaXMgYSBmdW5jdGlvbiB0aGF0IHNpbXBseSBleHRyYWN0cyBodG1sIHdlYnBhZ2VzIGFuZCBwdXRzIHRoZW0gaW4geG1sIGZvcm1hdC4NCg0KYGBge3J9DQpscG9sX3N0YWZmIDwtIHJlYWRfaHRtbCgiaHR0cHM6Ly93d3cudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuL3NvY2lhbC1iZWhhdmlvdXJhbC1zY2llbmNlcy9wb2xpdGljYWwtc2NpZW5jZS9zdGFmZiN0YWItMSIpDQpoZWFkKGxwb2xfc3RhZmYpDQpgYGANClRoYXQgbG9va3Mga2luZGEgd2VpcmQuIFdoYXQgdHlwZSBvZiBvYmplY3QgZGlkIHdlIHN0b3JlIGl0IGJ5IHB1dHRpbmcgdGhlIGh0bWwgaW50byBgbHBvbF9zdGFmZjFgPw0KDQpgYGB7cn0NCmNsYXNzKGxwb2xfc3RhZmYpDQpgYGANCg0KU28gaXQgaXMgaXMgc3RvcmVkIGluIHNvbWV0aGluZyB0aGF0J3MgY2FsbGVkIGFuIHhtbCBvYmplY3QuIE5vdCBpbXBvcnRhbnQgZm9yIG5vdyB3aGF0IHRoYXQgaXMuIEJ1dCBpdCBpcyBpbXBvcnRhbnQgdG8gZXh0cmFjdCB0aGUgcmVsZXZhbnQgdGFibGUgdGhhdCB3ZSBzYXcgb24gdGhlIHN0YWZmIHdlYnNpdGUuIEhvdyBkbyB3ZSBkbyB0aGF0PyBHbyB0byBvbmUgb2YgdGhlIGxpbmtzIGFib3ZlIGluIGEgYnJvd3NlciBhbmQgdGhlbiBwcmVzcyAiSW5zcGVjdCIgb24gdGhlIHdlYnBhZ2UgKHVzdWFsbHk6IHJpZ2h0IGNsaWNrLS1cPkluc3BlY3QpLiBJbiB0aGUgaHRtbCBjb2RlIHdlIGV4dHJhY3RlZCwgd2UgbmVlZCB0byBnbyB0byBvbmUgb2YgdGhlIG5vZGVzIGZpcnN0LiBJZiB5b3UgbW92ZSB5b3VyIGN1cnNvciBvdmVyICoqImRpdiIqKiBpbiB0aGUgaHRtbCBjb2RlIG9uIHRoZSBzY3JlZW4sIHRoZSBlbnRpcmUgKioiYm9keSIqKiBvZiB0aGUgcGFnZSBzaG91bGQgYmVjb21lIHNvbWUgc2hhZGUgb2YgYmx1ZS4gVGhpcyBtZWFucyB0aGF0IHRoZSBlbGVtZW50cyBlbmNhcHN1bGF0ZWQgaW4gdGhlICoqImJvZHkiKiogbm9kZSBjYXB0dXJlcyBldmVyeXRoaW5nIHRoYXQgdHVybmVkIGJsdWUuDQoNCg0KIyMjIFB5dGhvbg0KDQpgYGB7cHl0aG9uLCBldmFsID0gRkFMU0V9DQojIEZldGNoIHRoZSB3ZWJwYWdlDQp1cmwgPSAiaHR0cHM6Ly93d3cudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuL3NvY2lhbC1iZWhhdmlvdXJhbC1zY2llbmNlcy9wb2xpdGljYWwtc2NpZW5jZS9zdGFmZiN0YWItMSINCg0KcmVzcG9uc2UgPSByZXF1ZXN0cy5nZXQodXJsKQ0Kd2VicGFnZSA9IHJlc3BvbnNlLmNvbnRlbnQNCg0KIyBQYXJzZSB0aGUgd2VicGFnZQ0Kc291cCA9IEJlYXV0aWZ1bFNvdXAod2VicGFnZSwgJ2h0bWwucGFyc2VyJykNCg0KI3ByaW50KHNvdXAucHJldHRpZnkoKSkNCg0KI29yIHRvIHByaW50IGp1c3QgYSBmZXcgbGluZXMNCnJlc3VsdCA9IHNvdXAucHJldHRpZnkoKS5zcGxpdGxpbmVzKCkNCnByaW50KCdcbicuam9pbihyZXN1bHRbOjEwXSkpDQpgYGANCmBgYA0KPCFET0NUWVBFIGh0bWw+DQo8aHRtbCBkYXRhLXZlcnNpb249IjEuMTc4LjAwIiBsYW5nPSJlbiI+DQogPGhlYWQ+DQogIDwhLS0gc3RhbmRhcmQgcGFnZSBodG1sIGhlYWQgLS0+DQogIDx0aXRsZT4NCiAgIFN0YWZmIC0gTGVpZGVuIFVuaXZlcnNpdHkNCiAgPC90aXRsZT4NCiAgPG1ldGEgY29udGVudD0ibzhLWXVGQWlTWmk2UVdXMXd4cUtGdlQxV1F3Ti1CeHJ1VTQyc2k5WWpYdyIgbmFtZT0iZ29vZ2xlLXNpdGUtdmVyaWZpY2F0aW9uIi8+DQogIDxtZXRhIGNvbnRlbnQ9ImhSVXhycUlBUk1pbkxXMmRSWHJQcG10THR5bW5PVHNnMFBsM1dqSFdRNHciIG5hbWU9Imdvb2dsZS1zaXRlLXZlcmlmaWNhdGlvbiIvPg0KICA8bGluayBocmVmPSJodHRwczovL3d3dy51bml2ZXJzaXRlaXRsZWlkZW4ubmwvZW4vc29jaWFsLWJlaGF2aW91cmFsLXNjaWVuY2VzL3BvbGl0aWNhbC1zY2llbmNlL3N0YWZmIiByZWw9ImNhbm9uaWNhbCIvPg0KYGBgDQoNCg0KIyMgTm9kZXMgYW5kIHRhZ3Mgey50YWJzZXQgLnRhYnNldC1mYWRlfQ0KDQoNCk5leHQsIHdlIG5lZWQgdG8gbG9vayBhdCB0aGUgc3BlY2lmaWMgZWxlbWVudHMgb24gdGhlIHBhZ2UgdGhhdCB3ZSBuZWVkIHRvIGV4dHJhY3QuIFNvbWV3aGF0IGJ5IGluZm9ybWVkIHRyaWFsIGFuZCBlcnJvciwgbG9va2luZyBmb3IgdGhlIGNvcnJlY3QgY29kZSwgd2UgY2FuIHNlbGVjdCB0aGUgZWxlbWVudHMgd2Ugd2FudC4gU28gd2UgbmVlZCBjb2RlIHRoYXQgbG9va3MgZm9yIHRoZSBub2RlICoqIm1haW4iKiogYW5kIHRoZSAqKiJ0ZCIqKiBlbGVtZW50cyBpbiB0aGUgeG1sIG9iamVjdCBhbmQgdGhlbiBleHRyYWN0IHRob3NlIGVsZW1lbnRzIGluIGl0LiBOb3RlIHRoYXQgeW91IGNhbiBjbGljayBvbiB0aGUgYXJyb3dzIG9uY2UgeW91IGFyZSBpbiB0aGUgIkluc3BlY3QiIG1vZGUgaW4gdGhlIHdlYiBicm93c2VyIHRvIHRyaWFsLWFuZC1lcnJvciB0byBnZXQgYXQgdGhlIGNvcnJlY3QgZWxlbWVudHMuICANCg0KVGhlcmUgYXJlIG1hbnkgd2F5cyB0byBmaW5kIHRoZSBDU1Mgb3IgWHBhdGggb2YgdGhlIGVsZW1lbnRzIHlvdSB3YW50LiANClRoZSBwYWNrYWdlIGBydmVzdGAgYWxzbyBoYXMgYSBTZWxlY3RvckdhZGdldCB0b29sLiBTZWUgW2hlcmVdKGh0dHBzOi8vcnZlc3QudGlkeXZlcnNlLm9yZy9hcnRpY2xlcy9zZWxlY3RvcmdhZGdldC5odG1sKQ0KDQpXbyB3ZSBuZWVkIHRvIGZpbmQgV0hFUkUgdGhlIHRhYmxlIGlzIGxvY2F0ZWQgaW4gdGhlIGh0bWwuIA0KDQpBc3NpZ25tZW50OiAgDQotIHVzZSBmaXJlZm94ICdpbnNwZWN0JyAgDQotIHVzZSByc3R1ZGlvICANCi0gdXNlIGBydmVzdGAgU2VsZWN0b3JHYWRnZXQNCg0KIyMjIFIgDQoNCmBgYHtyfQ0KbHBvbF9zdGFmZiA8LSBscG9sX3N0YWZmICU+JSANCiAgaHRtbF9ub2RlcygiYm9keSIpICU+JQ0KICBodG1sX25vZGVzKHhwYXRoID0gIi8vYSIpICU+JSANCiAgaHRtbF90ZXh0KCkNCmBgYA0KDQpMZXQgdXMgZm9yIG5vdyBhc3N1bWUgeW91IGFyZSBzYXRpc2ZpZWQgd2l0aCB0aGUgYWJvdmUgb3V0cHV0Lg0KDQojIyMgUHl0aG9uDQpgYGB7cHl0aG9uLCBldmFsID0gRkFMU0V9DQpscG9sX3N0YWZmID0gc291cC5ib2R5LmZpbmRfYWxsKCdhJykNCg0KbHBvbF9zdGFmZiA9IFt0YWdzLnByZXR0aWZ5KCkgZm9yIHRhZ3MgaW4gbHBvbF9zdGFmZl0NCnByaW50KGxwb2xfc3RhZmZbOjEwXSkNCmBgYA0KYGBgDQpbJzxhIGNsYXNzPSJhY3RpdmUgdHJhY2stZXZlbnQiIGRhdGEtZXZlbnQtY2F0ZWdvcnk9ImV4dGVybmFsLXNpdGUiIGRhdGEtZXZlbnQtbGFiZWw9IlRvcG1lbnUgZXh0ZXJuYWwtc2l0ZSIgaHJlZj0iL2VuIj5cbiBMZWlkZW4gVW5pdmVyc2l0eVxuPC9hPlxuJywgJzxhIGNsYXNzPSJ0cmFjay1ldmVudCIgZGF0YS1ldmVudC1jYXRlZ29yeT0ic3R1ZGVudC1zaXRlIiBkYXRhLWV2ZW50LWxhYmVsPSJUb3BtZW51IGV4dGVybmFsLXNpdGUiIGhyZWY9Imh0dHBzOi8vd3d3LnN0dWRlbnQudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuIj5cbiBTdHVkZW50c1xuPC9hPlxuJywgJzxhIGNsYXNzPSJ0cmFjay1ldmVudCIgZGF0YS1ldmVudC1jYXRlZ29yeT0ic3RhZmZtZW1iZXItc2l0ZSIgZGF0YS1ldmVudC1sYWJlbD0iVG9wbWVudSBleHRlcm5hbC1zaXRlIiBocmVmPSJodHRwczovL3d3dy5zdGFmZi51bml2ZXJzaXRlaXRsZWlkZW4ubmwvIj5cbiBTdGFmZiBtZW1iZXJzXG48L2E+XG4nLCAnPGEgY2xhc3M9InRyYWNrLWV2ZW50IiBkYXRhLWV2ZW50LWNhdGVnb3J5PSJvcmctc2l0ZSIgZGF0YS1ldmVudC1sYWJlbD0iVG9wbWVudSBleHRlcm5hbC1zaXRlIiBocmVmPSJodHRwczovL3d3dy5vcmdhbmlzYXRpZWdpZHMudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuIj5cbiBPcmdhbmlzYXRpb25hbCBzdHJ1Y3R1cmVcbjwvYT5cbicsICc8YSBjbGFzcz0idHJhY2stZXZlbnQiIGRhdGEtZXZlbnQtY2F0ZWdvcnk9ImxpYnJhcnktc2l0ZSIgZGF0YS1ldmVudC1sYWJlbD0iVG9wbWVudSBleHRlcm5hbC1zaXRlIiBocmVmPSJodHRwczovL3d3dy5saWJyYXJ5LnVuaXZlcnNpdGVpdGxlaWRlbi5ubC8iPlxuIExpYnJhcnlcbjwvYT5cbicsICc8YSBocmVmPSIvZW4iPlxuIDxpbWcgYWx0PSJVbml2ZXJzaXRlaXQgTGVpZGVuIiBoZWlnaHQ9IjY0IiBzcmM9Ii9lbi9kZXNpZ24tMS4wL2Fzc2V0cy9pbWFnZXMvemVnZWwucG5nIiB3aWR0aD0iMTUxIi8+XG48L2E+XG4nLCAnPGEgZGF0YS1oaWRkZW49IiIgZGF0YS1oaW50PSJTZWFyY2ggZm9yIHN1YmplY3Qgb3IgcGVyc29uIiBocmVmPSIvZW4vc2VhcmNoIj5cbiBBbGwgY2F0ZWdvcmllc1xuPC9hPlxuJywgJzxhIGRhdGEtaGlkZGVuPVwneyJjb250ZW50LWNhdGVnb3J5Ijoic3RhZmZtZW1iZXIifVwnIGRhdGEtaGludD0iU2VhcmNoIGZvclx4YTBwZXJzb25zIiBocmVmPSIvZW4vc2VhcmNoIj5cbiBQZXJzb25zXG48L2E+XG4nLCAnPGEgZGF0YS1oaWRkZW49XCd7ImNvbnRlbnQtY2F0ZWdvcnkiOiJlZHVjYXRpb24ifVwnIGRhdGEtaGludD0iU2VhcmNoIGZvclx4YTBlZHVjYXRpb24iIGhyZWY9Ii9lbi9zZWFyY2giPlxuIEVkdWNhdGlvblxuPC9hPlxuJywgJzxhIGRhdGEtaGlkZGVuPVwneyJjb250ZW50LWNhdGVnb3J5IjoicmVzZWFyY2gifVwnIGRhdGEtaGludD0iU2VhcmNoIGZvclx4YTByZXNlYXJjaCIgaHJlZj0iL2VuL3NlYXJjaCI+XG4gUmVzZWFyY2hcbjwvYT5cbiddDQpgYGANCg0KIyMgQ2xlYW5pbmcgDQoNCiMjIyBSIA0KDQpTZWVtcyBsaWtlIG1vcmUgdXNlZnVsIGRhdGEgbm93LiBCdXQgY2FuIHdlIGltcHJvdmUgYnkgZGVsZXRpbmcgc29tZSBlbGVtZW50cyB3ZSBkbyBub3QgbmVlZD8gTGV0J3MgZmlyc3QgZGVsZXRlIHNvbWUgb2YgdGhlIHVzZWxlc3MgaW5mb3JtYXRpb24uDQoNCmBgYHtyfQ0KaGVhZChscG9sX3N0YWZmKQ0KbHBvbF9zdGFmZiA8LWxwb2xfc3RhZmZbLWMoMTozOSldDQpscG9sX3N0YWZmPC0gbHBvbF9zdGFmZlstYygxMzM6bGVuZ3RoKGxwb2xfc3RhZmYpKV0NCmhlYWQobHBvbF9zdGFmZikNCg0KZnNob3dkZihscG9sX3N0YWZmKQ0KYGBgDQoNClN0aWxsIGxvb2tzIGEgYml0IG1lc3N5LiBDYW4gd2UgZ2V0IGl0IGludG8gYSBkYXRhZnJhbWUgYW5kIHNwbGl0IHRoZSBjb2x1bW4gaW50byB1c2VmdWwgY29sdW1ucz8NCg0KYGBge3J9DQpscG9sX3N0YWZmIDwtIGRhdGEuZnJhbWUobHBvbF9zdGFmZikNCmxwb2xfc3RhZmYgPC0gY29sc3BsaXQobHBvbF9zdGFmZiRscG9sX3N0YWZmLCAiICAgICAgICAgICIsIG5hbWVzID0gYygidjEiLCJ2MiIsInYzIiwidjQiLCJ2NSIpKQ0KZnNob3dkZihscG9sX3N0YWZmLCBjYXB0aW9uPSJscG9sX3N0YWZmIikNCmBgYA0KDQpOaWNlISBJIHRoaW5rIHdlIG9ubHkgbmVlZCBjb2x1bW4gNCBhbmQgNT8gQW5kIGxldCdzIG5hbWUgdGhlbSBuaWNlbHkgYW5kIGRlbGV0ZSBhbnkgdHJhaWxpbmcgb3IgbGVhZGluZyB3aGl0ZXNwYWNlLg0KDQpgYGB7cn0NCmxwb2xfc3RhZmYgPC0gbHBvbF9zdGFmZlssIGMoInYzIiwidjQiKV0NCm5hbWVzKGxwb2xfc3RhZmYpIDwtIGMoIm5hbWUiLCAiZnVuYyIpDQoNCmxwb2xfc3RhZmYkbmFtZSA8LSB0cmltd3MobHBvbF9zdGFmZiRuYW1lLCB3aGljaCA9IGMoImJvdGgiKSwgd2hpdGVzcGFjZSA9ICJbIFx0XHJcbl0iKQ0KbHBvbF9zdGFmZiRmdW5jIDwtIHRyaW13cyhscG9sX3N0YWZmJGZ1bmMsIHdoaWNoID0gYygiYm90aCIpLCB3aGl0ZXNwYWNlID0gIlsgXHRcclxuXSIpDQpmc2hvd2RmKGxwb2xfc3RhZmYsIGNhcHRpb249Imxwb2xfc3RhZmYiKQ0KYGBgDQoNCk5vdCBiYWQuIA0KDQojIyBMb3ZlIFNjcmFwaW5nPyB7LnRhYnNldCAudGFic2V0LWZhZGV9DQoNClN1cHBvc2UgeW91IGRvIG5vdCBsaWtlIGRhdGF3cmFuZ2xpbmcgYnV0IHNpbXBseSBsb3ZlIHNjcmFwaW5nLiANCg0KIyMjIFINCg0KYGBge3J9DQpscG9sX3N0YWZmX25hbWVzIDwtIHJlYWRfaHRtbCgiaHR0cHM6Ly93d3cudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuL3NvY2lhbC1iZWhhdmlvdXJhbC1zY2llbmNlcy9wb2xpdGljYWwtc2NpZW5jZS9zdGFmZiN0YWItMSIpICU+JQ0KICBodG1sX2VsZW1lbnQoInNlY3Rpb24udGFiLmFjdGl2ZSIpICU+JQ0KICBodG1sX2VsZW1lbnRzKCJ1bC50YWJsZS1saXN0IikgJT4lDQogIGh0bWxfZWxlbWVudHMoImxpIikgJT4lIA0KICBodG1sX2VsZW1lbnRzKCJhIikgJT4lIA0KICBodG1sX2VsZW1lbnRzKCJkaXYiKSAlPiUNCiAgaHRtbF9lbGVtZW50cygic3Ryb25nIiklPiUNCiAgaHRtbF90ZXh0KCkNCg0KbHBvbF9zdGFmZl9mdW5jdGlvbnMgPC0gcmVhZF9odG1sKCJodHRwczovL3d3dy51bml2ZXJzaXRlaXRsZWlkZW4ubmwvZW4vc29jaWFsLWJlaGF2aW91cmFsLXNjaWVuY2VzL3BvbGl0aWNhbC1zY2llbmNlL3N0YWZmI3RhYi0xIikgJT4lDQogIGh0bWxfZWxlbWVudCgic2VjdGlvbi50YWIuYWN0aXZlIikgJT4lDQogIGh0bWxfZWxlbWVudHMoInVsLnRhYmxlLWxpc3QiKSAlPiUNCiAgaHRtbF9lbGVtZW50cygibGkiKSAlPiUgDQogIGh0bWxfZWxlbWVudHMoImEiKSAlPiUgDQogIGh0bWxfZWxlbWVudHMoImRpdiIpICU+JQ0KICBodG1sX2VsZW1lbnRzKCJzcGFuIiklPiUNCiAgaHRtbF90ZXh0KCkNCiAgDQogIGxwb2xfc3RhZmYyIDwtIGRhdGEuZnJhbWUobmFtZSA9IGxwb2xfc3RhZmZfbmFtZXMsIGZ1bmN0ID0gbHBvbF9zdGFmZl9mdW5jdGlvbnMpDQogIGZzaG93ZGYobHBvbF9zdGFmZjIpDQoNCmBgYA0KIyMjIFB5dGhvbg0KDQpgYGB7cHl0aG9uLCBldmFsID0gRkFMU0V9DQp1cmwgPSAiaHR0cHM6Ly93d3cudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuL3NvY2lhbC1iZWhhdmlvdXJhbC1zY2llbmNlcy9wb2xpdGljYWwtc2NpZW5jZS9zdGFmZiN0YWItMSINCnJlc3BvbnNlID0gcmVxdWVzdHMuZ2V0KHVybCkNCndlYnBhZ2UgPSByZXNwb25zZS5jb250ZW50DQoNCiMgUGFyc2UgdGhlIHdlYnBhZ2UNCnNvdXAgPSBCZWF1dGlmdWxTb3VwKHdlYnBhZ2UsICdodG1sLnBhcnNlcicpDQoNCiNzYXZlIHRoZSB0YWdzICdsaScgaW4gYSBsaXN0DQpzb3VwMiA9IHNvdXAuc2VsZWN0X29uZSgnc2VjdGlvbi50YWIuYWN0aXZlJykuc2VsZWN0X29uZSgndWwudGFibGUtbGlzdCcpLmZpbmRfYWxsKCJsaSIpDQoNCiNsb29wIHRocm91Z2ggdGhlIGxpc3QgdG8gZmluZCB3aGF0IHdlIHdhbnQNCmxwb2xfc3RhZmZfbmFtZXMgPSBbdGFnYS5zZWxlY3Rfb25lKCJzdHJvbmciKS5nZXRfdGV4dCgpIGZvciB0YWdhIGluIHNvdXAyXQ0KbHBvbF9zdGFmZl9mdW5jdGlvbnMgPSBbdGFnYS5zZWxlY3Rfb25lKCJzcGFuIikuZ2V0X3RleHQoKSBmb3IgdGFnYSBpbiBzb3VwMl0NCg0KIyBDb21iaW5lIGRhdGEgaW50byBhIERhdGFGcmFtZQ0KbHBvbF9zdGFmZl9kZiA9IHBkLkRhdGFGcmFtZSh7DQogICAgJ25hbWUnOiBscG9sX3N0YWZmX25hbWVzLA0KICAgICdmdW5jdCc6IGxwb2xfc3RhZmZfZnVuY3Rpb25zDQp9KQ0KDQojIERpc3BsYXkgdGhlIERhdGFGcmFtZQ0KcHJpbnQobHBvbF9zdGFmZl9kZi5oZWFkKCkpICANCg0KYGBgDQpgYGANCiAgICAgICAgICAgICAgICBuYW1lICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBmdW5jdA0KMCAgICAgICAgQWRpbmEgQWtiaWsgICAgICAgICAgICAgICAgICAgICAgIFNlbmlvciBBc3Npc3RhbnQgUHJvZmVzc29yDQoxICAgICAgIEZlbWtlIEJha2tlciAgICAgICAgICAgICAgICAgICAgICAgU2VuaW9yIGFzc2lzdGFudCBwcm9mZXNzb3INCjIgIEluZ3JpZCB2YW4gQmllemVuICAgICAgICAgICAgICAgIFByb2Zlc3NvciBvZiBDb21wYXJhdGl2ZSBQb2xpdGljcw0KMyAgICAgTmljb2xhcyBCbGFyZWwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBBc3NvY2lhdGUgUHJvZmVzc29yDQo0ICAgICAgICAgQXJqZW4gQm9pbiAgUHJvZmVzc29yIG9mIFB1YmxpYyBJbnN0aXR1dGlvbnMgYW5kIEdvdmVybmFuY2UNCmBgYA0KDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIldlYnNjcmFwaW5nIHNjaG9sYXJzIg0KYmlibGlvZ3JhcGh5OiByZWZlcmVuY2VzLmJpYg0KbGluay1jaXRhdGlvbnM6IHllcw0KLS0tDQoNCg0KYGBge3IsIGdsb2JhbHNldHRpbmdzLCBlY2hvPUZBTFNFLCB3YXJuaW5nPUZBTFNFLCBtZXNzYWdlPUZBTFNFLCByZXN1bHRzPSdoaWRlJ30NCmxpYnJhcnkoa25pdHIpDQpvcHRzX2NodW5rJHNldCh0aWR5Lm9wdHM9bGlzdCh3aWR0aC5jdXRvZmY9MTAwKSx0aWR5PVRSVUUsICB3YXJuaW5nID0gRkFMU0UsIG1lc3NhZ2UgPSBGQUxTRSxjb21tZW50ID0gIiM+IiwgY2FjaGU9VFJVRSwgY2xhc3Muc291cmNlPWMoInRlc3QiKSwgY2xhc3Mub3V0cHV0PWMoInRlc3QyIiksIGNhY2hlLmxhenkgPSBGQUxTRSkNCm9wdGlvbnMod2lkdGggPSAxMDApIA0KcmdsOjpzZXR1cEtuaXRyKCkNCmBgYA0KDQpgYGB7ciBrbGlwcHksIGVjaG89RkFMU0UsIGluY2x1ZGU9VFJVRSwgbWVzc2FnZT1GQUxTRSwgZXZhbD1UUlVFfQ0KIyBpbnN0YWxsLnBhY2thZ2VzKCJyZW1vdGVzIikNCiNyZW1vdGVzOjppbnN0YWxsX2dpdGh1Yigicmxlc3VyL2tsaXBweSIpDQprbGlwcHk6OmtsaXBweShwb3NpdGlvbiA9IGMoJ3RvcCcsICdyaWdodCcpKQ0KI2tsaXBweTo6a2xpcHB5KGNvbG9yID0gJ2RhcmtyZWQnKQ0KI2tsaXBweTo6a2xpcHB5KHRvb2x0aXBfbWVzc2FnZSA9ICdDbGljayB0byBjb3B5JywgdG9vbHRpcF9zdWNjZXNzID0gJ0RvbmUnKQ0KYGBgDQoNCiMgR29hbCAgDQoNCioqSGFuZHMtb24gd2Vic2NyYXBpbmcqKiAgDQoNCkl0IGlzIHRpbWUgdG8gZG8gc29tZSB3ZWJzY3JhcGluZyBvdXJzZWx2ZXMuIEluIHdoYXQgZm9sbG93cyBpcyBhIHNob3J0IGZpcnN0IHR1dG9yaWFsIG9uIHdlYnNjcmFwaW5nIHdoZXJlIHdlIHdpbGwgYmUgY29sbGVjdGluZyBkYXRhIGZyb20gd2VicGFnZXMgb24gdGhlIGludGVybmV0LiBXZSB3aWxsIHVzZSB0aGUgc3BlY2lmaWMgdXNlIGNhc2Ugb2YgdGhlIHBvbGl0aWNhbCBzY2llbmNlIGRlcGFydG1lbnQgc3RhZmYgb2YgdGhlIHVuaXZlcnNpdHkgb2YgTGVpZGVuLiANCg0KV2hhdCBkbyB0aGV5IHB1Ymxpc2g/IFdoZXJlPyBBbmQgd2l0aCB3aG9tIGRvIHRoZXkgY29sbGFib3JhdGU/IFdlIGFzc3VtZSB5b3UgaGF2ZSBhdCBsZWFzdCBzb21lIGV4cGVyaWVuY2Ugd2l0aCBjb2RpbmcgaW4gUi4gSW4gdGhlIHJlc3Qgb2YgdGhpcyBwYXJ0IG9mIHRoZSB0dXRvcmlhbCwgd2Ugd2lsbCBzd2l0Y2ggYmV0d2VlbiBiYXNlIFIgYW5kIFRpZHl2ZXJzZSAoanVzdCBhIGJpdCksIHdoYXRldmVyIGlzIG1vc3QgY29udmVuaWVudC4gKE5vdGUgdGhhdCB0aGlzIHdpbGwgaGFwcGVuIG9mdGVuIGlmIHlvdSBiZWNvbWUgYW4gYXBwbGllZCBjb21wdXRhdGlvbmFsIHNvY2lvbG9naXN0LikgV2UgYWxzbyBvZmZlciBQeXRob24gY29kZS4gDQoNClRoZXJlIGFyZSBkaWZmZXJlbnQgc3RyYXRlZ2llcyBpbiBzY3JhcGluZy4gVGhlcmUgaXMgb2Z0ZW4gYSB0cmFkZS1vZmYgYmV0d2VlbiBjb21wbGV4IHNjcmFwaW5nIHRlY2huaXF1ZXMgdmVyc3VzIGNvbXBsZXggc3RyaW5nIG1hbmlwdWxhdGlvbnMuIEluIHRoaXMgZmlyc3QgZXhhbXBsZSwgd2Ugd2lsbCB1c2UgcXVpdGUgYSBsb3Qgb2Ygc3RyaW5nIG1hbmlwdWxhdGlvbnMuIA0KDQpGb3IgZXZlbiBtb3JlIGluZm8gc2VlIG91ciBbU05BU1MgYm9vayAtIENoYXB0ZXIgMTFdKGh0dHBzOi8vc25hc3MubmV0bGlmeS5hcHAvd2ViaW50cm8uaHRtbCkgIA0KDQotLS0gIA0KDQojIFByZXBhcmF0aW9uDQoNCiMjIGNsZWFuIHVwDQpgYGB7ciwgY2xlYW51cCwgcmVzdWx0cz0naGlkZSd9DQpybShsaXN0PWxzKCkpDQpnYygpDQpgYGANCg0KIyMgQ3VzdG9tIGZ1bmN0aW9ucw0KDQotIGBmcGFja2FnZS5jaGVja2A6IENoZWNrIGlmIHBhY2thZ2VzIGFyZSBpbnN0YWxsZWQgKGFuZCBpbnN0YWxsIGlmIG5vdCkgaW4gUi4gIA0KLSBgZnNhdmVgOiBTYXZlIHRvIHByb2Nlc3NlZCBkYXRhIGluIHJlcG9zaXRvcnkgIA0KLSBgZmxvYWRgOiBUbyBsb2FkIHRoZSBmaWxlcyBiYWNrIGFmdGVyIGFuIGBmc2F2ZWAgIA0KLSBgZnNob3dkZmA6IFRvIHByaW50IG9iamVjdHMgKHRpYmJsZXMgLyBkYXRhLmZyYW1lKSBuaWNlbHkgb24gc2NyZWVuIGluIC5ybWQgIA0KDQoNCmBgYHtyIGN1c3RvbWZ1bmN0aW9ucywgcmVzdWx0cz0naGlkZScsIGV2YWwgPSBUUlVFfQ0Kcm0obGlzdCA9IGxzKCkpICNjbGVhbiB1cCB5b3VyIGVudmlyb25tZW50DQoNCmZwYWNrYWdlLmNoZWNrIDwtIGZ1bmN0aW9uKHBhY2thZ2VzKSB7DQogIGxhcHBseShwYWNrYWdlcywgRlVOID0gZnVuY3Rpb24oeCkgew0KICAgIGlmICghcmVxdWlyZSh4LCBjaGFyYWN0ZXIub25seSA9IFRSVUUpKSB7DQogICAgICBpbnN0YWxsLnBhY2thZ2VzKHgsIGRlcGVuZGVuY2llcyA9IFRSVUUpDQogICAgICBsaWJyYXJ5KHgsIGNoYXJhY3Rlci5vbmx5ID0gVFJVRSkNCiAgICB9DQogIH0pDQp9DQoNCmZzYXZlIDwtIGZ1bmN0aW9uKHgsIGZpbGU9TlVMTCwgbG9jYXRpb249Ii4vZGF0YS9wcm9jZXNzZWQvIikgew0KICBpZmVsc2UoIWRpci5leGlzdHMoImRhdGEiKSwgZGlyLmNyZWF0ZSgiZGF0YSIpLCBGQUxTRSkNCiAgaWZlbHNlKCFkaXIuZXhpc3RzKCJkYXRhL3Byb2Nlc3NlZCIpLCBkaXIuY3JlYXRlKCJkYXRhL3Byb2Nlc3NlZCIpLCBGQUxTRSkNCiAgaWYgKGlzLm51bGwoZmlsZSkpIGZpbGU9IGRlcGFyc2Uoc3Vic3RpdHV0ZSh4KSkNCiAgZGF0ZW5hbWUgPC0gc3Vic3RyKGdzdWIoIls6LV0iLCAiIiwgU3lzLnRpbWUoKSksIDEsOCkgIA0KICB0b3RhbG5hbWUgPC0gcGFzdGUobG9jYXRpb24sIGRhdGVuYW1lLCBmaWxlLCAiLnJkYSIsIHNlcD0iIikNCiAgc2F2ZSh4LCBmaWxlID0gdG90YWxuYW1lKSAgI25lZWQgdG8gZml4IGlmIGZpbGUgaXMgcmVsb2FkZWQgYXMgaW5wdXQgbmFtZSwgbm90IGFzIHguIA0KfQ0KDQpmbG9hZCA8LSBmdW5jdGlvbihmaWxlbmFtZSkgew0KICBsb2FkKGZpbGVuYW1lKQ0KICBnZXQobHMoKVtscygpICE9ICJmaWxlbmFtZSJdKQ0KfQ0KDQpmc2hvd2RmIDwtICBmdW5jdGlvbih4LCAuLi4pIHsNCiAga25pdHI6OmthYmxlKHgsIGRpZ2l0cz0yLCAiaHRtbCIsIC4uLikgJT4lDQogIGthYmxlRXh0cmE6OmthYmxlX3N0eWxpbmcoYm9vdHN0cmFwX29wdGlvbnMgPSBjKCJzdHJpcGVkIiwgImhvdmVyIikpICU+JQ0KICBrYWJsZUV4dHJhOjpzY3JvbGxfYm94KHdpZHRoPSIxMDAlIiwgaGVpZ2h0PSAiMzAwcHgiKQ0KfSANCg0KY29sb3JpemUgPC0gZnVuY3Rpb24oeCwgY29sb3IpIHtzcHJpbnRmKCI8c3BhbiBzdHlsZT0nY29sb3I6ICVzOyc+JXM8L3NwYW4+IiwgY29sb3IsIHgpIH0NCg0KYGBgDQoNCi0tLS0NCg0KIyMgUGFja2FnZXMgey50YWJzZXQgLnRhYnNldC1mYWRlfQ0KDQojIyMgUiANCg0KLSBgdGlkeXZlcnNlYDogZm9yIHBpcGluZyBldGMuIA0KLSBgaHR0cmA6IFRvb2xzIGZvciBXb3JraW5nIHdpdGggVVJMcyBhbmQgSFRUUCAgDQotIGB4bWwyYDogV29yayB3aXRoIFhNTCBmaWxlcyB1c2luZyBhIHNpbXBsZSwgY29uc2lzdGVudCBpbnRlcmZhY2UuICANCi0gYHJ2ZXN0YDogV3JhcHBlcnMgYXJvdW5kIHRoZSAneG1sMicgYW5kICdodHRyJyBwYWNrYWdlcyB0byBtYWtlIGl0IGVhc3kgdG8gZG93bmxvYWQsIHRoZW4gbWFuaXB1bGF0ZSwgSFRNTCBhbmQgWE1MLiAgDQotIGByZXNoYXBlMmA6IEZsZXhpYmx5IFJlc2hhcGUgRGF0YSAgDQoNCmBgYHtyLCByZXN1bHRzPSdoaWRlJ30NCnBhY2thZ2VzID0gYygidGlkeXZlcnNlIiwgImh0dHIiLCAicnZlc3QiLCAicmVzaGFwZTIiLCAieG1sMiIpDQpmcGFja2FnZS5jaGVjayhwYWNrYWdlcykNCmBgYA0KDQotLS0gIA0KDQojIyMgUHl0aG9uDQoNCk1ha2Ugc3VyZSB5b3UgaGF2ZSB0aGUgcmVxdWlyZWQgbGlicmFyaWVzIGJ5IHR5cGluZyBpbiB0aGUgY29kZSBiZWxvdyBpbnRvIHlvdXIgY29uc29sZQ0KDQpgYGB7YmFzaCwgZXZhbCA9IEZBTFNFfQ0KcGlwIGluc3RhbGwgcmVxdWVzdHMgYmVhdXRpZnVsc291cDQgcGFuZGFzDQpgYGAgDQoNCjxicj4NCg0KYW5kIGltcG9ydCBuZWNlc3NhcnkgbW9kdWxlcw0KDQpgYGB7cHl0aG9uLCBldmFsID0gRkFMU0V9DQoNCmltcG9ydCByZXF1ZXN0cw0KZnJvbSBiczQgaW1wb3J0IEJlYXV0aWZ1bFNvdXANCmltcG9ydCBwYW5kYXMgYXMgcGQNCmltcG9ydCByZQ0KDQpgYGAgDQoNCjxicj4NCg0KDQojIExlaWRlbiBVbml2ZXJzaXR5OiBQb2xpdGljYWwgU2NpZW5jZQ0KDQpXaGF0IGRvIHdlIG1lYW4gYnkgYW5jaG9yIGRhdGE/IE91ciBnb2FsIGlzIHRvIGdldCB0byBrbm93OiAgDQoNCmkuIHdobyB0aGUgUG9saXRpY2FsIFNjaWVuY2Ugc3RhZmYgaXMgYXQgc2V2ZXJhbCB1bml2ZXJzaXRpZXMsICANCmlpLiB3aGF0IHRoZXkgcHVibGlzaCB3aXRoIHJlc3BlY3QgdG8gc2NpZW50aWZpYyB3b3JrLCBhbmQgIA0KaWlpLiB3aG8gdGhleSBjb2xsYWJvcmF0ZSB3aXRoLiAgDQoNClNvIHRoYXQgbWVhbnMgYXQgbGVhc3QgdGhyZWUgZGF0YSBzb3VyY2VzIHdlIG5lZWQgdG8gY29sbGVjdCBmcm9tIHNvbWV3aGVyZS4gV2hhdCB3b3VsZCBiZSBhIG5pY2Ugc3RhcnRpbmcgKHJlYWQ6IGFuY2hvcikgcG9pbnQgYmU/IEZpcnN0LCB3ZSBoYXZlIHRvIGtub3cgd2hvIGlzIHN0YWZmLiBMZXQncyBjaGVjayBvdXQgW3RoZSBMZWlkZW4gcG9saXRpY2FsIHNjaWVuY2Ugc3RhZmYgd2Vic2l0ZV0oaHR0cHM6Ly93d3cudW5pdmVyc2l0ZWl0bGVpZGVuLm5sL2VuL3NvY2lhbC1iZWhhdmlvdXJhbC1zY2llbmNlcy9wb2xpdGljYWwtc2NpZW5jZS9zdGFmZiN0YWItMSkuIEhlcmUgd2Ugc2VlIGEgbmljZSBsaXN0IG9uIHdobyBpcyBvbiB0aGUgc3RhZmYgaW4gc2V2ZXJhbCBwYWdlcy4gSG93IGRvIHdlIGdldCB0aGF0IGRhdGE/IEl0IGlzIGFjdHVhbGx5IHF1aXRlIHNpbXBsZSwgdGhlIHBhY2thZ2UgW2BydmVzdGBdKGh0dHBzOi8vcnZlc3QudGlkeXZlcnNlLm9yZy9pbmRleC5odG1sKSBoYXMgYSB2ZXJ5IG5pY2UgZnVuY3Rpb24gW2BodG1sX3JlYWQoKWBdKGh0dHBzOi8vcnZlc3QudGlkeXZlcnNlLm9yZy9yZWZlcmVuY2UvcmVhZF9odG1sLmh0bWwpIChhY3R1YWxseSB0aGlzIGNvbWVzIGZyb20gdGhlIGB4bWwyYCBwYWNrYWdlKSB3aGljaCBzaW1wbHkgZGVyaXZlcyB0aGUgc291cmNlIGh0bWwgb2YgYSAqc3RhdGljKiB3ZWJwYWdlOg0KDQoNCjwhLS0gYHIgY29sb3JpemUoIkhvdyBpbmNyZWRpYmx5IGFubm95aW5nLCB3aGVuIHRyeWluZyB0byBkbyB0aGUgZmluYWwga25pdCBmb3IgdGhlIHdvcmtzaG9wLCBMZWlkZW4gdW5pdmVyc2l0eSBkZWNpZGVkIHRvIGRvIG1haW50YW5jZSB3b3JrIG9uIHRoZWlyIHdlYnNpdGUgb24gU2F0dXJkYXkgMjIgYW5kIFN1bmRheSAyMyBKdW5lISEhISEhISIsICJyZWQiKWAgLS0+DQoNCiMjIFN0YWZmIHBhZ2VzIHsudGFic2V0IC50YWJzZXQtZmFkZX0NCg0KIyMjIFIgDQoNCkxldCdzIGZpcnN0IHNpbXBseSBnZXQgdGhlIHN0YWZmIHBhZ2VzLg0KYHJlYWRfaHRtbCgpYCBpcyBhIGZ1bmN0aW9uIHRoYXQgc2ltcGx5IGV4dHJhY3RzIGh0bWwgd2VicGFnZXMgYW5kIHB1dHMgdGhlbSBpbiB4bWwgZm9ybWF0Lg0KDQpgYGB7cn0NCmxwb2xfc3RhZmYgPC0gcmVhZF9odG1sKCJodHRwczovL3d3dy51bml2ZXJzaXRlaXRsZWlkZW4ubmwvZW4vc29jaWFsLWJlaGF2aW91cmFsLXNjaWVuY2VzL3BvbGl0aWNhbC1zY2llbmNlL3N0YWZmI3RhYi0xIikNCmhlYWQobHBvbF9zdGFmZikNCmBgYA0KVGhhdCBsb29rcyBraW5kYSB3ZWlyZC4gV2hhdCB0eXBlIG9mIG9iamVjdCBkaWQgd2Ugc3RvcmUgaXQgYnkgcHV0dGluZyB0aGUgaHRtbCBpbnRvIGBscG9sX3N0YWZmMWA/DQoNCmBgYHtyfQ0KY2xhc3MobHBvbF9zdGFmZikNCmBgYA0KDQpTbyBpdCBpcyBpcyBzdG9yZWQgaW4gc29tZXRoaW5nIHRoYXQncyBjYWxsZWQgYW4geG1sIG9iamVjdC4gTm90IGltcG9ydGFudCBmb3Igbm93IHdoYXQgdGhhdCBpcy4gQnV0IGl0IGlzIGltcG9ydGFudCB0byBleHRyYWN0IHRoZSByZWxldmFudCB0YWJsZSB0aGF0IHdlIHNhdyBvbiB0aGUgc3RhZmYgd2Vic2l0ZS4gSG93IGRvIHdlIGRvIHRoYXQ/IEdvIHRvIG9uZSBvZiB0aGUgbGlua3MgYWJvdmUgaW4gYSBicm93c2VyIGFuZCB0aGVuIHByZXNzICJJbnNwZWN0IiBvbiB0aGUgd2VicGFnZSAodXN1YWxseTogcmlnaHQgY2xpY2stLVw+SW5zcGVjdCkuIEluIHRoZSBodG1sIGNvZGUgd2UgZXh0cmFjdGVkLCB3ZSBuZWVkIHRvIGdvIHRvIG9uZSBvZiB0aGUgbm9kZXMgZmlyc3QuIElmIHlvdSBtb3ZlIHlvdXIgY3Vyc29yIG92ZXIgKioiZGl2IioqIGluIHRoZSBodG1sIGNvZGUgb24gdGhlIHNjcmVlbiwgdGhlIGVudGlyZSAqKiJib2R5IioqIG9mIHRoZSBwYWdlIHNob3VsZCBiZWNvbWUgc29tZSBzaGFkZSBvZiBibHVlLiBUaGlzIG1lYW5zIHRoYXQgdGhlIGVsZW1lbnRzIGVuY2Fwc3VsYXRlZCBpbiB0aGUgKioiYm9keSIqKiBub2RlIGNhcHR1cmVzIGV2ZXJ5dGhpbmcgdGhhdCB0dXJuZWQgYmx1ZS4NCg0KDQojIyMgUHl0aG9uDQoNCmBgYHtweXRob24sIGV2YWwgPSBGQUxTRX0NCiMgRmV0Y2ggdGhlIHdlYnBhZ2UNCnVybCA9ICJodHRwczovL3d3dy51bml2ZXJzaXRlaXRsZWlkZW4ubmwvZW4vc29jaWFsLWJlaGF2aW91cmFsLXNjaWVuY2VzL3BvbGl0aWNhbC1zY2llbmNlL3N0YWZmI3RhYi0xIg0KDQpyZXNwb25zZSA9IHJlcXVlc3RzLmdldCh1cmwpDQp3ZWJwYWdlID0gcmVzcG9uc2UuY29udGVudA0KDQojIFBhcnNlIHRoZSB3ZWJwYWdlDQpzb3VwID0gQmVhdXRpZnVsU291cCh3ZWJwYWdlLCAnaHRtbC5wYXJzZXInKQ0KDQojcHJpbnQoc291cC5wcmV0dGlmeSgpKQ0KDQojb3IgdG8gcHJpbnQganVzdCBhIGZldyBsaW5lcw0KcmVzdWx0ID0gc291cC5wcmV0dGlmeSgpLnNwbGl0bGluZXMoKQ0KcHJpbnQoJ1xuJy5qb2luKHJlc3VsdFs6MTBdKSkNCmBgYA0KYGBgDQo8IURPQ1RZUEUgaHRtbD4NCjxodG1sIGRhdGEtdmVyc2lvbj0iMS4xNzguMDAiIGxhbmc9ImVuIj4NCiA8aGVhZD4NCiAgPCEtLSBzdGFuZGFyZCBwYWdlIGh0bWwgaGVhZCAtLT4NCiAgPHRpdGxlPg0KICAgU3RhZmYgLSBMZWlkZW4gVW5pdmVyc2l0eQ0KICA8L3RpdGxlPg0KICA8bWV0YSBjb250ZW50PSJvOEtZdUZBaVNaaTZRV1cxd3hxS0Z2VDFXUXdOLUJ4cnVVNDJzaTlZalh3IiBuYW1lPSJnb29nbGUtc2l0ZS12ZXJpZmljYXRpb24iLz4NCiAgPG1ldGEgY29udGVudD0iaFJVeHJxSUFSTWluTFcyZFJYclBwbXRMdHltbk9Uc2cwUGwzV2pIV1E0dyIgbmFtZT0iZ29vZ2xlLXNpdGUtdmVyaWZpY2F0aW9uIi8+DQogIDxsaW5rIGhyZWY9Imh0dHBzOi8vd3d3LnVuaXZlcnNpdGVpdGxlaWRlbi5ubC9lbi9zb2NpYWwtYmVoYXZpb3VyYWwtc2NpZW5jZXMvcG9saXRpY2FsLXNjaWVuY2Uvc3RhZmYiIHJlbD0iY2Fub25pY2FsIi8+DQpgYGANCg0KDQojIyBOb2RlcyBhbmQgdGFncyB7LnRhYnNldCAudGFic2V0LWZhZGV9DQoNCg0KTmV4dCwgd2UgbmVlZCB0byBsb29rIGF0IHRoZSBzcGVjaWZpYyBlbGVtZW50cyBvbiB0aGUgcGFnZSB0aGF0IHdlIG5lZWQgdG8gZXh0cmFjdC4gU29tZXdoYXQgYnkgaW5mb3JtZWQgdHJpYWwgYW5kIGVycm9yLCBsb29raW5nIGZvciB0aGUgY29ycmVjdCBjb2RlLCB3ZSBjYW4gc2VsZWN0IHRoZSBlbGVtZW50cyB3ZSB3YW50LiBTbyB3ZSBuZWVkIGNvZGUgdGhhdCBsb29rcyBmb3IgdGhlIG5vZGUgKioibWFpbiIqKiBhbmQgdGhlICoqInRkIioqIGVsZW1lbnRzIGluIHRoZSB4bWwgb2JqZWN0IGFuZCB0aGVuIGV4dHJhY3QgdGhvc2UgZWxlbWVudHMgaW4gaXQuIE5vdGUgdGhhdCB5b3UgY2FuIGNsaWNrIG9uIHRoZSBhcnJvd3Mgb25jZSB5b3UgYXJlIGluIHRoZSAiSW5zcGVjdCIgbW9kZSBpbiB0aGUgd2ViIGJyb3dzZXIgdG8gdHJpYWwtYW5kLWVycm9yIHRvIGdldCBhdCB0aGUgY29ycmVjdCBlbGVtZW50cy4gIA0KDQpUaGVyZSBhcmUgbWFueSB3YXlzIHRvIGZpbmQgdGhlIENTUyBvciBYcGF0aCBvZiB0aGUgZWxlbWVudHMgeW91IHdhbnQuIA0KVGhlIHBhY2thZ2UgYHJ2ZXN0YCBhbHNvIGhhcyBhIFNlbGVjdG9yR2FkZ2V0IHRvb2wuIFNlZSBbaGVyZV0oaHR0cHM6Ly9ydmVzdC50aWR5dmVyc2Uub3JnL2FydGljbGVzL3NlbGVjdG9yZ2FkZ2V0Lmh0bWwpDQoNCldvIHdlIG5lZWQgdG8gZmluZCBXSEVSRSB0aGUgdGFibGUgaXMgbG9jYXRlZCBpbiB0aGUgaHRtbC4gDQoNCkFzc2lnbm1lbnQ6ICANCi0gdXNlIGZpcmVmb3ggJ2luc3BlY3QnICANCi0gdXNlIHJzdHVkaW8gIA0KLSB1c2UgYHJ2ZXN0YCBTZWxlY3RvckdhZGdldA0KDQojIyMgUiANCg0KYGBge3J9DQpscG9sX3N0YWZmIDwtIGxwb2xfc3RhZmYgJT4lIA0KICBodG1sX25vZGVzKCJib2R5IikgJT4lDQogIGh0bWxfbm9kZXMoeHBhdGggPSAiLy9hIikgJT4lIA0KICBodG1sX3RleHQoKQ0KYGBgDQoNCkxldCB1cyBmb3Igbm93IGFzc3VtZSB5b3UgYXJlIHNhdGlzZmllZCB3aXRoIHRoZSBhYm92ZSBvdXRwdXQuDQoNCiMjIyBQeXRob24NCmBgYHtweXRob24sIGV2YWwgPSBGQUxTRX0NCmxwb2xfc3RhZmYgPSBzb3VwLmJvZHkuZmluZF9hbGwoJ2EnKQ0KDQpscG9sX3N0YWZmID0gW3RhZ3MucHJldHRpZnkoKSBmb3IgdGFncyBpbiBscG9sX3N0YWZmXQ0KcHJpbnQobHBvbF9zdGFmZls6MTBdKQ0KYGBgDQpgYGANClsnPGEgY2xhc3M9ImFjdGl2ZSB0cmFjay1ldmVudCIgZGF0YS1ldmVudC1jYXRlZ29yeT0iZXh0ZXJuYWwtc2l0ZSIgZGF0YS1ldmVudC1sYWJlbD0iVG9wbWVudSBleHRlcm5hbC1zaXRlIiBocmVmPSIvZW4iPlxuIExlaWRlbiBVbml2ZXJzaXR5XG48L2E+XG4nLCAnPGEgY2xhc3M9InRyYWNrLWV2ZW50IiBkYXRhLWV2ZW50LWNhdGVnb3J5PSJzdHVkZW50LXNpdGUiIGRhdGEtZXZlbnQtbGFiZWw9IlRvcG1lbnUgZXh0ZXJuYWwtc2l0ZSIgaHJlZj0iaHR0cHM6Ly93d3cuc3R1ZGVudC51bml2ZXJzaXRlaXRsZWlkZW4ubmwvZW4iPlxuIFN0dWRlbnRzXG48L2E+XG4nLCAnPGEgY2xhc3M9InRyYWNrLWV2ZW50IiBkYXRhLWV2ZW50LWNhdGVnb3J5PSJzdGFmZm1lbWJlci1zaXRlIiBkYXRhLWV2ZW50LWxhYmVsPSJUb3BtZW51IGV4dGVybmFsLXNpdGUiIGhyZWY9Imh0dHBzOi8vd3d3LnN0YWZmLnVuaXZlcnNpdGVpdGxlaWRlbi5ubC8iPlxuIFN0YWZmIG1lbWJlcnNcbjwvYT5cbicsICc8YSBjbGFzcz0idHJhY2stZXZlbnQiIGRhdGEtZXZlbnQtY2F0ZWdvcnk9Im9yZy1zaXRlIiBkYXRhLWV2ZW50LWxhYmVsPSJUb3BtZW51IGV4dGVybmFsLXNpdGUiIGhyZWY9Imh0dHBzOi8vd3d3Lm9yZ2FuaXNhdGllZ2lkcy51bml2ZXJzaXRlaXRsZWlkZW4ubmwvZW4iPlxuIE9yZ2FuaXNhdGlvbmFsIHN0cnVjdHVyZVxuPC9hPlxuJywgJzxhIGNsYXNzPSJ0cmFjay1ldmVudCIgZGF0YS1ldmVudC1jYXRlZ29yeT0ibGlicmFyeS1zaXRlIiBkYXRhLWV2ZW50LWxhYmVsPSJUb3BtZW51IGV4dGVybmFsLXNpdGUiIGhyZWY9Imh0dHBzOi8vd3d3LmxpYnJhcnkudW5pdmVyc2l0ZWl0bGVpZGVuLm5sLyI+XG4gTGlicmFyeVxuPC9hPlxuJywgJzxhIGhyZWY9Ii9lbiI+XG4gPGltZyBhbHQ9IlVuaXZlcnNpdGVpdCBMZWlkZW4iIGhlaWdodD0iNjQiIHNyYz0iL2VuL2Rlc2lnbi0xLjAvYXNzZXRzL2ltYWdlcy96ZWdlbC5wbmciIHdpZHRoPSIxNTEiLz5cbjwvYT5cbicsICc8YSBkYXRhLWhpZGRlbj0iIiBkYXRhLWhpbnQ9IlNlYXJjaCBmb3Igc3ViamVjdCBvciBwZXJzb24iIGhyZWY9Ii9lbi9zZWFyY2giPlxuIEFsbCBjYXRlZ29yaWVzXG48L2E+XG4nLCAnPGEgZGF0YS1oaWRkZW49XCd7ImNvbnRlbnQtY2F0ZWdvcnkiOiJzdGFmZm1lbWJlciJ9XCcgZGF0YS1oaW50PSJTZWFyY2ggZm9yXHhhMHBlcnNvbnMiIGhyZWY9Ii9lbi9zZWFyY2giPlxuIFBlcnNvbnNcbjwvYT5cbicsICc8YSBkYXRhLWhpZGRlbj1cJ3siY29udGVudC1jYXRlZ29yeSI6ImVkdWNhdGlvbiJ9XCcgZGF0YS1oaW50PSJTZWFyY2ggZm9yXHhhMGVkdWNhdGlvbiIgaHJlZj0iL2VuL3NlYXJjaCI+XG4gRWR1Y2F0aW9uXG48L2E+XG4nLCAnPGEgZGF0YS1oaWRkZW49XCd7ImNvbnRlbnQtY2F0ZWdvcnkiOiJyZXNlYXJjaCJ9XCcgZGF0YS1oaW50PSJTZWFyY2ggZm9yXHhhMHJlc2VhcmNoIiBocmVmPSIvZW4vc2VhcmNoIj5cbiBSZXNlYXJjaFxuPC9hPlxuJ10NCmBgYA0KDQojIyBDbGVhbmluZyANCg0KIyMjIFIgDQoNClNlZW1zIGxpa2UgbW9yZSB1c2VmdWwgZGF0YSBub3cuIEJ1dCBjYW4gd2UgaW1wcm92ZSBieSBkZWxldGluZyBzb21lIGVsZW1lbnRzIHdlIGRvIG5vdCBuZWVkPyBMZXQncyBmaXJzdCBkZWxldGUgc29tZSBvZiB0aGUgdXNlbGVzcyBpbmZvcm1hdGlvbi4NCg0KYGBge3J9DQpoZWFkKGxwb2xfc3RhZmYpDQpscG9sX3N0YWZmIDwtbHBvbF9zdGFmZlstYygxOjM5KV0NCmxwb2xfc3RhZmY8LSBscG9sX3N0YWZmWy1jKDEzMzpsZW5ndGgobHBvbF9zdGFmZikpXQ0KaGVhZChscG9sX3N0YWZmKQ0KDQpmc2hvd2RmKGxwb2xfc3RhZmYpDQpgYGANCg0KU3RpbGwgbG9va3MgYSBiaXQgbWVzc3kuIENhbiB3ZSBnZXQgaXQgaW50byBhIGRhdGFmcmFtZSBhbmQgc3BsaXQgdGhlIGNvbHVtbiBpbnRvIHVzZWZ1bCBjb2x1bW5zPw0KDQpgYGB7cn0NCmxwb2xfc3RhZmYgPC0gZGF0YS5mcmFtZShscG9sX3N0YWZmKQ0KbHBvbF9zdGFmZiA8LSBjb2xzcGxpdChscG9sX3N0YWZmJGxwb2xfc3RhZmYsICIgICAgICAgICAgIiwgbmFtZXMgPSBjKCJ2MSIsInYyIiwidjMiLCJ2NCIsInY1IikpDQpmc2hvd2RmKGxwb2xfc3RhZmYsIGNhcHRpb249Imxwb2xfc3RhZmYiKQ0KYGBgDQoNCk5pY2UhIEkgdGhpbmsgd2Ugb25seSBuZWVkIGNvbHVtbiA0IGFuZCA1PyBBbmQgbGV0J3MgbmFtZSB0aGVtIG5pY2VseSBhbmQgZGVsZXRlIGFueSB0cmFpbGluZyBvciBsZWFkaW5nIHdoaXRlc3BhY2UuDQoNCmBgYHtyfQ0KbHBvbF9zdGFmZiA8LSBscG9sX3N0YWZmWywgYygidjMiLCJ2NCIpXQ0KbmFtZXMobHBvbF9zdGFmZikgPC0gYygibmFtZSIsICJmdW5jIikNCg0KbHBvbF9zdGFmZiRuYW1lIDwtIHRyaW13cyhscG9sX3N0YWZmJG5hbWUsIHdoaWNoID0gYygiYm90aCIpLCB3aGl0ZXNwYWNlID0gIlsgXHRcclxuXSIpDQpscG9sX3N0YWZmJGZ1bmMgPC0gdHJpbXdzKGxwb2xfc3RhZmYkZnVuYywgd2hpY2ggPSBjKCJib3RoIiksIHdoaXRlc3BhY2UgPSAiWyBcdFxyXG5dIikNCmZzaG93ZGYobHBvbF9zdGFmZiwgY2FwdGlvbj0ibHBvbF9zdGFmZiIpDQpgYGANCg0KTm90IGJhZC4gDQoNCiMjIExvdmUgU2NyYXBpbmc/IHsudGFic2V0IC50YWJzZXQtZmFkZX0NCg0KU3VwcG9zZSB5b3UgZG8gbm90IGxpa2UgZGF0YXdyYW5nbGluZyBidXQgc2ltcGx5IGxvdmUgc2NyYXBpbmcuIA0KDQojIyMgUg0KDQpgYGB7cn0NCmxwb2xfc3RhZmZfbmFtZXMgPC0gcmVhZF9odG1sKCJodHRwczovL3d3dy51bml2ZXJzaXRlaXRsZWlkZW4ubmwvZW4vc29jaWFsLWJlaGF2aW91cmFsLXNjaWVuY2VzL3BvbGl0aWNhbC1zY2llbmNlL3N0YWZmI3RhYi0xIikgJT4lDQogIGh0bWxfZWxlbWVudCgic2VjdGlvbi50YWIuYWN0aXZlIikgJT4lDQogIGh0bWxfZWxlbWVudHMoInVsLnRhYmxlLWxpc3QiKSAlPiUNCiAgaHRtbF9lbGVtZW50cygibGkiKSAlPiUgDQogIGh0bWxfZWxlbWVudHMoImEiKSAlPiUgDQogIGh0bWxfZWxlbWVudHMoImRpdiIpICU+JQ0KICBodG1sX2VsZW1lbnRzKCJzdHJvbmciKSU+JQ0KICBodG1sX3RleHQoKQ0KDQpscG9sX3N0YWZmX2Z1bmN0aW9ucyA8LSByZWFkX2h0bWwoImh0dHBzOi8vd3d3LnVuaXZlcnNpdGVpdGxlaWRlbi5ubC9lbi9zb2NpYWwtYmVoYXZpb3VyYWwtc2NpZW5jZXMvcG9saXRpY2FsLXNjaWVuY2Uvc3RhZmYjdGFiLTEiKSAlPiUNCiAgaHRtbF9lbGVtZW50KCJzZWN0aW9uLnRhYi5hY3RpdmUiKSAlPiUNCiAgaHRtbF9lbGVtZW50cygidWwudGFibGUtbGlzdCIpICU+JQ0KICBodG1sX2VsZW1lbnRzKCJsaSIpICU+JSANCiAgaHRtbF9lbGVtZW50cygiYSIpICU+JSANCiAgaHRtbF9lbGVtZW50cygiZGl2IikgJT4lDQogIGh0bWxfZWxlbWVudHMoInNwYW4iKSU+JQ0KICBodG1sX3RleHQoKQ0KICANCiAgbHBvbF9zdGFmZjIgPC0gZGF0YS5mcmFtZShuYW1lID0gbHBvbF9zdGFmZl9uYW1lcywgZnVuY3QgPSBscG9sX3N0YWZmX2Z1bmN0aW9ucykNCiAgZnNob3dkZihscG9sX3N0YWZmMikNCg0KYGBgDQojIyMgUHl0aG9uDQoNCmBgYHtweXRob24sIGV2YWwgPSBGQUxTRX0NCnVybCA9ICJodHRwczovL3d3dy51bml2ZXJzaXRlaXRsZWlkZW4ubmwvZW4vc29jaWFsLWJlaGF2aW91cmFsLXNjaWVuY2VzL3BvbGl0aWNhbC1zY2llbmNlL3N0YWZmI3RhYi0xIg0KcmVzcG9uc2UgPSByZXF1ZXN0cy5nZXQodXJsKQ0Kd2VicGFnZSA9IHJlc3BvbnNlLmNvbnRlbnQNCg0KIyBQYXJzZSB0aGUgd2VicGFnZQ0Kc291cCA9IEJlYXV0aWZ1bFNvdXAod2VicGFnZSwgJ2h0bWwucGFyc2VyJykNCg0KI3NhdmUgdGhlIHRhZ3MgJ2xpJyBpbiBhIGxpc3QNCnNvdXAyID0gc291cC5zZWxlY3Rfb25lKCdzZWN0aW9uLnRhYi5hY3RpdmUnKS5zZWxlY3Rfb25lKCd1bC50YWJsZS1saXN0JykuZmluZF9hbGwoImxpIikNCg0KI2xvb3AgdGhyb3VnaCB0aGUgbGlzdCB0byBmaW5kIHdoYXQgd2Ugd2FudA0KbHBvbF9zdGFmZl9uYW1lcyA9IFt0YWdhLnNlbGVjdF9vbmUoInN0cm9uZyIpLmdldF90ZXh0KCkgZm9yIHRhZ2EgaW4gc291cDJdDQpscG9sX3N0YWZmX2Z1bmN0aW9ucyA9IFt0YWdhLnNlbGVjdF9vbmUoInNwYW4iKS5nZXRfdGV4dCgpIGZvciB0YWdhIGluIHNvdXAyXQ0KDQojIENvbWJpbmUgZGF0YSBpbnRvIGEgRGF0YUZyYW1lDQpscG9sX3N0YWZmX2RmID0gcGQuRGF0YUZyYW1lKHsNCiAgICAnbmFtZSc6IGxwb2xfc3RhZmZfbmFtZXMsDQogICAgJ2Z1bmN0JzogbHBvbF9zdGFmZl9mdW5jdGlvbnMNCn0pDQoNCiMgRGlzcGxheSB0aGUgRGF0YUZyYW1lDQpwcmludChscG9sX3N0YWZmX2RmLmhlYWQoKSkgIA0KDQpgYGANCmBgYA0KICAgICAgICAgICAgICAgIG5hbWUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZ1bmN0DQowICAgICAgICBBZGluYSBBa2JpayAgICAgICAgICAgICAgICAgICAgICAgU2VuaW9yIEFzc2lzdGFudCBQcm9mZXNzb3INCjEgICAgICAgRmVta2UgQmFra2VyICAgICAgICAgICAgICAgICAgICAgICBTZW5pb3IgYXNzaXN0YW50IHByb2Zlc3Nvcg0KMiAgSW5ncmlkIHZhbiBCaWV6ZW4gICAgICAgICAgICAgICAgUHJvZmVzc29yIG9mIENvbXBhcmF0aXZlIFBvbGl0aWNzDQozICAgICBOaWNvbGFzIEJsYXJlbCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEFzc29jaWF0ZSBQcm9mZXNzb3INCjQgICAgICAgICBBcmplbiBCb2luICBQcm9mZXNzb3Igb2YgUHVibGljIEluc3RpdHV0aW9ucyBhbmQgR292ZXJuYW5jZQ0KYGBgDQoNCg0K</div>
 <style>
   .center {
     text-align: center;

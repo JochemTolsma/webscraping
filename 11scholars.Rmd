@@ -159,7 +159,7 @@ You will need to know the tags or XPath to the exact types of elements you are l
 
 Alternatively, you can use extensions such as Selector Gadget to get the XPath or tags you are looking for. Here, I am inputting the code used to specify information from an individual staff member
 
-```{r, eval = TRUE, results = 'asis'}
+```{r, eval = TRUE}
 Staffmembers <- RugSociology %>% html_elements(".rug-ph-xs")
 ```
 
@@ -171,13 +171,13 @@ xml_child(Staffmembers[[2]], 1)
 
 Again, then using Selector Gadget or looking at the similarities between each individual staff members list, we can find the tag that corresponds just to the names, and extract just the text from this using html_text2. For the difference between [html_text/2]( https://rvest.tidyverse.org/reference/html_text.html)
 
-```{r, eval = TRUE, results = 'asis'}
+```{r, eval = TRUE}
 StaffNames <- Staffmembers %>% html_nodes("div") %>% html_elements(".rug-h3") %>% html_text2()
 head(StaffNames)
 ```
 
 Similarly, this can be done for other information like their email
-```{r, eval = TRUE, results = 'asis'}
+```{r, eval = TRUE}
 StaffEmail <- Staffmembers %>% html_element(".rug-mb-s:nth-child(1) .rug-width-s-20-24") %>% html_text2()
 #necessary to clean text
 StaffEmail<- gsub("[\r\n0-9+/]", "", StaffEmail)
@@ -190,7 +190,7 @@ head(StaffEmail)
 ```
 
 Fiels of research:  
-```{r, eval = TRUE, results = 'asis'}
+```{r, eval = TRUE}
 StaffExpertese <- Staffmembers %>% html_element(".rug-mb-s~ .rug-mb-s+ .rug-mb-s .rug-width-s-20-24") %>% html_text2()
 #Here we remove line breaks and replace them with semi-colons 
 StaffExpertese<- gsub("[\r\n]", "; ", StaffExpertese)
@@ -198,19 +198,19 @@ head(StaffExpertese)
 ```
 
 Function/role: 
-```{r, eval = TRUE, results = 'asis'}
+```{r, eval = TRUE}
 StaffRole <- Staffmembers %>% html_element(".rug-layout:nth-child(2) .rug-width-s-20-24") %>% html_text2()
 head(StaffRole)
 ```
 
 Misc Info:
-```{r,  eval = TRUE, results = 'asis'}
+```{r,  eval = TRUE}
 StaffInfo <- Staffmembers %>% html_element(".rug-h3+ .rug-mb-s") %>% html_text2()
 head(StaffInfo)
 ```
 
 After we get all the information we want, we can then combine it into a single dataframe to allow for better storage and data manipulation
-```{r, eval = TRUE, results = 'asis'}
+```{r, eval = TRUE}
 
 RugSociologyEmployees <- data.frame(cbind(StaffNames,StaffEmail,StaffRole,StaffExpertese,StaffInfo))
 

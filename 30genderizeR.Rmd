@@ -139,7 +139,7 @@ firstname <- df %>%
 
 It is possible to use specific databases of GenderizeR by country. In that case, you can add the 'country' argument in genderizeAPI. We will now use the worldwide database, which this function defaults to when you don't add a country argument. 
 
-As a besides, in our 'real' project, we scraped the gender for Dutch names from this website: [(https://nvb.meertens.knaw.nl/)]. We only used genderizeR as check. 
+As a besides, in our 'real' project, we scraped the gender for Dutch names from this [website](https://nvb.meertens.knaw.nl/). We only used genderizeR as check. 
 
 Let us scrape one name first  
 

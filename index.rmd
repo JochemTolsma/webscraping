@@ -159,11 +159,11 @@ The program of this workshop will be as follows:
 *Time: 10:45am - 12:30pm*
 
 -   **Jochem**
-    -   Webscraping - [Lecture](./presentations/insna_science_data.pdf)
+    -   Webscraping - [Tutorial I](10scholars.html)
 -   **Dan**
-    -   Webscraping - [Tutorial](RUG_scholar_names_RVest.Rmd)
+    -   Webscraping - [Tutorial II](11scholars.html)
 -   **Rob**
-    -   Webscraping - [Tutorial](RU_scholar_names_RSelenium.Rmd)
+    -   Webscraping - [Tutorial III](12scholars.html)
 
 `r colorize("BREAK", "red")`\
 *Time: 12:30pm - 1:45pm*
@@ -173,7 +173,7 @@ The program of this workshop will be as follows:
 
 -   **Jochem**
     -   names curating - [tutorial](20names.html)
-    -   names to gender - [tutorial](30gender.html)
+    -   names to gender - [tutorial](30genderizeR.html)
 
 `r colorize("Webscraping - publications", "red")`\
 *Time: 2:45pm - 3:45pm*

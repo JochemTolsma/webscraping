@@ -152,7 +152,7 @@ jt <- read_html("https://api.openalex.org/authors?search=Jochem+Tolsma") %>%
 substr(jt, 1, 100)
 
 ```
-Okay, everything is in this `jt` object, but not very conviently. 
+Okay, everything is in this `jt` object, but not very conveniently. 
 
 The openalex page is actually a json object so will read in that. And make it a bit prettier. 
 
